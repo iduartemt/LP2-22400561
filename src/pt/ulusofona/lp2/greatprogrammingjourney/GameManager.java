@@ -12,27 +12,27 @@ enum Cores {
 
 public class GameManager {
 
-    private List<Player> players = new ArrayList<>();
-
-    public boolean createInitialBoard(String[][] playerInfo, int worldSize) {
-
+    //Se tem esta entre 2 e 4 players
+    public boolean nrValidPlayers(String[][] playerInfo) {
         if (playerInfo == null || playerInfo.length < 2 || playerInfo.length > 4) {
             return false;
         }
+        return true;
+    }
 
-        if (worldSize < playerInfo.length * 2) {
-            return false;
-        }
-
+    //Se cada jogador tem a informacao valida(id,nome,cor)
+    public boolean infoValidPlayers(String[][] playerInfo) {
         HashSet<String> validId = new HashSet<>();
         HashSet<String> validName = new HashSet<>();
         HashSet<String> validColor = new HashSet<>();
 
         for (int i = 0; i < playerInfo.length; i++) {
+            //Linha
             String[] validLine = playerInfo[i];
             if (validLine == null || validLine.length == 0) {
                 return false;
             }
+            //Colunas
             //validar id
             if (validLine[0] == null || validLine[0].isEmpty()) {
                 return false;
@@ -58,12 +58,26 @@ public class GameManager {
         return true;
     }
 
+    public boolean createInitialBoard(String[][] playerInfo, int worldSize) {
+        if (!nrValidPlayers(playerInfo)) {
+            return false;
+        }
+        //Se o tamanho é o dobro dos players em jogo
+        if (worldSize < playerInfo.length * 2) {
+            return false;
+        }
+        if (!infoValidPlayers(playerInfo)) {
+            return false;
+        }
+        return true;
+    }
+
     public String getImagePng(int nrSquare) {
-        return "";
+        return null;
     }
 
     public String[] getProgrammerInfo(int id) {
-        return null;
+        return new String[]{"a", "b", "c", "d"};
     }
 
     public String getProgrammerInfoAsStr(int id) {
@@ -95,6 +109,6 @@ public class GameManager {
     }
 
     public HashMap<String, String> customizeBoard() {
-        return null;
+        return new HashMap<>();
     }
 }
