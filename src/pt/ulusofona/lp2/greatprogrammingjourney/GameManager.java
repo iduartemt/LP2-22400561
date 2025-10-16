@@ -11,6 +11,7 @@ enum Cores {
 }
 
 public class GameManager {
+    Board board;
 
     //Se tem esta entre 2 e 4 players
     public boolean nrValidPlayers(String[][] playerInfo) {
@@ -21,59 +22,79 @@ public class GameManager {
     }
 
     //Se cada jogador tem a informacao valida(id,nome,cor)
-    public boolean infoValidPlayers(String[][] playerInfo) {
+    public List<Player> infoValidPlayers(String[][] playerInfo) {
+        List<Player> validPlayers = new ArrayList<>();
         HashSet<String> validId = new HashSet<>();
         HashSet<String> validName = new HashSet<>();
         HashSet<String> validColor = new HashSet<>();
 
         for (int i = 0; i < playerInfo.length; i++) {
+
             //Linha
             String[] validLine = playerInfo[i];
             if (validLine == null || validLine.length == 0) {
-                return false;
+                return null;
             }
+
             //Colunas
             //validar id
+            int id;
+            String name;
+            String language;
+            String color;
             if (validLine[0] == null || validLine[0].isEmpty()) {
-                return false;
+                return null;
             }
             if (!validId.add(validLine[0])) {
-                return false;
+                return null;
             }
+            id = Integer.parseInt(validLine[0]);
+
             //validar nome
             if (validLine[1] == null || validLine[1].isEmpty()) {
-                return false;
+                return null;
             }
             if (!validName.add(validLine[1])) {
-                return false;
+                return null;
             }
+            name = validLine[1];
+
             //validar cor
             if (validLine[3] == null || validLine[3].isEmpty()) {
-                return false;
+                return null;
             }
             if (!validColor.add(validLine[3])) {
-                return false;
+                return null;
             }
+            color = validLine[3];
+            language = validLine[2];
+
+            validPlayers.add(new Player(id, name, language, color));
         }
-        return true;
+
+        return validPlayers;
     }
 
     public boolean createInitialBoard(String[][] playerInfo, int worldSize) {
-        if (!nrValidPlayers(playerInfo)) {
+        if (nrValidPlayers(playerInfo)) {
             return false;
         }
         //Se o tamanho é o dobro dos players em jogo
         if (worldSize < playerInfo.length * 2) {
             return false;
         }
-        if (!infoValidPlayers(playerInfo)) {
+
+        List<Player> validPlayers = infoValidPlayers(playerInfo);
+        if (validPlayers == null) {
             return false;
         }
+
+        board = new Board(validPlayers, worldSize);
         return true;
     }
 
     public String getImagePng(int nrSquare) {
-        return null;
+        return "";
     }
 
     public String[] getProgrammerInfo(int id) {
