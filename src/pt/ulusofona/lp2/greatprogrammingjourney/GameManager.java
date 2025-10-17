@@ -309,7 +309,7 @@ public class GameManager {
         }
         results.add("THE GREAT PROGRAMMING JOURNEY");
         results.add("");
-        results.add("NR. DE TURNOS " + turnCount);
+        results.add("NR. DE TURNOS " + turnCount );
         results.add("");
         results.add("VENCEDOR " + winner);
         results.add("");
