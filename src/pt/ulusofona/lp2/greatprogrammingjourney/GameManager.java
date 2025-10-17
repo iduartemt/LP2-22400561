@@ -283,6 +283,13 @@ public class GameManager {
 
 
     public boolean gameIsOver() {
+        for (Slot slot : board.slots){
+            if (slot.nrSlot == board.getNrTotalSlots()){
+                if (!slot.players.isEmpty()){
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
