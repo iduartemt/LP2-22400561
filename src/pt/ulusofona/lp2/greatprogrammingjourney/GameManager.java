@@ -15,7 +15,7 @@ public class GameManager {
     //======VARIAVEIS=======
     Board board;
     int currentPlayerId;
-    int turnCount = 0;
+    int turnCount = 1;
     //======================
 
     public boolean validBoard() {
@@ -281,11 +281,10 @@ public class GameManager {
         return true;
     }
 
-
     public boolean gameIsOver() {
-        for (Slot slot : board.slots){
-            if (slot.nrSlot == board.getNrTotalSlots()){
-                if (!slot.players.isEmpty()){
+        for (Slot slot : board.slots) {
+            if (slot.nrSlot == board.getNrTotalSlots()) {
+                if (!slot.players.isEmpty()) {
                     return true;
                 }
             }
@@ -294,7 +293,17 @@ public class GameManager {
     }
 
     public ArrayList<String> getGameResults() {
-        return null;
+        ArrayList<String> results = new ArrayList<>();
+        results.add("THE GREAT PROGRAMMING JOURNEY\n");
+        results.add("");
+        results.add("NR. DE TURNOS");
+        results.add(turnCount + "");
+        results.add("");
+        results.add("VENCEDOR");
+        results.add( + "");
+        results.add("");
+        results.add("RESTANTES");
+        return results;
     }
 
     public JPanel getAuthorsPanel() {
