@@ -13,6 +13,10 @@ enum Cores {
 public class GameManager {
     Board board;
 
+    public boolean validBoard() {
+        return board != null;
+    }
+
     //Se tem esta entre 2 e 4 players
     public boolean nrValidPlayers(String[][] playerInfo) {
         if (playerInfo == null || playerInfo.length < 2 || playerInfo.length > 4) {
@@ -36,12 +40,13 @@ public class GameManager {
                 return null;
             }
 
-            //Colunas
-            //validar id
             int id;
             String name;
             String language;
             String color;
+
+            //Colunas
+            //validar id
             if (validLine[0] == null || validLine[0].isEmpty()) {
                 return null;
             }
@@ -76,7 +81,7 @@ public class GameManager {
     }
 
     public boolean createInitialBoard(String[][] playerInfo, int worldSize) {
-        if (nrValidPlayers(playerInfo)) {
+        if (!nrValidPlayers(playerInfo)) {
             return false;
         }
         //Se o tamanho é o dobro dos players em jogo
@@ -94,18 +99,70 @@ public class GameManager {
     }
 
     public String getImagePng(int nrSquare) {
-        return "";
+        if (nrSquare < 1 || nrSquare > board.getNrTotalSlots()) {
+            return null;
+        }
+        if (nrSquare == board.getNrTotalSlots()) {
+            return "glory.png";
+        }
+        return null;
     }
 
     public String[] getProgrammerInfo(int id) {
-        return new String[]{"a", "b", "c", "d"};
+        if (board == null || id < 1) {
+            return null;
+        }
+
+        for (Slot slot : board.slots) {
+            for (Player player : slot.players) {
+                if (player.id == id) {
+                    String[] foundedPlayer = new String[5];
+                    foundedPlayer[0] = String.valueOf(player.id);
+                    foundedPlayer[1] = player.name;
+                    foundedPlayer[2] = player.language;
+                    foundedPlayer[3] = player.color;
+                    foundedPlayer[4] = String.valueOf(slot.nrSlot);
+                    return foundedPlayer;
+                }
+            }
+        }
+        return null;
     }
 
     public String getProgrammerInfoAsStr(int id) {
-        return "";
+        if (!validBoard() || id < 1) {
+            return null;
+        }
+
+        for (Slot slot : board.slots) {
+            for (Player player : slot.players) {
+                if (id == player.id) {
+                    return id + " | " + player.name + " | " + slot.nrSlot + " | " + player.language + " | Em jogo";
+                }
+            }
+        }
+        return null;
     }
 
     public String[] getSlotInfo(int position) {
+        if (position < 1 || position > board.getNrTotalSlots()) {
+            return null;
+        }
+        for (Slot slot : board.slots) {
+            if (slot.nrSlot == position) {
+                if (slot.players.isEmpty()) {
+                    return new String[]{""};
+                }
+                StringBuilder sb = new StringBuilder();
+                for (Player player : slot.players) {
+                    if (!sb.isEmpty()) {
+                        sb.append(",");
+                    }
+                    sb.append(player.id);
+                }
+                return new String[]{sb.toString()};
+            }
+        }
         return null;
     }
 

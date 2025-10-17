@@ -11,14 +11,16 @@ public class Board {
         addPlayerSlotFirstSlot(players);
     }
 
+    //adiciona cada slot a lista de slots
     private void addSlotList(int worldSize) {
         for (int i = 0; i < worldSize; i++) {
             slots.add(new Slot(i + 1));
         }
     }
 
+    //Adiciona jogadores na primeira casa
     private void addPlayerSlotFirstSlot(List<Player> players) {
-        for (Player player: players){
+        for (Player player : players) {
             slots.get(0).addPlayer(player);
         }
     }
@@ -26,6 +28,4 @@ public class Board {
     int getNrTotalSlots() {
         return slots.size();
     }
-
-
 }

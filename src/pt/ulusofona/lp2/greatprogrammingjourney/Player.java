@@ -21,6 +21,7 @@ public class Player {
         return name;
     }
 
+
     String getColor() {
         return color;
     }
