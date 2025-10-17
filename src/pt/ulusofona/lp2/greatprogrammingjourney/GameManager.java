@@ -294,15 +294,26 @@ public class GameManager {
 
     public ArrayList<String> getGameResults() {
         ArrayList<String> results = new ArrayList<>();
-        results.add("THE GREAT PROGRAMMING JOURNEY\n");
+        String winner = "";
+        StringBuilder sb = new StringBuilder();
+        for (Slot slot : board.slots) {
+            for (Player player : slot.players) {
+                if (board.getNrTotalSlots() == slot.nrSlot) {
+                    if (!winner.isEmpty()) {
+                        sb.append(player.name);
+                    } else {
+                        winner = player.name;
+                    }
+                }
+            }
+        }
+        results.add("THE GREAT PROGRAMMING JOURNEY");
         results.add("");
-        results.add("NR. DE TURNOS");
-        results.add(turnCount + "");
+        results.add("NR. DE TURNOS " + turnCount);
         results.add("");
-        results.add("VENCEDOR");
-        results.add( + "");
+        results.add("VENCEDOR " + winner);
         results.add("");
-        results.add("RESTANTES");
+        results.add("RESTANTES " + sb);
         return results;
     }
 
