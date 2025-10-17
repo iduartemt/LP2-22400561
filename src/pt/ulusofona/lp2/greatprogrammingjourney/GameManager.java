@@ -11,7 +11,12 @@ enum Cores {
 }
 
 public class GameManager {
+
+    //======VARIAVEIS=======
     Board board;
+    int currentPlayerId;
+    int turnCount = 0;
+    //======================
 
     public boolean validBoard() {
         return board != null;
@@ -95,6 +100,16 @@ public class GameManager {
         }
 
         board = new Board(validPlayers, worldSize);
+
+        int lowerId = validPlayers.get(0).id;
+
+        for (Player player : validPlayers) {
+            if (player.id < lowerId) {
+                lowerId = player.id;
+            }
+        }
+        currentPlayerId = lowerId;
+
         return true;
     }
 
@@ -109,7 +124,7 @@ public class GameManager {
     }
 
     public String[] getProgrammerInfo(int id) {
-        if (board == null || id < 1) {
+        if (!validBoard() || id < 1) {
             return null;
         }
 
@@ -167,12 +182,105 @@ public class GameManager {
     }
 
     public int getCurrentPlayerID() {
-        return 0;
+        return currentPlayerId;
     }
 
     public boolean moveCurrentPlayer(int nrSpaces) {
-        return false;
+        if (board == null || nrSpaces < 1 || nrSpaces > 6) {
+            return false;
+        }
+
+        Player currentPlayer = null;
+        Slot originSlot = null;
+        boolean found = false;
+
+        //Encontrar o player atual e a slot em que esta
+        for (int i = 0; i < board.slots.size(); i++) {
+            Slot slot = board.slots.get(i);
+            for (int j = 0; j < slot.players.size(); j++) {
+                Player p = slot.players.get(j);
+                if (p.id == currentPlayerId) {
+                    currentPlayer = p;
+                    originSlot = slot;
+                    found = true;
+                    break;
+                }
+            }
+            if (found) {
+                break;
+            }
+        }
+
+        if (!found) {
+            return false; //nao encontrou player
+        }
+
+        //Destino e ultima casa
+        int lastSlot = board.getNrTotalSlots();
+        int destination = originSlot.nrSlot + nrSpaces;
+        if (destination > lastSlot) {
+            destination = lastSlot;
+        }
+
+        //ver qual é a proxima slot
+        Slot destinationSlot = null;
+        for (int i = 0; i < board.slots.size(); i++) {
+            Slot slot = board.slots.get(i);
+            if (slot.nrSlot == destination) {
+                destinationSlot = slot;
+                break;
+            }
+        }
+
+        if (destinationSlot == null) {
+            return false;
+        }
+
+        //remover e adicionar jplayer
+        originSlot.removePlayer(currentPlayer);
+        destinationSlot.addPlayer(currentPlayer);
+        turnCount++;
+
+        //roximo player
+        List<Player> allPlayers = new ArrayList<>();
+        for (int i = 0; i < board.slots.size(); i++) {
+            Slot slot = board.slots.get(i);
+            for (int j = 0; j < slot.players.size(); j++) {
+                allPlayers.add(slot.players.get(j));
+            }
+        }
+
+        for (int i = 0; i < allPlayers.size() - 1; i++) {
+            int minIdx = i;
+            for (int j = i + 1; j < allPlayers.size(); j++) {
+                if (allPlayers.get(j).id < allPlayers.get(minIdx).id) {
+                    minIdx = j;
+                }
+            }
+            if (minIdx != i) {
+                Player tmp = allPlayers.get(i);
+                allPlayers.set(i, allPlayers.get(minIdx));
+                allPlayers.set(minIdx, tmp);
+            }
+        }
+
+        int currentIndex = -1;
+        for (int i = 0; i < allPlayers.size(); i++) {
+            if (allPlayers.get(i).id == currentPlayerId) {
+                currentIndex = i;
+                break;
+            }
+        }
+
+        if (currentIndex == -1) {
+            return false; // safety check
+        }
+
+        int nextIndex = (currentIndex + 1) % allPlayers.size();
+        currentPlayerId = allPlayers.get(nextIndex).id;
+        return true;
     }
+
 
     public boolean gameIsOver() {
         return false;
