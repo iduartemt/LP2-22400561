@@ -15,7 +15,7 @@ public class GameManager {
     //======VARIAVEIS=======
     Board board;
     int currentPlayerId;
-    int turnCount = 1;
+    int turnCount = 0;
     //======================
 
     public boolean validBoard() {
@@ -295,6 +295,10 @@ public class GameManager {
     public ArrayList<String> getGameResults() {
         ArrayList<String> results = new ArrayList<>();
 
+        if (board == null) {
+            return results;
+        }
+
         //Encontrar o vencedor
         Slot findWinner = null;
         for (Slot slot : board.slots) {
@@ -304,6 +308,9 @@ public class GameManager {
             }
         }
 
+        if (findWinner == null || findWinner.players.isEmpty()) {
+            return results;
+        }
         String winner = findWinner.players.get(0).name;
 
         //Encontras players restantes
@@ -311,15 +318,14 @@ public class GameManager {
         for (Slot slot : board.slots) {
             for (Player player : slot.players) {
                 if (!player.name.equals(winner)) {
-                    sb.append(player.name).append()
-
+                    sb.append(player.name).append(" ").append(slot.nrSlot);
                 }
             }
         }
 
         results.add("THE GREAT PROGRAMMING JOURNEY");
         results.add("");
-        results.add("NR. DE TURNOS " + turnCount);
+        results.add("NR. DE TURNOS " + turnCount + 1);
         results.add("");
         results.add("VENCEDOR " + winner);
         results.add("");
