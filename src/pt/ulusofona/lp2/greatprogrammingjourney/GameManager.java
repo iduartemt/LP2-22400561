@@ -3,13 +3,6 @@ package pt.ulusofona.lp2.greatprogrammingjourney;
 import javax.swing.*;
 import java.util.*;
 
-enum Cores {
-    BLUE,
-    BROWN,
-    GREEN,
-    PURPLE
-}
-
 public class GameManager {
 
     //======VARIAVEIS=======
@@ -52,7 +45,7 @@ public class GameManager {
 
             //Colunas
             //validar id
-            if (validLine[0] == null || validLine[0].isEmpty()) {
+            if (validLine[0] == null || validLine[0].isEmpty() || Integer.parseInt(validLine[0]) < 0) {
                 return null;
             }
             if (!validId.add(validLine[0])) {
@@ -152,7 +145,7 @@ public class GameManager {
         for (Slot slot : board.slots) {
             for (Player player : slot.players) {
                 if (id == player.id) {
-                    return id + " | " + player.name + " | " + slot.nrSlot + " | " + player.language + " | Em jogo";
+                    return id + " | " + player.name + " | " + slot.nrSlot + " | " + player.language + " | Em Jogo";
                 }
             }
         }
@@ -160,7 +153,7 @@ public class GameManager {
     }
 
     public String[] getSlotInfo(int position) {
-        if (position < 1 || position > board.getNrTotalSlots()) {
+        if (board == null ||position < 1 || position > board.getNrTotalSlots()) {
             return null;
         }
         for (Slot slot : board.slots) {
@@ -218,9 +211,14 @@ public class GameManager {
         //Destino e ultima casa
         int lastSlot = board.getNrTotalSlots();
         int destination = originSlot.nrSlot + nrSpaces;
-        if (destination > lastSlot) {
-            destination = lastSlot;
-        }
+        for (int i = 0; i < board.getNrTotalSlots(); i++)
+
+            if (destination > lastSlot) {
+                int tillTheEnd = lastSlot - originSlot.nrSlot;
+                originSlot.nrSlot += tillTheEnd;
+                int exceed = nrSpaces - tillTheEnd;
+                originSlot.nrSlot = board.getNrTotalSlots() - exceed;
+            }
 
         //ver qual é a proxima slot
         Slot destinationSlot = null;
@@ -241,7 +239,7 @@ public class GameManager {
         destinationSlot.addPlayer(currentPlayer);
         turnCount++;
 
-        //roximo player
+        //proximo player
         List<Player> allPlayers = new ArrayList<>();
         for (int i = 0; i < board.slots.size(); i++) {
             Slot slot = board.slots.get(i);
@@ -282,6 +280,10 @@ public class GameManager {
     }
 
     public boolean gameIsOver() {
+        if (board == null) {
+            return false;
+        }
+
         for (Slot slot : board.slots) {
             if (slot.nrSlot == board.getNrTotalSlots()) {
                 if (!slot.players.isEmpty()) {
@@ -314,22 +316,25 @@ public class GameManager {
         String winner = findWinner.players.get(0).name;
 
         //Encontras players restantes
-        StringBuilder sb = new StringBuilder();
+        ArrayList<String> lastPlayers = new ArrayList<>();
         for (Slot slot : board.slots) {
             for (Player player : slot.players) {
                 if (!player.name.equals(winner)) {
-                    sb.append(player.name).append(" ").append(slot.nrSlot);
+                    lastPlayers.add(player.name + " " + slot.nrSlot);
                 }
             }
         }
 
         results.add("THE GREAT PROGRAMMING JOURNEY");
         results.add("");
-        results.add("NR. DE TURNOS " + turnCount + 1);
+        results.add("NR. DE TURNOS");
+        results.add(turnCount + 1 + "");
         results.add("");
-        results.add("VENCEDOR " + winner);
+        results.add("VENCEDOR");
+        results.add(winner);
         results.add("");
-        results.add("RESTANTES " + sb);
+        results.add("RESTANTES");
+        results.addAll(lastPlayers);
         return results;
     }
 
