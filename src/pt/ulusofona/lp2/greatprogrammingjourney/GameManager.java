@@ -3,20 +3,27 @@ package pt.ulusofona.lp2.greatprogrammingjourney;
 import javax.swing.*;
 import java.util.*;
 
+enum Color {
+    BROWN,
+    PURPLE,
+    GREEN,
+    BLUE
+}
+
 public class GameManager {
 
-    //======VARIAVEIS=======
+    //======VARIAVEIS===============
     Board board;
     int currentPlayerId;
     int turnCount = 0;
-    //======================
+    //==============================
 
-    public boolean validBoard() {
+    private boolean validBoard() {
         return board != null;
     }
 
     //Se tem esta entre 2 e 4 players
-    public boolean nrValidPlayers(String[][] playerInfo) {
+    private boolean nrValidPlayers(String[][] playerInfo) {
         if (playerInfo == null || playerInfo.length < 2 || playerInfo.length > 4) {
             return false;
         }
@@ -24,7 +31,7 @@ public class GameManager {
     }
 
     //Se cada jogador tem a informacao valida(id,nome,cor)
-    public List<Player> infoValidPlayers(String[][] playerInfo) {
+    private List<Player> infoValidPlayers(String[][] playerInfo) {
         List<Player> validPlayers = new ArrayList<>();
         HashSet<String> validId = new HashSet<>();
         HashSet<String> validName = new HashSet<>();
@@ -62,15 +69,31 @@ public class GameManager {
             }
             name = validLine[1];
 
+            language = validLine[2];
+
+
             //validar cor
             if (validLine[3] == null || validLine[3].isEmpty()) {
                 return null;
             }
+
+            boolean ifColorValid = false;
+
+            for (Color c : Color.values()){
+                if (c.name().equalsIgnoreCase(validLine[2])) {
+                    ifColorValid = true;
+                    break;
+                }
+            }
+            if (!ifColorValid) {
+                return null;
+            }
+
             if (!validColor.add(validLine[3])) {
                 return null;
             }
             color = validLine[3];
-            language = validLine[2];
+            color = color.substring(0, 1).toUpperCase() + color.substring(1).toLowerCase();
 
             validPlayers.add(new Player(id, name, language, color));
         }
@@ -127,7 +150,7 @@ public class GameManager {
                     String[] foundedPlayer = new String[5];
                     foundedPlayer[0] = String.valueOf(player.id);
                     foundedPlayer[1] = player.name;
-                    foundedPlayer[2] = player.language;
+                    foundedPlayer[2] = player.language + " ".trim();
                     foundedPlayer[3] = player.color;
                     foundedPlayer[4] = String.valueOf(slot.nrSlot);
                     return foundedPlayer;
@@ -153,7 +176,7 @@ public class GameManager {
     }
 
     public String[] getSlotInfo(int position) {
-        if (board == null ||position < 1 || position > board.getNrTotalSlots()) {
+        if (board == null || position < 1 || position > board.getNrTotalSlots()) {
             return null;
         }
         for (Slot slot : board.slots) {
@@ -217,7 +240,7 @@ public class GameManager {
                 int tillTheEnd = lastSlot - originSlot.nrSlot;
                 originSlot.nrSlot += tillTheEnd;
                 int exceed = nrSpaces - tillTheEnd;
-                originSlot.nrSlot = board.getNrTotalSlots() - exceed;
+                originSlot.nrSlot = originSlot.nrSlot - exceed;
             }
 
         //ver qual é a proxima slot

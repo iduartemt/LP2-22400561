@@ -6,7 +6,7 @@ public class Player {
     String language;
     String color;
 
-    public Player(int id, String name,String language, String color) {
+    public Player(int id, String name, String language, String color) {
         this.id = id;
         this.name = name;
         this.language = language;
@@ -21,6 +21,9 @@ public class Player {
         return name;
     }
 
+    String getLanguage() {
+        return language;
+    }
 
     String getColor() {
         return color;
