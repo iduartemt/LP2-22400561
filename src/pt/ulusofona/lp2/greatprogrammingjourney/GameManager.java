@@ -252,7 +252,7 @@ public class GameManager {
         //Destino e ultima casa
         int lastSlot = board.getNrTotalSlots();
         int destination = originSlot.nrSlot + nrSpaces;
-        for (int i = 0; i < board.getNrTotalSlots(); i++)
+        for (int i = 0; i < board.getNrTotalSlots(); i++) {
 
             if (destination > lastSlot) {
                 int tillTheEnd = lastSlot - originSlot.nrSlot;
@@ -260,6 +260,7 @@ public class GameManager {
                 int exceed = nrSpaces - tillTheEnd;
                 originSlot.nrSlot = originSlot.nrSlot - exceed;
             }
+        }
 
         //ver qual é a proxima slot
         Slot destinationSlot = null;
