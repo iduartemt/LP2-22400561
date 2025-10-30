@@ -155,7 +155,7 @@ public class GameManager {
                     String[] foundedPlayer = new String[5];
                     foundedPlayer[0] = String.valueOf(player.id);
                     foundedPlayer[1] = player.name;
-                    foundedPlayer[2] = player.language + " ".trim();
+                    foundedPlayer[2] = player.language;
                     foundedPlayer[3] = player.color;
                     foundedPlayer[4] = String.valueOf(slot.nrSlot);
                     return foundedPlayer;
@@ -173,13 +173,16 @@ public class GameManager {
         for (Slot slot : board.slots) {
             for (Player player : slot.players) {
                 if (id == player.id) {
-                    ArrayList<String> sortLanguage = new ArrayList<>(List.of(player.language.split("; ")));
-                    sortLanguage.sort(String::compareToIgnoreCase);
+                    ArrayList<String> sortLanguage = new ArrayList<>(List.of(player.language.split(";")));
+                    for (int i = 0; i < sortLanguage.size(); i++) {
+                        sortLanguage.set(i, sortLanguage.get(i).trim());
+                    }
+                    sortLanguage.sort(String::compareTo);
 
                     StringBuilder sb = new StringBuilder();
                     for (int i = 0; i < sortLanguage.size(); i++) {
                         sb.append(sortLanguage.get(i));
-                        if (sortLanguage.size() - 1 != i) {
+                        if (i != sortLanguage.size() - 1) {
                             sb.append("; ");
                         }
                     }
