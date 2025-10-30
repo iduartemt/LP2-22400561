@@ -69,6 +69,11 @@ public class GameManager {
             }
             name = validLine[1];
 
+            //Validar linguagem
+            if (validLine[2] == null) {
+                return null;
+            }
+
             language = validLine[2];
 
 
@@ -79,8 +84,8 @@ public class GameManager {
 
             boolean ifColorValid = false;
 
-            for (Color c : Color.values()){
-                if (c.name().equalsIgnoreCase(validLine[2])) {
+            for (Color c : Color.values()) {
+                if (c.name().equalsIgnoreCase(validLine[3])) {
                     ifColorValid = true;
                     break;
                 }
@@ -168,7 +173,17 @@ public class GameManager {
         for (Slot slot : board.slots) {
             for (Player player : slot.players) {
                 if (id == player.id) {
-                    return id + " | " + player.name + " | " + slot.nrSlot + " | " + player.language + " | Em Jogo";
+                    ArrayList<String> sortLanguage = new ArrayList<>(List.of(player.language.split("; ")));
+                    sortLanguage.sort(String::compareToIgnoreCase);
+
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i < sortLanguage.size(); i++) {
+                        sb.append(sortLanguage.get(i));
+                        if (sortLanguage.size() - 1 != i) {
+                            sb.append("; ");
+                        }
+                    }
+                    return id + " | " + player.name + " | " + slot.nrSlot + " | " + sb + " | Em Jogo";
                 }
             }
         }

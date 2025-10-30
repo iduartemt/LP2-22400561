@@ -5,10 +5,12 @@ import java.util.List;
 
 public class Board {
     List<Slot> slots = new ArrayList<>();
+    List<Player> players = new ArrayList<>();
 
     public Board(List<Player> players, int worldSize) {
         addSlotList(worldSize);
         addPlayerSlotFirstSlot(players);
+        this.players = players;
     }
 
     //adiciona cada slot a lista de slots
@@ -27,5 +29,9 @@ public class Board {
 
     int getNrTotalSlots() {
         return slots.size();
+    }
+
+    public List<Player> getPlayers() {
+        return players;
     }
 }
