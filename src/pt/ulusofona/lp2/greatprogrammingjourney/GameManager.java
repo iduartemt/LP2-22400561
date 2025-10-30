@@ -367,6 +367,8 @@ public class GameManager {
             }
         }
 
+        Collections.sort(lastPlayers);
+
         results.add("THE GREAT PROGRAMMING JOURNEY");
         results.add("");
         results.add("NR. DE TURNOS");
