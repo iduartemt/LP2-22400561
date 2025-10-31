@@ -119,6 +119,7 @@ public class GameManager {
         }
 
         board = new Board(validPlayers, worldSize);
+        turnCount = 0;
 
         int lowerId = validPlayers.get(0).id;
 
@@ -280,7 +281,7 @@ public class GameManager {
         destinationSlot.addPlayer(currentPlayer);
 
         turnCount++; // e também aqui para jogadas normais
-
+        System.out.println(turnCount);
 
         // Se o jogo acabou depois desta jogada, não passa a vez
         if (gameIsOver()) {
