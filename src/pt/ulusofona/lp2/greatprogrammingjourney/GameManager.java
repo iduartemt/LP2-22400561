@@ -288,6 +288,7 @@ public class GameManager {
             return true;
         }
 
+
         turnCount++; // e também aqui para jogadas normais
 
         //proximo player
