@@ -254,12 +254,10 @@ public class GameManager {
         int lastSlot = board.getNrTotalSlots();
         int destination = originSlot.nrSlot + nrSpaces;
 
-        boolean turnValid = true;
         if (destination > lastSlot) {
             int tillTheEnd = lastSlot - originSlot.nrSlot;
             int exceed = nrSpaces - tillTheEnd;
             destination = lastSlot - exceed;
-            turnValid = false;
         }
 
 
@@ -280,9 +278,9 @@ public class GameManager {
         //remover e adicionar player
         originSlot.removePlayer(currentPlayer);
         destinationSlot.addPlayer(currentPlayer);
-        if (turnValid) {
-            turnCount++; // e também aqui para jogadas normais
-        }
+
+        turnCount++; // e também aqui para jogadas normais
+
 
         // Se o jogo acabou depois desta jogada, não passa a vez
         if (gameIsOver()) {
@@ -366,21 +364,17 @@ public class GameManager {
         }
         String winner = findWinner.players.get(0).name;
 
-        //Encontras players restantes
-        HashMap<Integer, String> lastPlayers = new HashMap<>();
-        for (Slot slot : board.slots) {
+        ArrayList<String> lastPlayers = new ArrayList<>();
+
+        for (int i = board.getNrTotalSlots() -1; i >= 0; i--) {
+            Slot slot = board.slots.get(i);
             for (Player player : slot.players) {
                 if (!player.name.equals(winner)) {
-                    lastPlayers.put(slot.nrSlot, player.name + " " + slot.nrSlot);
+                    lastPlayers.add(player.name + " " + slot.nrSlot);
                 }
             }
         }
 
-        Set<Map.Entry<Integer, String>> entries = lastPlayers.entrySet();
-
-        ArrayList<Map.Entry<Integer, String>> ordenar = new ArrayList<>(entries);
-
-        Collections.sort(ordenar, Comparator.comparing((Map.Entry<Integer, String> entry) -> entry.getKey()).reversed());
 
         results.add("THE GREAT PROGRAMMING JOURNEY");
         results.add("");
@@ -391,9 +385,7 @@ public class GameManager {
         results.add(winner);
         results.add("");
         results.add("RESTANTES");
-        for (Map.Entry<Integer, String> entry : ordenar) {
-            results.add(entry.getValue());
-        }
+        results.addAll(lastPlayers);
         return results;
     }
 
