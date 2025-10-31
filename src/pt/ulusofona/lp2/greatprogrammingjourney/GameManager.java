@@ -223,7 +223,7 @@ public class GameManager {
         if (board == null || nrSpaces < 1 || nrSpaces > 6) {
             return false;
         }
-        if (gameIsOver()){
+        if (gameIsOver()) {
             return false;
         }
 
@@ -280,13 +280,15 @@ public class GameManager {
         //remover e adicionar player
         originSlot.removePlayer(currentPlayer);
         destinationSlot.addPlayer(currentPlayer);
-        turnCount++;
 
         // Se o jogo acabou depois desta jogada, não passa a vez
         if (gameIsOver()) {
+            turnCount++; // incrementa aqui
             currentPlayerId = currentPlayer.id; // mantém o vencedor como atual
             return true;
         }
+
+        turnCount++; // e também aqui para jogadas normais
 
         //proximo player
         List<Player> allPlayers = new ArrayList<>();
