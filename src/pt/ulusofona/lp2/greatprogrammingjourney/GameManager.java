@@ -17,9 +17,8 @@ public class GameManager {
     //======VARIAVEIS===============
     Board board;
     int currentPlayerId;
-    int turnCount = 0;
+    int turnCount = -3;
     //==============================
-
 
     //Se tem esta entre 2 e 4 players
     private boolean nrValidPlayers(String[][] playerInfo) {
@@ -280,6 +279,7 @@ public class GameManager {
         //remover e adicionar player
         originSlot.removePlayer(currentPlayer);
         destinationSlot.addPlayer(currentPlayer);
+        turnCount++; // e também aqui para jogadas normais
 
         // Se o jogo acabou depois desta jogada, não passa a vez
         if (gameIsOver()) {
@@ -287,9 +287,6 @@ public class GameManager {
             currentPlayerId = currentPlayer.id; // mantém o vencedor como atual
             return true;
         }
-
-
-        turnCount++; // e também aqui para jogadas normais
 
         //proximo player
         List<Player> allPlayers = new ArrayList<>();
