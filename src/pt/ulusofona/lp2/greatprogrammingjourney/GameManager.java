@@ -254,10 +254,12 @@ public class GameManager {
         int lastSlot = board.getNrTotalSlots();
         int destination = originSlot.nrSlot + nrSpaces;
 
+        boolean turnValid = true;
         if (destination > lastSlot) {
             int tillTheEnd = lastSlot - originSlot.nrSlot;
             int exceed = nrSpaces - tillTheEnd;
             destination = lastSlot - exceed;
+            turnValid = false;
         }
 
 
@@ -278,7 +280,9 @@ public class GameManager {
         //remover e adicionar player
         originSlot.removePlayer(currentPlayer);
         destinationSlot.addPlayer(currentPlayer);
-        turnCount++; // e também aqui para jogadas normais
+        if (turnValid) {
+            turnCount++; // e também aqui para jogadas normais
+        }
 
         // Se o jogo acabou depois desta jogada, não passa a vez
         if (gameIsOver()) {
