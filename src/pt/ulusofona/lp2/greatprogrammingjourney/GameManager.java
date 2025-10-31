@@ -17,7 +17,7 @@ public class GameManager {
     //======VARIAVEIS===============
     Board board;
     int currentPlayerId;
-    int turnCount = -3;
+    int turnCount = -1;
     //==============================
 
     //Se tem esta entre 2 e 4 players
@@ -283,7 +283,6 @@ public class GameManager {
 
         // Se o jogo acabou depois desta jogada, não passa a vez
         if (gameIsOver()) {
-            turnCount++; // incrementa aqui
             currentPlayerId = currentPlayer.id; // mantém o vencedor como atual
             return true;
         }
