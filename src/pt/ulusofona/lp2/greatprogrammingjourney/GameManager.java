@@ -278,13 +278,14 @@ public class GameManager {
         //remover e adicionar player
         originSlot.removePlayer(currentPlayer);
         destinationSlot.addPlayer(currentPlayer);
-        turnCount++;
 
         // Se o jogo acabou depois desta jogada, não passa a vez
         if (gameIsOver()) {
             currentPlayerId = currentPlayer.id; // mantém o vencedor como atual
             return true;
         }
+        turnCount++;
+
         //proximo player
         List<Player> allPlayers = new ArrayList<>();
         for (int i = 0; i < board.slots.size(); i++) {
