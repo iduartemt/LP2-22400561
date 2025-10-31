@@ -3,6 +3,8 @@ package pt.ulusofona.lp2.greatprogrammingjourney.Tests;
 import org.junit.jupiter.api.Test;
 import pt.ulusofona.lp2.greatprogrammingjourney.GameManager;
 
+import java.util.ArrayList;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 

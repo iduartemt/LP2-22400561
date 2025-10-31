@@ -374,7 +374,7 @@ public class GameManager {
         results.add("THE GREAT PROGRAMMING JOURNEY");
         results.add("");
         results.add("NR. DE TURNOS");
-        results.add(turnCount + 1 + "");
+        results.add(turnCount + "");
         results.add("");
         results.add("VENCEDOR");
         results.add(winner);
