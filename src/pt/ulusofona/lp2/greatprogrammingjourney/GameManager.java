@@ -1,5 +1,6 @@
 package pt.ulusofona.lp2.greatprogrammingjourney;
 
+
 import javax.swing.*;
 import java.util.*;
 
@@ -228,7 +229,7 @@ public class GameManager {
         Slot originSlot = null;
         boolean found = false;
 
-        // Encontrar o player atual e a slot em que está
+        //Encontrar o player atual e a slot em que esta
         for (int i = 0; i < board.slots.size(); i++) {
             Slot slot = board.slots.get(i);
             for (int j = 0; j < slot.players.size(); j++) {
@@ -246,10 +247,10 @@ public class GameManager {
         }
 
         if (!found) {
-            return false;
+            return false; //nao encontrou player
         }
 
-        // Destino e última casa
+        //Destino e ultima casa
         int lastSlot = board.getNrTotalSlots();
         int destination = originSlot.nrSlot + nrSpaces;
 
@@ -259,7 +260,8 @@ public class GameManager {
             destination = lastSlot - exceed;
         }
 
-        // Ver qual é a próxima slot
+
+        //ver qual é a proxima slot
         Slot destinationSlot = null;
         for (int i = 0; i < board.slots.size(); i++) {
             Slot slot = board.slots.get(i);
@@ -273,18 +275,18 @@ public class GameManager {
             return false;
         }
 
-        // Remover e adicionar player
+        //remover e adicionar player
         originSlot.removePlayer(currentPlayer);
         destinationSlot.addPlayer(currentPlayer);
+        turnCount++; // e também aqui para jogadas normais
 
         // Se o jogo acabou depois desta jogada, não passa a vez
         if (gameIsOver()) {
-            currentPlayerId = currentPlayer.id;
-            turnCount++; // Incrementa aqui quando o jogo acaba
+            currentPlayerId = currentPlayer.id; // mantém o vencedor como atual
             return true;
         }
 
-        // Próximo player
+        //proximo player
         List<Player> allPlayers = new ArrayList<>();
         for (int i = 0; i < board.slots.size(); i++) {
             Slot slot = board.slots.get(i);
@@ -293,7 +295,6 @@ public class GameManager {
             }
         }
 
-        // Ordenar por ID
         for (int i = 0; i < allPlayers.size() - 1; i++) {
             int minIdx = i;
             for (int j = i + 1; j < allPlayers.size(); j++) {
@@ -321,17 +322,10 @@ public class GameManager {
         }
 
         int nextIndex = (currentIndex + 1) % allPlayers.size();
-        int nextPlayerId = allPlayers.get(nextIndex).id;
-
-        // Incrementar turno apenas quando volta ao primeiro jogador (menor ID)
-        int minId = allPlayers.get(0).id; // já está ordenado
-        if (nextPlayerId == minId) {
-            turnCount++;
-        }
-
-        currentPlayerId = nextPlayerId;
+        currentPlayerId = allPlayers.get(nextIndex).id;
         return true;
     }
+
     public boolean gameIsOver() {
         if (board == null) {
             return false;
