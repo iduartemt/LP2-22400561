@@ -252,15 +252,13 @@ public class GameManager {
         //Destino e ultima casa
         int lastSlot = board.getNrTotalSlots();
         int destination = originSlot.nrSlot + nrSpaces;
-        for (int i = 0; i < board.getNrTotalSlots(); i++) {
 
-            if (destination > lastSlot) {
-                int tillTheEnd = lastSlot - originSlot.nrSlot;
-                originSlot.nrSlot += tillTheEnd;
-                int exceed = nrSpaces - tillTheEnd;
-                originSlot.nrSlot = originSlot.nrSlot - exceed;
-            }
+        if (destination > lastSlot) {
+            int tillTheEnd = lastSlot - originSlot.nrSlot;
+            int exceed = nrSpaces - tillTheEnd;
+            destination = lastSlot - exceed;
         }
+
 
         //ver qual é a proxima slot
         Slot destinationSlot = null;
@@ -276,7 +274,7 @@ public class GameManager {
             return false;
         }
 
-        //remover e adicionar jplayer
+        //remover e adicionar player
         originSlot.removePlayer(currentPlayer);
         destinationSlot.addPlayer(currentPlayer);
         turnCount++;
@@ -313,7 +311,7 @@ public class GameManager {
         }
 
         if (currentIndex == -1) {
-            return false; // safety check
+            return false;
         }
 
         int nextIndex = (currentIndex + 1) % allPlayers.size();
