@@ -17,7 +17,7 @@ public class GameManager {
     //======VARIAVEIS===============
     Board board;
     int currentPlayerId;
-    int turnCount = -1;
+    int turnCount = 0;
     //==============================
 
     //Se tem esta entre 2 e 4 players
