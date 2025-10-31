@@ -1,5 +1,7 @@
 package pt.ulusofona.lp2.greatprogrammingjourney;
 
+import kotlin.jvm.internal.markers.KMutableMap;
+
 import javax.swing.*;
 import java.util.*;
 
@@ -18,9 +20,6 @@ public class GameManager {
     int turnCount = 0;
     //==============================
 
-    private boolean validBoard() {
-        return board != null;
-    }
 
     //Se tem esta entre 2 e 4 players
     private boolean nrValidPlayers(String[][] playerInfo) {
@@ -106,6 +105,7 @@ public class GameManager {
         return validPlayers;
     }
 
+    //Criar a board inicial
     public boolean createInitialBoard(String[][] playerInfo, int worldSize) {
         if (!nrValidPlayers(playerInfo)) {
             return false;
@@ -145,7 +145,7 @@ public class GameManager {
     }
 
     public String[] getProgrammerInfo(int id) {
-        if (!validBoard() || id < 1) {
+        if (board == null || id < 1) {
             return null;
         }
 
@@ -166,7 +166,7 @@ public class GameManager {
     }
 
     public String getProgrammerInfoAsStr(int id) {
-        if (!validBoard() || id < 1) {
+        if (board == null || id < 1) {
             return null;
         }
 
@@ -358,16 +358,20 @@ public class GameManager {
         String winner = findWinner.players.get(0).name;
 
         //Encontras players restantes
-        ArrayList<String> lastPlayers = new ArrayList<>();
+        HashMap<Integer, String> lastPlayers = new HashMap<>();
         for (Slot slot : board.slots) {
             for (Player player : slot.players) {
                 if (!player.name.equals(winner)) {
-                    lastPlayers.add(player.name + " " + slot.nrSlot);
+                    lastPlayers.put(slot.nrSlot, player.name + " " + slot.nrSlot);
                 }
             }
         }
 
-        Collections.sort(lastPlayers);
+        Set<Map.Entry<Integer, String>> entries = lastPlayers.entrySet();
+
+        ArrayList<Map.Entry<Integer, String>> ordenar = new ArrayList<>(entries);
+
+        Collections.sort(ordenar, Comparator.comparing((Map.Entry<Integer, String> entry) -> entry.getKey()).reversed());
 
         results.add("THE GREAT PROGRAMMING JOURNEY");
         results.add("");
@@ -378,7 +382,9 @@ public class GameManager {
         results.add(winner);
         results.add("");
         results.add("RESTANTES");
-        results.addAll(lastPlayers);
+        for (Map.Entry<Integer, String> entry : ordenar) {
+            results.add(entry.getValue());
+        }
         return results;
     }
 
