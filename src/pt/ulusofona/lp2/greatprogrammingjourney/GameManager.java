@@ -1,6 +1,5 @@
 package pt.ulusofona.lp2.greatprogrammingjourney;
 
-
 import javax.swing.*;
 import java.util.*;
 
@@ -13,13 +12,14 @@ enum Color {
 
 public class GameManager {
 
-    //======VARIAVEIS===============
+    //======VARIÁVEIS===============
     Board board;
-    int currentPlayerId;
-    int turnCount = 0;
+    int currentPlayerId; // guarda o ID do jogador atual
+    int turnCount = 0;   // conta o número de jogadas
     //==============================
 
-    //Se tem esta entre 2 e 4 players
+
+    // Verifica se o número de jogadores está entre 2 e 4
     private boolean nrValidPlayers(String[][] playerInfo) {
         if (playerInfo == null || playerInfo.length < 2 || playerInfo.length > 4) {
             return false;
@@ -27,7 +27,7 @@ public class GameManager {
         return true;
     }
 
-    //Se cada jogador tem a informacao valida(id,nome,cor)
+    // Valida as informações de cada jogador e devolve uma lista de jogadores validos
     private List<Player> infoValidPlayers(String[][] playerInfo) {
         List<Player> validPlayers = new ArrayList<>();
         HashSet<String> validId = new HashSet<>();
@@ -35,8 +35,7 @@ public class GameManager {
         HashSet<String> validColor = new HashSet<>();
 
         for (int i = 0; i < playerInfo.length; i++) {
-
-            //Linha
+            // Cada linha contém a informação de um jogador
             String[] validLine = playerInfo[i];
             if (validLine == null || validLine.length == 0) {
                 return null;
@@ -47,40 +46,40 @@ public class GameManager {
             String language;
             String color;
 
-            //Colunas
-            //validar id
+            // ===== VALIDAR ID =====
             if (validLine[0] == null || validLine[0].isEmpty() || Integer.parseInt(validLine[0]) < 0) {
                 return null;
             }
+            // impede IDs duplicados
             if (!validId.add(validLine[0])) {
                 return null;
             }
             id = Integer.parseInt(validLine[0]);
 
-            //validar nome
+            // ===== VALIDAR NOME =====
             if (validLine[1] == null || validLine[1].isEmpty()) {
                 return null;
             }
+            // impede nomes repetidos
             if (!validName.add(validLine[1])) {
                 return null;
             }
             name = validLine[1];
 
-            //Validar linguagem
+            // ===== VALIDAR LINGUAGEM =====
             if (validLine[2] == null) {
                 return null;
             }
-
             language = validLine[2];
 
-
-            //validar cor
+            // ===== VALIDAR COR =====
             if (validLine[3] == null || validLine[3].isEmpty()) {
                 return null;
             }
 
             boolean ifColorValid = false;
 
+            // verifica se a cor existe no enum Color
             for (Color c : Color.values()) {
                 if (c.name().equalsIgnoreCase(validLine[3])) {
                     ifColorValid = true;
@@ -91,38 +90,44 @@ public class GameManager {
                 return null;
             }
 
+            // impede cores repetidas
             if (!validColor.add(validLine[3])) {
                 return null;
             }
             color = validLine[3];
             color = color.substring(0, 1).toUpperCase() + color.substring(1).toLowerCase();
 
+            // adiciona jogador válido à lista
             validPlayers.add(new Player(id, name, language, color));
         }
 
         return validPlayers;
     }
 
-    //Criar a board inicial
+    // Cria o tabuleiro inicial e define o jogador que começa
     public boolean createInitialBoard(String[][] playerInfo, int worldSize) {
+        // verifica número de jogadores
         if (!nrValidPlayers(playerInfo)) {
             return false;
         }
-        //Se o tamanho é o dobro dos players em jogo
+
+        // tamanho do tabuleiro deve ser pelo menos o dobro do número de jogadores
         if (worldSize < playerInfo.length * 2) {
             return false;
         }
 
+        // valida os jogadores e cria a lista
         List<Player> validPlayers = infoValidPlayers(playerInfo);
         if (validPlayers == null) {
             return false;
         }
 
+        // cria o tabuleiro com os jogadores e slots
         board = new Board(validPlayers, worldSize);
         turnCount = 0;
 
+        // escolhe o jogador com ID mais baixo para começar
         int lowerId = validPlayers.get(0).id;
-
         for (Player player : validPlayers) {
             if (player.id < lowerId) {
                 lowerId = player.id;
@@ -133,24 +138,28 @@ public class GameManager {
         return true;
     }
 
+    // Devolve o nome da imagem associada a uma casa específica
     public String getImagePng(int nrSquare) {
         if (nrSquare < 1 || nrSquare > board.getNrTotalSlots()) {
             return null;
         }
         if (nrSquare == board.getNrTotalSlots()) {
-            return "glory.png";
+            return "glory.png"; // última casa do tabuleiro
         }
         return null;
     }
 
+    // Retorna as informações de um programador (player) num array de strings
     public String[] getProgrammerInfo(int id) {
         if (board == null || id < 1) {
             return null;
         }
 
+        // percorre todas as slots e jogadores
         for (Slot slot : board.slots) {
             for (Player player : slot.players) {
                 if (player.id == id) {
+                    // cria array com informações do jogador
                     String[] foundedPlayer = new String[5];
                     foundedPlayer[0] = String.valueOf(player.id);
                     foundedPlayer[1] = player.name;
@@ -164,6 +173,7 @@ public class GameManager {
         return null;
     }
 
+    // Retorna informações formatadas de um jogador em forma de string
     public String getProgrammerInfoAsStr(int id) {
         if (board == null || id < 1) {
             return null;
@@ -172,12 +182,14 @@ public class GameManager {
         for (Slot slot : board.slots) {
             for (Player player : slot.players) {
                 if (id == player.id) {
+                    // separa e ordena linguagens por ordem alfabética
                     ArrayList<String> sortLanguage = new ArrayList<>(List.of(player.language.split(";")));
                     for (int i = 0; i < sortLanguage.size(); i++) {
                         sortLanguage.set(i, sortLanguage.get(i).trim());
                     }
                     sortLanguage.sort(String::compareTo);
 
+                    // constrói string final com info do jogador
                     StringBuilder sb = new StringBuilder();
                     for (int i = 0; i < sortLanguage.size(); i++) {
                         sb.append(sortLanguage.get(i));
@@ -192,6 +204,7 @@ public class GameManager {
         return null;
     }
 
+    // Retorna os IDs dos jogadores presentes numa determinada slot
     public String[] getSlotInfo(int position) {
         if (board == null || position < 1 || position > board.getNrTotalSlots()) {
             return null;
@@ -214,10 +227,12 @@ public class GameManager {
         return null;
     }
 
+    // Devolve o ID do jogador atual
     public int getCurrentPlayerID() {
         return currentPlayerId;
     }
 
+    // Move o jogador atual pelo tabuleiro
     public boolean moveCurrentPlayer(int nrSpaces) {
         if (board == null || nrSpaces < 1 || nrSpaces > 6) {
             return false;
@@ -230,11 +245,9 @@ public class GameManager {
         Slot originSlot = null;
         boolean found = false;
 
-        //Encontrar o player atual e a slot em que esta
-        for (int i = 0; i < board.slots.size(); i++) {
-            Slot slot = board.slots.get(i);
-            for (int j = 0; j < slot.players.size(); j++) {
-                Player p = slot.players.get(j);
+        // Encontra o jogador atual e a casa onde está
+        for (Slot slot : board.slots) {
+            for (Player p : slot.players) {
                 if (p.id == currentPlayerId) {
                     currentPlayer = p;
                     originSlot = slot;
@@ -242,30 +255,29 @@ public class GameManager {
                     break;
                 }
             }
-            if (found) {
+            if (found){
                 break;
             }
         }
 
         if (!found) {
-            return false; //nao encontrou player
+            return false; // jogador não encontrado
         }
 
-        //Destino e ultima casa
+        // Calcula destino e trata se passar do fim
         int lastSlot = board.getNrTotalSlots();
         int destination = originSlot.nrSlot + nrSpaces;
 
+        // se ultrapassar o final volta para trás
         if (destination > lastSlot) {
             int tillTheEnd = lastSlot - originSlot.nrSlot;
             int exceed = nrSpaces - tillTheEnd;
             destination = lastSlot - exceed;
         }
 
-
-        //ver qual é a proxima slot
+        // encontra a slot de destino
         Slot destinationSlot = null;
-        for (int i = 0; i < board.slots.size(); i++) {
-            Slot slot = board.slots.get(i);
+        for (Slot slot : board.slots) {
             if (slot.nrSlot == destination) {
                 destinationSlot = slot;
                 break;
@@ -276,42 +288,28 @@ public class GameManager {
             return false;
         }
 
-        //remover e adicionar player
+        // move o jogador da casa atual para a nova
         originSlot.removePlayer(currentPlayer);
         destinationSlot.addPlayer(currentPlayer);
 
-        turnCount++; // e também aqui para jogadas normais
-        System.out.println(turnCount);
+        turnCount++; // aumenta o número de jogadas
 
-        // Se o jogo acabou depois desta jogada, não passa a vez
+        // Se o jogo acabou, o jogador atual é o vencedor
         if (gameIsOver()) {
-            currentPlayerId = currentPlayer.id; // mantém o vencedor como atual
+            currentPlayerId = currentPlayer.id;
             return true;
         }
 
-        //proximo player
+        // Determina o próximo jogador (ordem crescente de ID)
         List<Player> allPlayers = new ArrayList<>();
-        for (int i = 0; i < board.slots.size(); i++) {
-            Slot slot = board.slots.get(i);
-            for (int j = 0; j < slot.players.size(); j++) {
-                allPlayers.add(slot.players.get(j));
-            }
+        for (Slot slot : board.slots) {
+            allPlayers.addAll(slot.players);
         }
 
-        for (int i = 0; i < allPlayers.size() - 1; i++) {
-            int minIdx = i;
-            for (int j = i + 1; j < allPlayers.size(); j++) {
-                if (allPlayers.get(j).id < allPlayers.get(minIdx).id) {
-                    minIdx = j;
-                }
-            }
-            if (minIdx != i) {
-                Player tmp = allPlayers.get(i);
-                allPlayers.set(i, allPlayers.get(minIdx));
-                allPlayers.set(minIdx, tmp);
-            }
-        }
+        // ordena jogadores por ID
+        allPlayers.sort(Comparator.comparingInt(p -> p.id));
 
+        // encontra o índice do jogador atual
         int currentIndex = -1;
         for (int i = 0; i < allPlayers.size(); i++) {
             if (allPlayers.get(i).id == currentPlayerId) {
@@ -324,26 +322,26 @@ public class GameManager {
             return false;
         }
 
+        // calcula o próximo jogador
         int nextIndex = (currentIndex + 1) % allPlayers.size();
         currentPlayerId = allPlayers.get(nextIndex).id;
         return true;
     }
 
+    // Verifica se o jogo terminou
     public boolean gameIsOver() {
         if (board == null) {
             return false;
         }
-
         for (Slot slot : board.slots) {
-            if (slot.nrSlot == board.getNrTotalSlots()) {
-                if (!slot.players.isEmpty()) {
-                    return true;
-                }
+            if (slot.nrSlot == board.getNrTotalSlots() && !slot.players.isEmpty()) {
+                return true;
             }
         }
         return false;
     }
 
+    // Gera um relatório com os resultados finais do jogo
     public ArrayList<String> getGameResults() {
         ArrayList<String> results = new ArrayList<>();
 
@@ -351,7 +349,7 @@ public class GameManager {
             return results;
         }
 
-        //Encontrar o vencedor
+        // encontra o vencedor
         Slot findWinner = null;
         for (Slot slot : board.slots) {
             if (slot.nrSlot == board.getNrTotalSlots()) {
@@ -363,11 +361,12 @@ public class GameManager {
         if (findWinner == null || findWinner.players.isEmpty()) {
             return results;
         }
-        String winner = findWinner.players.get(0).name;
 
+        String winner = findWinner.players.get(0).name;
         ArrayList<String> lastPlayers = new ArrayList<>();
 
-        for (int i = board.getNrTotalSlots() -1; i >= 0; i--) {
+        // lista dos restantes jogadores e suas posições
+        for (int i = board.getNrTotalSlots() - 1; i >= 0; i--) {
             Slot slot = board.slots.get(i);
             for (Player player : slot.players) {
                 if (!player.name.equals(winner)) {
@@ -375,7 +374,6 @@ public class GameManager {
                 }
             }
         }
-
 
         results.add("THE GREAT PROGRAMMING JOURNEY");
         results.add("");
