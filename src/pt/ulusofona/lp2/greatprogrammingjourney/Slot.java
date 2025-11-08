@@ -19,4 +19,12 @@ public class Slot {
         players.remove(player);
     }
 
+    Player findPlayerByID(int currentPlayerId) {
+        for (Player p : players) {
+            if (p.id == currentPlayerId) {
+                return p;
+            }
+        }
+        return null;
+    }
 }

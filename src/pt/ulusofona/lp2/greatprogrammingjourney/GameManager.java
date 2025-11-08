@@ -12,12 +12,13 @@ enum Color {
 
 public class GameManager {
 
-    //======VARIÁVEIS===============
+    //================================================VARIÁVEIS=========================================================
+
     Board board;
     int currentPlayerId; // guarda o ID do jogador atual
     int turnCount = 0;   // conta o número de jogadas
-    //==============================
 
+    //==================================================================================================================
 
     // Verifica se o número de jogadores está entre 2 e 4
     private boolean nrValidPlayers(String[][] playerInfo) {
@@ -25,6 +26,54 @@ public class GameManager {
             return false;
         }
         return true;
+    }
+
+    boolean isValidColor(String cor) {
+        for (Color c : Color.values()) {
+            if (c.name().equalsIgnoreCase(cor)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    boolean isValidLine(String[] validLine) {
+
+        // Cada linha contém a informação de um jogador
+        if (validLine == null || validLine.length == 0) {
+            return false;
+        }
+        return true;
+    }
+
+    private Integer isValidPlayer(String idString, HashSet<String> validId) {
+        if (idString == null || idString.isEmpty()) {
+            return null;
+        }
+
+        int id = Integer.parseInt(idString);
+
+        if (id < 0) {
+            return null;
+        }
+
+        //Verifica os duplicados
+        if (!validId.add(idString)) {
+            return null;
+        }
+        return id;
+    }
+
+    String isValidName(String name, HashSet<String> validName) {
+        if (name == null || name.isEmpty()) {
+            return null;
+        }
+
+        //duplicados
+        if (!validName.add(name)) {
+            return null;
+        }
+        return name;
     }
 
     // Valida as informações de cada jogador e devolve uma lista de jogadores validos
@@ -35,9 +84,10 @@ public class GameManager {
         HashSet<String> validColor = new HashSet<>();
 
         for (int i = 0; i < playerInfo.length; i++) {
-            // Cada linha contém a informação de um jogador
+
             String[] validLine = playerInfo[i];
-            if (validLine == null || validLine.length == 0) {
+
+            if (!isValidLine(validLine)) {
                 return null;
             }
 
@@ -46,25 +96,10 @@ public class GameManager {
             String language;
             String color;
 
-            // ===== VALIDAR ID =====
-            if (validLine[0] == null || validLine[0].isEmpty() || Integer.parseInt(validLine[0]) < 0) {
-                return null;
-            }
-            // impede IDs duplicados
-            if (!validId.add(validLine[0])) {
-                return null;
-            }
-            id = Integer.parseInt(validLine[0]);
-
-            // ===== VALIDAR NOME =====
-            if (validLine[1] == null || validLine[1].isEmpty()) {
-                return null;
-            }
-            // impede nomes repetidos
-            if (!validName.add(validLine[1])) {
-                return null;
-            }
-            name = validLine[1];
+            //=============================================VALIDAR ID===================================================
+            id = isValidPlayer(validLine[0], validId);
+            //============================================VALIDAR NOME==================================================
+            name = isValidName(validLine[1], validName);
 
             // ===== VALIDAR LINGUAGEM =====
             if (validLine[2] == null) {
@@ -77,19 +112,9 @@ public class GameManager {
                 return null;
             }
 
-            boolean ifColorValid = false;
-
-            // verifica se a cor existe no enum Color
-            for (Color c : Color.values()) {
-                if (c.name().equalsIgnoreCase(validLine[3])) {
-                    ifColorValid = true;
-                    break;
-                }
-            }
-            if (!ifColorValid) {
+            if (!isValidColor(validLine[3])) {
                 return null;
             }
-
             // impede cores repetidas
             if (!validColor.add(validLine[3])) {
                 return null;
@@ -127,15 +152,19 @@ public class GameManager {
         turnCount = 0;
 
         // escolhe o jogador com ID mais baixo para começar
+        currentPlayerId = findLowestPlayerId(validPlayers);
+
+        return true;
+    }
+
+    int findLowestPlayerId(List<Player> validPlayers) {
         int lowerId = validPlayers.get(0).id;
         for (Player player : validPlayers) {
             if (player.id < lowerId) {
                 lowerId = player.id;
             }
         }
-        currentPlayerId = lowerId;
-
-        return true;
+        return lowerId;
     }
 
     // Devolve o nome da imagem associada a uma casa específica
@@ -247,15 +276,11 @@ public class GameManager {
 
         // Encontra o jogador atual e a casa onde está
         for (Slot slot : board.slots) {
-            for (Player p : slot.players) {
-                if (p.id == currentPlayerId) {
-                    currentPlayer = p;
-                    originSlot = slot;
-                    found = true;
-                    break;
-                }
-            }
-            if (found){
+            Player p = slot.findPlayerByID(currentPlayerId);
+            if (p != null) {
+                currentPlayer = p;
+                originSlot = slot;
+                found = true;
                 break;
             }
         }
@@ -276,13 +301,7 @@ public class GameManager {
         }
 
         // encontra a slot de destino
-        Slot destinationSlot = null;
-        for (Slot slot : board.slots) {
-            if (slot.nrSlot == destination) {
-                destinationSlot = slot;
-                break;
-            }
-        }
+        Slot destinationSlot = encontraSlot(destination);
 
         if (destinationSlot == null) {
             return false;
@@ -310,13 +329,7 @@ public class GameManager {
         allPlayers.sort(Comparator.comparingInt(p -> p.id));
 
         // encontra o índice do jogador atual
-        int currentIndex = -1;
-        for (int i = 0; i < allPlayers.size(); i++) {
-            if (allPlayers.get(i).id == currentPlayerId) {
-                currentIndex = i;
-                break;
-            }
-        }
+        int currentIndex = encontraIndiceJogadorActual(allPlayers);
 
         if (currentIndex == -1) {
             return false;
@@ -327,6 +340,25 @@ public class GameManager {
         currentPlayerId = allPlayers.get(nextIndex).id;
         return true;
     }
+
+    Slot encontraSlot(int nrSlot) {
+        for (Slot slot : board.slots) {
+            if (slot.nrSlot == nrSlot) {
+                return slot;
+            }
+        }
+        return null;
+    }
+
+    int encontraIndiceJogadorActual(List<Player> allPlayers) {
+        for (int i = 0; i < allPlayers.size(); i++) {
+            if (allPlayers.get(i).id == currentPlayerId) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
 
     // Verifica se o jogo terminou
     public boolean gameIsOver() {
