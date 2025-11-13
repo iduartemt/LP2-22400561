@@ -11,11 +11,11 @@ public class Slot {
         this.nrSlot = nrSlot;
     }
 
-    void addPlayer(Player player){
+    void addPlayer(Player player) {
         players.add(player);
     }
 
-    void removePlayer(Player player){
+    void removePlayer(Player player) {
         players.remove(player);
     }
 

@@ -13,11 +13,9 @@ enum Color {
 public class GameManager {
 
     //================================================VARIÁVEIS=========================================================
-
     Board board;
     int currentPlayerId; // guarda o ID do jogador atual
     int turnCount = 0;   // conta o número de jogadas
-
     //==================================================================================================================
 
     // Verifica se o número de jogadores está entre 2 e 4
@@ -28,7 +26,7 @@ public class GameManager {
         return true;
     }
 
-    boolean isValidColor(String cor) {
+    boolean validColors(String cor) {
         for (Color c : Color.values()) {
             if (c.name().equalsIgnoreCase(cor)) {
                 return true;
@@ -76,6 +74,29 @@ public class GameManager {
         return name;
     }
 
+    String isValidLanguage(String language) {
+        if (language == null) {
+            return null;
+        }
+        return language;
+    }
+
+    String isValidColor(String color, HashSet<String> validColor) {
+        if (color == null || color.isEmpty()) {
+            return null;
+        }
+
+        if (!validColors(color)) {
+            return null;
+        }
+
+        if (!validColor.add(color)) {
+            return null;
+        }
+        color = color.substring(0, 1).toUpperCase() + color.substring(1).toLowerCase();
+        return color;
+    }
+
     // Valida as informações de cada jogador e devolve uma lista de jogadores validos
     private List<Player> infoValidPlayers(String[][] playerInfo) {
         List<Player> validPlayers = new ArrayList<>();
@@ -86,7 +107,6 @@ public class GameManager {
         for (int i = 0; i < playerInfo.length; i++) {
 
             String[] validLine = playerInfo[i];
-
             if (!isValidLine(validLine)) {
                 return null;
             }
@@ -100,27 +120,10 @@ public class GameManager {
             id = isValidPlayer(validLine[0], validId);
             //============================================VALIDAR NOME==================================================
             name = isValidName(validLine[1], validName);
-
-            // ===== VALIDAR LINGUAGEM =====
-            if (validLine[2] == null) {
-                return null;
-            }
-            language = validLine[2];
-
-            // ===== VALIDAR COR =====
-            if (validLine[3] == null || validLine[3].isEmpty()) {
-                return null;
-            }
-
-            if (!isValidColor(validLine[3])) {
-                return null;
-            }
-            // impede cores repetidas
-            if (!validColor.add(validLine[3])) {
-                return null;
-            }
-            color = validLine[3];
-            color = color.substring(0, 1).toUpperCase() + color.substring(1).toLowerCase();
+            //==========================================VALIDAR LINGUAGEM===============================================
+            language = isValidLanguage(validLine[2]);
+            //=============================================VALIDAR COR==================================================
+            color = isValidColor(validLine[3], validColor);
 
             // adiciona jogador válido à lista
             validPlayers.add(new Player(id, name, language, color));
@@ -169,6 +172,7 @@ public class GameManager {
 
     // Devolve o nome da imagem associada a uma casa específica
     public String getImagePng(int nrSquare) {
+
         if (nrSquare < 1 || nrSquare > board.getNrTotalSlots()) {
             return null;
         }
@@ -183,8 +187,8 @@ public class GameManager {
         if (board == null || id < 1) {
             return null;
         }
-
         // percorre todas as slots e jogadores
+
         for (Slot slot : board.slots) {
             for (Player player : slot.players) {
                 if (player.id == id) {
@@ -202,6 +206,17 @@ public class GameManager {
         return null;
     }
 
+    public StringBuilder playerLanguageInfo(ArrayList<String> sortLanguage) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < sortLanguage.size(); i++) {
+            sb.append(sortLanguage.get(i));
+            if (i != sortLanguage.size() - 1) {
+                sb.append("; ");
+            }
+        }
+        return sb;
+    }
+
     // Retorna informações formatadas de um jogador em forma de string
     public String getProgrammerInfoAsStr(int id) {
         if (board == null || id < 1) {
@@ -216,45 +231,56 @@ public class GameManager {
                     for (int i = 0; i < sortLanguage.size(); i++) {
                         sortLanguage.set(i, sortLanguage.get(i).trim());
                     }
-                    sortLanguage.sort(String::compareTo);
+                    Collections.sort(sortLanguage);
 
                     // constrói string final com info do jogador
-                    StringBuilder sb = new StringBuilder();
-                    for (int i = 0; i < sortLanguage.size(); i++) {
-                        sb.append(sortLanguage.get(i));
-                        if (i != sortLanguage.size() - 1) {
-                            sb.append("; ");
-                        }
-                    }
-                    return id + " | " + player.name + " | " + slot.nrSlot + " | " + sb + " | Em Jogo";
+                    playerLanguageInfo(sortLanguage);
+
+                    return id + " | " + player.name + " | " + slot.nrSlot + " | " + playerLanguageInfo(sortLanguage) + " | Em Jogo";
                 }
             }
         }
         return null;
     }
 
-    // Retorna os IDs dos jogadores presentes numa determinada slot
-    public String[] getSlotInfo(int position) {
+
+    public Slot findSlot(int position) {
         if (board == null || position < 1 || position > board.getNrTotalSlots()) {
             return null;
         }
         for (Slot slot : board.slots) {
             if (slot.nrSlot == position) {
-                if (slot.players.isEmpty()) {
-                    return new String[]{""};
-                }
-                StringBuilder sb = new StringBuilder();
-                for (Player player : slot.players) {
-                    if (!sb.isEmpty()) {
-                        sb.append(",");
-                    }
-                    sb.append(player.id);
-                }
-                return new String[]{sb.toString()};
+                return slot;
             }
         }
         return null;
     }
+
+    public String buildPlayerIds(Slot slot) {
+        if (slot.players.isEmpty()) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        for (Player player : slot.players) {
+            if (!sb.isEmpty()) {
+                sb.append(",");
+            }
+            sb.append(player.id);
+        }
+        return sb.toString();
+    }
+
+
+    // Retorna os IDs dos jogadores presentes numa determinada slot
+    public String[] getSlotInfo(int position) {
+        Slot slot = findSlot(position);
+        if (slot == null) {
+            return null;
+        }
+        String[] finalPrint = new String[1];
+        finalPrint[0] = buildPlayerIds(slot);
+        return finalPrint;    }
+
 
     // Devolve o ID do jogador atual
     public int getCurrentPlayerID() {
@@ -358,7 +384,6 @@ public class GameManager {
         }
         return -1;
     }
-
 
     // Verifica se o jogo terminou
     public boolean gameIsOver() {
