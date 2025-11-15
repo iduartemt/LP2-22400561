@@ -26,7 +26,7 @@ public class GameManager {
         return true;
     }
 
-    boolean validColors(String cor) {
+    private boolean validColors(String cor) {
         for (Color c : Color.values()) {
             if (c.name().equalsIgnoreCase(cor)) {
                 return true;
@@ -35,7 +35,7 @@ public class GameManager {
         return false;
     }
 
-    boolean isValidLine(String[] validLine) {
+    private boolean isValidLine(String[] validLine) {
 
         // Cada linha contém a informação de um jogador
         if (validLine == null || validLine.length == 0) {
@@ -44,7 +44,7 @@ public class GameManager {
         return true;
     }
 
-    private Integer isValidPlayer(String idString, HashSet<String> validId) {
+    private  Integer isValidPlayer(String idString, HashSet<String> validId) {
         if (idString == null || idString.isEmpty()) {
             return null;
         }
@@ -62,7 +62,7 @@ public class GameManager {
         return id;
     }
 
-    String isValidName(String name, HashSet<String> validName) {
+    private String isValidName(String name, HashSet<String> validName) {
         if (name == null || name.isEmpty()) {
             return null;
         }
@@ -74,14 +74,14 @@ public class GameManager {
         return name;
     }
 
-    String isValidLanguage(String language) {
+    private String isValidLanguage(String language) {
         if (language == null) {
             return null;
         }
         return language;
     }
 
-    String isValidColor(String color, HashSet<String> validColor) {
+    private String isValidColor(String color, HashSet<String> validColor) {
         if (color == null || color.isEmpty()) {
             return null;
         }
@@ -160,7 +160,7 @@ public class GameManager {
         return true;
     }
 
-    int findLowestPlayerId(List<Player> validPlayers) {
+   private int findLowestPlayerId(List<Player> validPlayers) {
         int lowerId = validPlayers.get(0).id;
         for (Player player : validPlayers) {
             if (player.id < lowerId) {
@@ -206,7 +206,7 @@ public class GameManager {
         return null;
     }
 
-    public StringBuilder playerLanguageInfo(ArrayList<String> sortLanguage) {
+    private StringBuilder playerLanguageInfo(List<String> sortLanguage) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < sortLanguage.size(); i++) {
             sb.append(sortLanguage.get(i));
@@ -217,6 +217,15 @@ public class GameManager {
         return sb;
     }
 
+    private List<String> getSortedLanguages(String languageStr) {
+        List<String> languages = new ArrayList<>(List.of(languageStr.split(";")));
+        for (int i = 0; i < languages.size(); i++) {
+            languages.set(i, languages.get(i).trim());
+        }
+        Collections.sort(languages);
+        return languages;
+    }
+
     // Retorna informações formatadas de um jogador em forma de string
     public String getProgrammerInfoAsStr(int id) {
         if (board == null || id < 1) {
@@ -224,27 +233,20 @@ public class GameManager {
         }
 
         for (Slot slot : board.slots) {
-            for (Player player : slot.players) {
-                if (id == player.id) {
-                    // separa e ordena linguagens por ordem alfabética
-                    ArrayList<String> sortLanguage = new ArrayList<>(List.of(player.language.split(";")));
-                    for (int i = 0; i < sortLanguage.size(); i++) {
-                        sortLanguage.set(i, sortLanguage.get(i).trim());
-                    }
-                    Collections.sort(sortLanguage);
+            Player player = slot.findPlayerByID(id);
+            if (player != null) {
+                List<String> sortedLanguages = getSortedLanguages(player.language);
+                StringBuilder languagesInfo = playerLanguageInfo(sortedLanguages);
 
-                    // constrói string final com info do jogador
-                    playerLanguageInfo(sortLanguage);
-
-                    return id + " | " + player.name + " | " + slot.nrSlot + " | " + playerLanguageInfo(sortLanguage) + " | Em Jogo";
-                }
+                return id + " | " + player.name + " | " +
+                        slot.nrSlot + " | " + languagesInfo + " | Em Jogo";
             }
         }
+
         return null;
     }
 
-
-    public Slot findSlot(int position) {
+    private Slot findSlot(int position) {
         if (board == null || position < 1 || position > board.getNrTotalSlots()) {
             return null;
         }
@@ -256,7 +258,7 @@ public class GameManager {
         return null;
     }
 
-    public String buildPlayerIds(Slot slot) {
+    private String buildPlayerIds(Slot slot) {
         if (slot.players.isEmpty()) {
             return "";
         }
@@ -270,7 +272,6 @@ public class GameManager {
         return sb.toString();
     }
 
-
     // Retorna os IDs dos jogadores presentes numa determinada slot
     public String[] getSlotInfo(int position) {
         Slot slot = findSlot(position);
@@ -279,8 +280,8 @@ public class GameManager {
         }
         String[] finalPrint = new String[1];
         finalPrint[0] = buildPlayerIds(slot);
-        return finalPrint;    }
-
+        return finalPrint;
+    }
 
     // Devolve o ID do jogador atual
     public int getCurrentPlayerID() {
@@ -355,7 +356,7 @@ public class GameManager {
         allPlayers.sort(Comparator.comparingInt(p -> p.id));
 
         // encontra o índice do jogador atual
-        int currentIndex = encontraIndiceJogadorActual(allPlayers);
+        int currentIndex = findAtualPlayerIndex(allPlayers);
 
         if (currentIndex == -1) {
             return false;
@@ -367,7 +368,7 @@ public class GameManager {
         return true;
     }
 
-    Slot encontraSlot(int nrSlot) {
+   private Slot encontraSlot(int nrSlot) {
         for (Slot slot : board.slots) {
             if (slot.nrSlot == nrSlot) {
                 return slot;
@@ -376,7 +377,7 @@ public class GameManager {
         return null;
     }
 
-    int encontraIndiceJogadorActual(List<Player> allPlayers) {
+   private int findAtualPlayerIndex(List<Player> allPlayers) {
         for (int i = 0; i < allPlayers.size(); i++) {
             if (allPlayers.get(i).id == currentPlayerId) {
                 return i;
@@ -398,6 +399,37 @@ public class GameManager {
         return false;
     }
 
+    private Slot findWinner() {
+        if (board == null) {
+            return null;
+        }
+
+        for (Slot slot : board.slots) {
+            if (slot.nrSlot == board.getNrTotalSlots()) {
+                return slot;
+            }
+        }
+        return null;
+    }
+
+    private ArrayList<String> findLastPlayers(String winnerName) {
+        ArrayList<String> lastPlayers = new ArrayList<>();
+
+        if (board == null) {
+            return null;
+        }
+
+        for (int i = board.getNrTotalSlots() - 1; i >= 0; i--) {
+            Slot slot = board.slots.get(i);
+            for (Player player : slot.players) {
+                if (!player.name.equals(winnerName)) {
+                    lastPlayers.add(player.name + " " + slot.nrSlot);
+                }
+            }
+        }
+        return lastPlayers;
+    }
+
     // Gera um relatório com os resultados finais do jogo
     public ArrayList<String> getGameResults() {
         ArrayList<String> results = new ArrayList<>();
@@ -407,30 +439,16 @@ public class GameManager {
         }
 
         // encontra o vencedor
-        Slot findWinner = null;
-        for (Slot slot : board.slots) {
-            if (slot.nrSlot == board.getNrTotalSlots()) {
-                findWinner = slot;
-                break;
-            }
-        }
+        Slot winnerSlot = findWinner();
 
-        if (findWinner == null || findWinner.players.isEmpty()) {
+        if (winnerSlot == null || winnerSlot.players.isEmpty()) {
             return results;
         }
 
-        String winner = findWinner.players.get(0).name;
-        ArrayList<String> lastPlayers = new ArrayList<>();
-
-        // lista dos restantes jogadores e suas posições
-        for (int i = board.getNrTotalSlots() - 1; i >= 0; i--) {
-            Slot slot = board.slots.get(i);
-            for (Player player : slot.players) {
-                if (!player.name.equals(winner)) {
-                    lastPlayers.add(player.name + " " + slot.nrSlot);
-                }
-            }
-        }
+        // nome do vencedor
+        String winnerName = winnerSlot.players.get(0).name;
+        // nome dos outros jogadores
+        ArrayList<String> lastPlayers = findLastPlayers(winnerName);
 
         results.add("THE GREAT PROGRAMMING JOURNEY");
         results.add("");
@@ -438,7 +456,7 @@ public class GameManager {
         results.add((turnCount + 1) + "");
         results.add("");
         results.add("VENCEDOR");
-        results.add(winner);
+        results.add(winnerName);
         results.add("");
         results.add("RESTANTES");
         results.addAll(lastPlayers);
