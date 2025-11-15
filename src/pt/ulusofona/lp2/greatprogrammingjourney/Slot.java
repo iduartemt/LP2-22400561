@@ -27,4 +27,19 @@ public class Slot {
         }
         return null;
     }
+
+    public String buildPlayerIds() {
+        if (players.isEmpty()) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        for (Player player : players) {
+            if (!sb.isEmpty()) {
+                sb.append(",");
+            }
+            sb.append(player.id);
+        }
+        return sb.toString();
+    }
+
 }

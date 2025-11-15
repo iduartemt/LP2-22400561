@@ -28,4 +28,22 @@ public class Board {
     int getNrTotalSlots() {
         return slots.size();
     }
+
+    public Slot encontraSlot(int nrSlot) {
+        for (Slot slot : slots) {
+            if (slot.nrSlot == nrSlot) {
+                return slot;
+            }
+        }
+        return null;
+    }
+
+    public boolean hasPlayerOnLastSlot() {
+        if (slots.isEmpty()) {
+            return false;
+        }
+        int lastIndex = slots.size() - 1;
+        return !slots.get(lastIndex).players.isEmpty();
+    }
+
 }
