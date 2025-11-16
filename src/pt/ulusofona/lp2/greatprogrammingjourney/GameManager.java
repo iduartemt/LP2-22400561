@@ -38,7 +38,7 @@ public class GameManager {
     private boolean isValidLine(String[] validLine) {
 
         // Cada linha contém a informação de um jogador
-        if (validLine == null || validLine.length == 0) {
+        if (validLine == null || validLine.length != 4) {
             return false;
         }
         return true;
@@ -86,7 +86,6 @@ public class GameManager {
         HashSet<String> validColor = new HashSet<>();
 
         for (int i = 0; i < playerInfo.length; i++) {
-
             String[] validLine = playerInfo[i];
             if (!isValidLine(validLine)) {
                 return null;
@@ -114,7 +113,7 @@ public class GameManager {
     }
 
     // Cria o tabuleiro inicial e define o jogador que começa
-    public boolean createInitialBoard(String[][] playerInfo, int worldSize, String[][] abyssesAndTools) {
+    public boolean createInitialBoard(String[][] playerInfo, int worldSize) {
         // verifica número de jogadores
         if (!nrValidPlayers(playerInfo)) {
             return false;
@@ -131,7 +130,32 @@ public class GameManager {
             return false;
         }
 
+
+        // cria o tabuleiro com os jogadores e slots
+        board = new Board(validPlayers, worldSize);
+        turnCount = 0;
+
+        // escolhe o jogador com ID mais baixo para começar
+        currentPlayerId = findLowestPlayerId(validPlayers);
+
+        return true;
+    }
+
+    public boolean createInitialBoard(String[][] playerInfo, int worldSize, String[][] abyssesAndTools) {
         if (abyssesAndTools == null) {
+            return false;
+        }
+
+        if (!nrValidPlayers(playerInfo)) {
+            return false;
+        }
+
+        if (worldSize < playerInfo.length * 2) {
+            return false;
+        }
+
+        List<Player> validPlayers = infoValidPlayers(playerInfo);
+        if (validPlayers == null) {
             return false;
         }
 
@@ -140,6 +164,7 @@ public class GameManager {
             if (line == null || line.length != 3) {
                 return false;
             }
+
             String type = line[0];
             String subTypeStr = line[1];
             String boardPositionStr = line[2];
@@ -152,8 +177,8 @@ public class GameManager {
             int boardPosition;
 
             try {
-                subType = Integer.parseInt(line[1]);
-                boardPosition = Integer.parseInt(line[2]);
+                subType = Integer.parseInt(subTypeStr);
+                boardPosition = Integer.parseInt(boardPositionStr);
             } catch (NumberFormatException e) {
                 return false;
             }
@@ -175,19 +200,11 @@ public class GameManager {
             }
         }
 
-
-        // cria o tabuleiro com os jogadores e slots
-        board = new Board(validPlayers, worldSize,abyssesAndTools);
+        board = new Board(validPlayers, worldSize, abyssesAndTools);
         turnCount = 0;
-
-        // escolhe o jogador com ID mais baixo para começar
         currentPlayerId = findLowestPlayerId(validPlayers);
 
-        return true;
-    }
-
-    public boolean createInitialBoard(String[][] playerInfo, int worldSize) {
-        return createInitialBoard(playerInfo, worldSize, new String[0][0]);
+        return createInitialBoard(playerInfo, worldSize);
     }
 
     private int findLowestPlayerId(List<Player> validPlayers) {
@@ -254,6 +271,42 @@ public class GameManager {
         }
 
         return null;
+    }
+
+    public String getProgrammersInfo() {
+        if (board == null) {
+            return "";
+        }
+
+        List<Player> alivePlayers = new ArrayList<>();
+
+        for (Slot s : board.slots) {
+            for (Player p : s.players) {
+                if (p.isAlive && !alivePlayers.contains(p)) {
+                    alivePlayers.add(p);
+                }
+            }
+        }
+
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < alivePlayers.size(); i++) {
+            Player p = alivePlayers.get(i);
+            if (i > 0) {
+                sb.append(" | ");
+            }
+
+            sb.append(p.getName()).append(" : ");
+
+            String tools = p.getTools();
+
+            if (tools == null || tools.isEmpty()) {
+                sb.append("No tools");
+            } else {
+                sb.append((tools));
+            }
+        }
+        return sb.toString();
     }
 
     // Retorna os IDs dos jogadores presentes numa determinada slot

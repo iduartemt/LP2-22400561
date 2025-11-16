@@ -9,7 +9,9 @@ public class Player {
     int id;
     String name;
     String language;
+    String tools;
     String color;
+    boolean isAlive = true;
 
     public Player(int id, String name, String language, String color) {
         this.id = id;
@@ -28,6 +30,10 @@ public class Player {
 
     String getLanguage() {
         return language;
+    }
+
+    String getTools() {
+        return tools;
     }
 
     String getColor() {

@@ -6,6 +6,12 @@ import java.util.List;
 public class Board {
     List<Slot> slots = new ArrayList<>();
 
+
+    public Board(List<Player> players, int worldSize) {
+        addSlotList(worldSize);
+        addPlayerSlotFirstSlot(players);
+    }
+
     public Board(List<Player> players, int worldSize, String[][] abyssesAndTools) {
         addSlotList(worldSize);
         addPlayerSlotFirstSlot(players);
