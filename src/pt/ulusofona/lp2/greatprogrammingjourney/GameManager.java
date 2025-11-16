@@ -114,7 +114,7 @@ public class GameManager {
     }
 
     // Cria o tabuleiro inicial e define o jogador que começa
-    public boolean createInitialBoard(String[][] playerInfo, int worldSize) {
+    public boolean createInitialBoard(String[][] playerInfo, int worldSize, String[][] abyssesAndTools) {
         // verifica número de jogadores
         if (!nrValidPlayers(playerInfo)) {
             return false;
@@ -131,14 +131,63 @@ public class GameManager {
             return false;
         }
 
+        if (abyssesAndTools == null) {
+            return false;
+        }
+
+        //validar a linha
+        for (String[] line : abyssesAndTools) {
+            if (line == null || line.length != 3) {
+                return false;
+            }
+            String type = line[0];
+            String subTypeStr = line[1];
+            String boardPositionStr = line[2];
+
+            if (!"0".equals(type) && !"1".equals(type)) {
+                return false;
+            }
+
+            int subType;
+            int boardPosition;
+
+            try {
+                subType = Integer.parseInt(line[1]);
+                boardPosition = Integer.parseInt(line[2]);
+            } catch (NumberFormatException e) {
+                return false;
+            }
+
+            if (type.equals("0")) {
+                if (subType < 0 || subType > 9) {
+                    return false;
+                }
+            }
+
+            if (type.equals("1")) {
+                if (subType < 0 || subType > 5) {
+                    return false;
+                }
+            }
+
+            if (boardPosition < 1 || boardPosition > worldSize) {
+                return false;
+            }
+        }
+
+
         // cria o tabuleiro com os jogadores e slots
-        board = new Board(validPlayers, worldSize);
+        board = new Board(validPlayers, worldSize,abyssesAndTools);
         turnCount = 0;
 
         // escolhe o jogador com ID mais baixo para começar
         currentPlayerId = findLowestPlayerId(validPlayers);
 
         return true;
+    }
+
+    public boolean createInitialBoard(String[][] playerInfo, int worldSize) {
+        return createInitialBoard(playerInfo, worldSize, new String[0][0]);
     }
 
     private int findLowestPlayerId(List<Player> validPlayers) {
