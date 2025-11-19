@@ -10,6 +10,11 @@ enum Color {
     BLUE
 }
 
+enum EventType {
+    ABYSS,
+    TOOL
+}
+
 public class GameManager {
 
     //================================================VARIÁVEIS=========================================================
@@ -130,7 +135,6 @@ public class GameManager {
             return false;
         }
 
-
         // cria o tabuleiro com os jogadores e slots
         board = new Board(validPlayers, worldSize);
         turnCount = 0;
@@ -151,11 +155,6 @@ public class GameManager {
         }
 
         if (worldSize < playerInfo.length * 2) {
-            return false;
-        }
-
-        List<Player> validPlayers = infoValidPlayers(playerInfo);
-        if (validPlayers == null) {
             return false;
         }
 
@@ -200,11 +199,12 @@ public class GameManager {
             }
         }
 
-        board = new Board(validPlayers, worldSize, abyssesAndTools);
-        turnCount = 0;
-        currentPlayerId = findLowestPlayerId(validPlayers);
+        if (!createInitialBoard(playerInfo, worldSize)) {
+            return false;
+        }
 
-        return createInitialBoard(playerInfo, worldSize);
+        board.addEventsToSlot(abyssesAndTools);
+        return true;
     }
 
     private int findLowestPlayerId(List<Player> validPlayers) {
@@ -298,7 +298,7 @@ public class GameManager {
 
             sb.append(p.getName()).append(" : ");
 
-            String tools = p.getTools();
+            String tools = p.getTools().toString();
 
             if (tools == null || tools.isEmpty()) {
                 sb.append("No tools");
@@ -315,7 +315,7 @@ public class GameManager {
         if (slot == null) {
             return null;
         }
-        return new String[]{slot.buildPlayerIds()};
+        return new String[]{slot.buildPlayerIds(), "", ""};
     }
 
     // Devolve o ID do jogador atual
@@ -337,11 +337,11 @@ public class GameManager {
         boolean found = false;
 
         // Encontra o jogador atual e a casa onde está
-        for (Slot slot : board.slots) {
-            Player p = slot.findPlayerByID(currentPlayerId);
+        for (Slot s : board.slots) {
+            Player p = s.findPlayerByID(getCurrentPlayerID());
             if (p != null) {
                 currentPlayer = p;
-                originSlot = slot;
+                originSlot = s;
                 found = true;
                 break;
             }
@@ -401,6 +401,64 @@ public class GameManager {
         int nextIndex = (currentIndex + 1) % allPlayers.size();
         currentPlayerId = allPlayers.get(nextIndex).id;
         return true;
+    }
+
+    public String reactToAbyssOrTool() {
+
+        Player currentPlayer = null;
+        Slot currentSlot = null;
+        boolean foundPlayer = false;
+
+        for (Slot s : board.slots) {
+            Player p = s.findPlayerByID(getCurrentPlayerID());
+            if (p != null) {
+
+                currentPlayer = p;
+                currentSlot = s;
+                foundPlayer = true;
+                break;
+            }
+        }
+
+        if (!foundPlayer) {
+            return null;
+        }
+
+        Event event = currentSlot.getEvent();
+
+        if (event != null) {
+
+            if (event.isTool()) {
+
+                currentPlayer.tools.add(event);
+                currentSlot.removeEvent();
+                return "Recolheu a ferramenta " + event.subtype;
+            } else if (event.isAbyss()) {
+
+                boolean hasTool = false;
+                Event fixTool = null;
+
+                for (Event tool : currentPlayer.tools) {
+                    if (tool.subtype.equals(event.subtype)) {
+
+                        hasTool = true;
+                        fixTool = tool;
+                        break;
+                    }
+                }
+
+                if (hasTool) {
+                    currentSlot.removeEvent();
+                    return "Abismo resolvido com a ferramenta " + fixTool.subtype;
+                }
+
+                currentPlayer.isAlive = false;
+                currentSlot.removePlayer(currentPlayer);
+                gameIsOver();
+                return "Derrotado pelo abismo " + event.subtype;
+            }
+        }
+        return null;
     }
 
     private int findAtualPlayerIndex(List<Player> allPlayers) {

@@ -9,7 +9,7 @@ public class Player {
     int id;
     String name;
     String language;
-    String tools;
+    ArrayList<Event> tools=new ArrayList<>();
     String color;
     boolean isAlive = true;
 
@@ -32,7 +32,7 @@ public class Player {
         return language;
     }
 
-    String getTools() {
+    ArrayList<Event> getTools() {
         return tools;
     }
 
@@ -78,5 +78,6 @@ public class Player {
         Collections.sort(languages);
         return languages;
     }
+
 
 }

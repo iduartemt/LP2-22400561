@@ -6,7 +6,6 @@ import java.util.List;
 public class Board {
     List<Slot> slots = new ArrayList<>();
 
-
     public Board(List<Player> players, int worldSize) {
         addSlotList(worldSize);
         addPlayerSlotFirstSlot(players);
@@ -52,4 +51,19 @@ public class Board {
         return !slots.get(lastIndex).players.isEmpty();
     }
 
+    public void addEventsToSlot(String[][] abyssesAndTools) {
+        for (String[] line : abyssesAndTools) {
+            String typeStr = line[0];
+            String subTypeStr = line[1];
+            String position = line[2];
+
+
+            Event event = new Event(typeStr, subTypeStr, position);
+
+            Slot slot = encontraSlot(Integer.parseInt(position));
+            if (slot != null) {
+                slot.addEvent(event);
+            }
+        }
+    }
 }

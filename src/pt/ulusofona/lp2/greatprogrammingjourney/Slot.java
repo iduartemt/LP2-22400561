@@ -6,12 +6,13 @@ import java.util.List;
 public class Slot {
     int nrSlot;
     List<Player> players = new ArrayList<>();
+    Event event;
 
     public Slot(int nrSlot) {
         this.nrSlot = nrSlot;
     }
 
-    void addPlayer(Player player) {
+    public void addPlayer(Player player) {
         players.add(player);
     }
 
@@ -42,4 +43,15 @@ public class Slot {
         return sb.toString();
     }
 
+    public void addEvent(Event event) {
+        this.event = event;
+    }
+
+    public void removeEvent() {
+        this.event = null;
+    }
+
+    public Event getEvent() {
+        return event;
+    }
 }
