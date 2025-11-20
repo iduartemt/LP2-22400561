@@ -385,7 +385,11 @@ public class GameManager {
         // Determina o próximo jogador (ordem crescente de ID)
         List<Player> allPlayers = new ArrayList<>();
         for (Slot slot : board.slots) {
-            allPlayers.addAll(slot.players);
+            for (Player p : slot.players) {
+                if (p.isAlive && !allPlayers.contains(p)) {
+                    allPlayers.add(p);
+                }
+            }
         }
 
         // ordena jogadores por ID
@@ -454,8 +458,6 @@ public class GameManager {
                 }
 
                 currentPlayer.isAlive = false;
-                currentSlot.removePlayer(currentPlayer);
-                gameIsOver();
                 return "Derrotado pelo abismo " + event.subtype;
             }
         }
@@ -545,223 +547,205 @@ public class GameManager {
 
     public void loadGame(File file) throws InvalidFileException, FileNotFoundException {
 
-        // 1) Validações básicas do ficheiro
-        if (file == null) {
-            throw new InvalidFileException();
-        }
-        if (!file.exists()) {
-            throw new FileNotFoundException();
-        }
-        if (!file.canRead()) {
-            throw new InvalidFileException();
-        }
+        validateFile(file);
 
-        // 2) Ler todas as linhas do ficheiro
+        List<String> lines = loadLines(file);
+        int index = 0;
+
+        int worldSize = parseWorldSize(lines, index++);
+        int nrPlayers = parseNrPlayers(lines, index++);
+
+        PlayerData pd = parsePlayers(lines, index, nrPlayers, worldSize);
+        index += nrPlayers;
+
+        EventData ed = parseEvents(lines, index, worldSize);
+        index += ed.nrEvents + 1;
+
+        int current = parseCurrentPlayerId(lines, index++);
+        int turns = parseTurnCount(lines, index++);
+
+        rebuildGame(worldSize, pd, ed, current, turns);
+    }
+
+
+    private void validateFile(File file) throws InvalidFileException, FileNotFoundException {
+        if (file == null) throw new InvalidFileException();
+        if (!file.exists()) throw new FileNotFoundException();
+        if (!file.canRead()) throw new InvalidFileException();
+    }
+
+    private List<String> loadLines(File file) throws InvalidFileException {
         List<String> lines = new ArrayList<>();
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+        try (BufferedReader r = new BufferedReader(new FileReader(file))) {
             String line;
-            while ((line = reader.readLine()) != null) {
+            while ((line = r.readLine()) != null) {
                 line = line.trim();
-                if (!line.isEmpty()) { // ignorar linhas vazias
-                    lines.add(line);
-                }
+                if (!line.isEmpty()) lines.add(line);
             }
         } catch (IOException e) {
             throw new InvalidFileException();
         }
+        return lines;
+    }
 
-        if (lines.size() < 4) { // claramente não chega para nada
-            throw new InvalidFileException();
-        }
-
-        int index = 0;
-
-        // 3) Ler worldSize
-        int worldSize;
+    private int parseWorldSize(List<String> lines, int index) throws InvalidFileException {
         try {
-            worldSize = Integer.parseInt(lines.get(index++));
-        } catch (NumberFormatException e) {
+            int ws = Integer.parseInt(lines.get(index));
+            if (ws < 2) throw new InvalidFileException();
+            return ws;
+        } catch (Exception e) {
             throw new InvalidFileException();
         }
+    }
 
-        if (worldSize < 2) {
-            throw new InvalidFileException();
-        }
-
-        // 4) Ler número de jogadores
-        int nrPlayers;
+    private int parseNrPlayers(List<String> lines, int index) throws InvalidFileException {
         try {
-            nrPlayers = Integer.parseInt(lines.get(index++));
-        } catch (NumberFormatException e) {
+            int n = Integer.parseInt(lines.get(index));
+            if (n < 2 || n > 4) throw new InvalidFileException();
+            return n;
+        } catch (Exception e) {
             throw new InvalidFileException();
         }
+    }
 
-        if (nrPlayers < 2 || nrPlayers > 4) {
-            throw new InvalidFileException();
+    private static class PlayerData {
+        String[][] info;
+        int[] positions;
+        String[] states;
+
+        PlayerData(String[][] i, int[] p, String[] s) {
+            info = i;
+            positions = p;
+            states = s;
         }
+    }
 
-        if (lines.size() < index + nrPlayers) {
-            throw new InvalidFileException();
-        }
+    private PlayerData parsePlayers(List<String> lines, int index, int nrPlayers, int worldSize)
+            throws InvalidFileException {
 
-        // Arrays para criar o tabuleiro inicial
-        String[][] playerInfo = new String[nrPlayers][4];
-        int[] playerPositions = new int[nrPlayers];
-        String[] playerStates = new String[nrPlayers];
+        String[][] info = new String[nrPlayers][4];
+        int[] pos = new int[nrPlayers];
+        String[] states = new String[nrPlayers];
 
-        // 5) Ler linhas de jogadores
         for (int i = 0; i < nrPlayers; i++) {
-            String playerLine = lines.get(index++);
-            String[] parts = playerLine.split(";", -1);
 
-            // Esperamos: id;nome;linguagem;cor;posicao;estado
-            if (parts.length < 6) {
-                throw new InvalidFileException();
-            }
+            String[] parts = lines.get(index + i).split(";", -1);
+            if (parts.length < 6) throw new InvalidFileException();
 
-            String idStr = parts[0].trim();
-            String name = parts[1].trim();
-            String language = parts[2].trim();
-            String color = parts[3].trim();
-            String posStr = parts[4].trim();
-            String state = parts[5].trim();
+            info[i][0] = parts[0].trim();
+            info[i][1] = parts[1].trim();
+            info[i][2] = parts[2].trim();
+            info[i][3] = parts[3].trim();
 
-            int position;
             try {
-                position = Integer.parseInt(posStr);
-            } catch (NumberFormatException e) {
+                pos[i] = Integer.parseInt(parts[4].trim());
+            } catch (Exception e) {
                 throw new InvalidFileException();
             }
 
-            if (position < 1 || position > worldSize) {
+            if (pos[i] < 1 || pos[i] > worldSize)
                 throw new InvalidFileException();
-            }
 
-            playerInfo[i][0] = idStr;
-            playerInfo[i][1] = name;
-            playerInfo[i][2] = language;
-            playerInfo[i][3] = color;
-
-            playerPositions[i] = position;
-            playerStates[i] = state;
+            states[i] = parts[5].trim();
         }
 
-        // 6) Ler número de eventos
-        if (lines.size() <= index) {
-            throw new InvalidFileException();
+        return new PlayerData(info, pos, states);
+    }
+
+    private static class EventData {
+        int nrEvents;
+        String[][] events;
+
+        EventData(int n, String[][] e) {
+            nrEvents = n;
+            events = e;
         }
+    }
+
+    private EventData parseEvents(List<String> lines, int index, int worldSize)
+            throws InvalidFileException {
 
         int nrEvents;
         try {
-            nrEvents = Integer.parseInt(lines.get(index++));
-        } catch (NumberFormatException e) {
+            nrEvents = Integer.parseInt(lines.get(index));
+        } catch (Exception e) {
             throw new InvalidFileException();
         }
 
-        if (nrEvents < 0) {
-            throw new InvalidFileException();
-        }
+        String[][] arr = new String[nrEvents][3];
 
-        if (lines.size() < index + nrEvents + 2) { // +2: currentPlayerId e turnCount
-            throw new InvalidFileException();
-        }
-
-        String[][] abyssesAndTools = new String[nrEvents][3];
-
-        // 7) Ler eventos: tipo;subtipo;posicao
         for (int i = 0; i < nrEvents; i++) {
-            String eventLine = lines.get(index++);
-            String[] parts = eventLine.split(";", -1);
-
-            if (parts.length < 3) {
-                throw new InvalidFileException();
-            }
+            String[] parts = lines.get(index + 1 + i).split(";", -1);
+            if (parts.length < 3) throw new InvalidFileException();
 
             String typeStr = parts[0].trim();
-            String subTypeStr = parts[1].trim();
+            String stStr = parts[1].trim();
             String posStr = parts[2].trim();
 
-            if (!"0".equals(typeStr) && !"1".equals(typeStr)) {
+            if (!typeStr.equals("0") && !typeStr.equals("1"))
                 throw new InvalidFileException();
-            }
 
-            int pos;
-            int subType;
+            int pos, subtype;
             try {
-                subType = Integer.parseInt(subTypeStr);
+                subtype = Integer.parseInt(stStr);
                 pos = Integer.parseInt(posStr);
-            } catch (NumberFormatException e) {
+            } catch (Exception e) {
                 throw new InvalidFileException();
             }
 
-            if (pos < 1 || pos > worldSize) {
+            if (pos < 1 || pos > worldSize) throw new InvalidFileException();
+
+            if (typeStr.equals("0") && (subtype < 0 || subtype > 9))
                 throw new InvalidFileException();
-            }
 
-            if (typeStr.equals("0")) { // abismo
-                if (subType < 0 || subType > 9) {
-                    throw new InvalidFileException();
-                }
-            } else { // ferramenta
-                if (subType < 0 || subType > 5) {
-                    throw new InvalidFileException();
-                }
-            }
+            if (typeStr.equals("1") && (subtype < 0 || subtype > 5))
+                throw new InvalidFileException();
 
-            abyssesAndTools[i][0] = typeStr;
-            abyssesAndTools[i][1] = subTypeStr;
-            abyssesAndTools[i][2] = posStr;
+            arr[i][0] = typeStr;
+            arr[i][1] = stStr;
+            arr[i][2] = posStr;
         }
 
-        // 8) Ler currentPlayerId
-        int loadedCurrentPlayerId;
+        return new EventData(nrEvents, arr);
+    }
+
+    private int parseCurrentPlayerId(List<String> lines, int index) throws InvalidFileException {
         try {
-            loadedCurrentPlayerId = Integer.parseInt(lines.get(index++));
-        } catch (NumberFormatException e) {
+            return Integer.parseInt(lines.get(index));
+        } catch (Exception e) {
             throw new InvalidFileException();
         }
+    }
 
-        // 9) Ler turnCount
-        int loadedTurnCount;
+    private int parseTurnCount(List<String> lines, int index) throws InvalidFileException {
         try {
-            loadedTurnCount = Integer.parseInt(lines.get(index++));
-        } catch (NumberFormatException e) {
+            return Integer.parseInt(lines.get(index));
+        } catch (Exception e) {
             throw new InvalidFileException();
         }
+    }
 
-        // 10) Criar o tabuleiro base com jogadores e eventos
-        boolean created = createInitialBoard(playerInfo, worldSize, abyssesAndTools);
-        if (!created || board == null) {
+    private void rebuildGame(int worldSize, PlayerData pd, EventData ed, int currentPlayerId, int turnCount) throws InvalidFileException {
+        // cria o tabuleiro base com os eventos
+        if (!createInitialBoard(pd.info, worldSize, ed.events))
             throw new InvalidFileException();
-        }
 
-        // 11) Reposicionar jogadores e restaurar estados
-        // Construir mapa id -> Player
-        Map<Integer, Player> playersById = new HashMap<>();
-        for (Slot slot : board.slots) {
-            for (Player p : slot.players) {
-                playersById.put(p.id, p);
-            }
-        }
+        // coloca jogadores nas posições corretas
+        Map<Integer, Player> map = new HashMap<>();
 
-        for (int i = 0; i < nrPlayers; i++) {
-            int id;
-            try {
-                id = Integer.parseInt(playerInfo[i][0]);
-            } catch (NumberFormatException e) {
-                throw new InvalidFileException();
-            }
+        for (Slot s : board.slots)
+            for (Player p : s.players)
+                map.put(p.id, p);
 
-            Player p = playersById.get(id);
-            if (p == null) {
-                throw new InvalidFileException();
-            }
+        for (int i = 0; i < pd.info.length; i++) {
 
-            String state = playerStates[i];
-            int desiredPos = playerPositions[i];
+            int id = Integer.parseInt(pd.info[i][0]);
+            Player p = map.get(id);
 
-            // Encontrar slot atual deste jogador (a partir da posição inicial)
+            if (p == null) throw new InvalidFileException();
+
+            // origem
             Slot origin = null;
             for (Slot s : board.slots) {
                 if (s.players.contains(p)) {
@@ -770,48 +754,25 @@ public class GameManager {
                 }
             }
 
-            if (!"Derrotado".equalsIgnoreCase(state)) {
-                // Jogador vivo/em jogo
-                p.isAlive = true;
-
-                // Mover para a posição correta, se necessário
-                if (origin != null && origin.nrSlot != desiredPos) {
-                    origin.removePlayer(p);
-                    Slot destination = board.encontraSlot(desiredPos);
-                    if (destination == null) {
-                        throw new InvalidFileException();
-                    }
-                    destination.addPlayer(p);
-                } else if (origin == null) {
-                    // Não encontrado mas deveria estar em jogo
-                    Slot destination = board.encontraSlot(desiredPos);
-                    if (destination == null) {
-                        throw new InvalidFileException();
-                    }
-                    destination.addPlayer(p);
-                }
-            } else {
-                // Jogador derrotado
+            if (pd.states[i].equalsIgnoreCase("Derrotado")) {
                 p.isAlive = false;
-                // Remover de qualquer slot onde esteja
-                if (origin != null) {
-                    origin.removePlayer(p);
-                }
+                if (origin != null) origin.removePlayer(p);
+                continue;
+            }
+
+            // mover jogador
+            int desired = pd.positions[i];
+
+            if (origin != null && origin.nrSlot != desired) {
+                origin.removePlayer(p);
+                board.encontraSlot(desired).addPlayer(p);
             }
         }
 
-        // 12) Restaurar jogador atual e número de turnos
-        if (!playersById.containsKey(loadedCurrentPlayerId)) {
-            throw new InvalidFileException();
-        }
-
-        this.currentPlayerId = loadedCurrentPlayerId;
-        this.turnCount = loadedTurnCount;
+        this.currentPlayerId = currentPlayerId;
+        this.turnCount = turnCount;
     }
 
-
-
-// ...
 
     public void saveGame(File file) throws FileNotFoundException {
         if (board == null) {
