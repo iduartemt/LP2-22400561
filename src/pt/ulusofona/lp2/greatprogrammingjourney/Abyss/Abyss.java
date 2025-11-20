@@ -1,0 +1,17 @@
+package pt.ulusofona.lp2.greatprogrammingjourney.Abyss;
+
+import pt.ulusofona.lp2.greatprogrammingjourney.Event;
+import pt.ulusofona.lp2.greatprogrammingjourney.tool.Tool;
+
+public abstract class Abyss extends Event {
+    Tool counter;
+
+    public Abyss(String name, int id, int position, Tool counter, String image) {
+        super(name, id, position,image);
+        this.counter = counter;
+    }
+
+    @Override
+    public abstract void playerInteraction();
+
+}

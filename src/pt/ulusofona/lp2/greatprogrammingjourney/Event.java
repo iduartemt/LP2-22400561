@@ -1,39 +1,30 @@
 package pt.ulusofona.lp2.greatprogrammingjourney;
 
-public class Event {
-    String type;
-    String subtype;
-    String position;
+public abstract class Event {
+    private final String name;
+    private final int id;
+    private final int position;
+    private final String image;
 
-    public Event(String type, String subtype, String position) {
-        this.type = type;
-        this.subtype = subtype;
+    public Event(String name, int id, int position, String image) {
+        this.name = name;
+        this.id = id;
         this.position = position;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public String getSubtype() {
-        return subtype;
+        this.image=image;
     }
 
     public String getName() {
+        return name;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public int getPosition() {
         return position;
     }
 
-    public boolean isAbyss(){
-        if (type.equals("0")){
-            return true;
-        }
-        return false;
-    }
+    public abstract void playerInteraction();
 
-    public boolean isTool() {
-        if(type.equals("1")){
-            return true;
-        }
-        return false;
-    }
 }
