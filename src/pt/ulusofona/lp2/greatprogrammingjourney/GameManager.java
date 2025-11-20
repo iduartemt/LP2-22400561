@@ -547,11 +547,13 @@ public class GameManager {
 
     public void loadGame(File file) throws InvalidFileException, FileNotFoundException {
 
-        validateFile(file);
+        if (!validateFile(file)) {
+            throw new InvalidFileException();
+        }
 
         List<String> lines = loadLines(file);
-        int index = 0;
 
+        int index = 0;
         int worldSize = parseWorldSize(lines, index++);
         int nrPlayers = parseNrPlayers(lines, index++);
 
@@ -564,14 +566,17 @@ public class GameManager {
         int current = parseCurrentPlayerId(lines, index++);
         int turns = parseTurnCount(lines, index++);
 
-        rebuildGame(worldSize, pd, ed, current, turns);
-    }
+        boolean ok = rebuildGame(worldSize, pd, ed, current, turns);
+        if (!ok) {
+            throw new InvalidFileException();
+        }    }
 
 
-    private void validateFile(File file) throws InvalidFileException, FileNotFoundException {
+    private boolean validateFile(File file) throws InvalidFileException, FileNotFoundException {
         if (file == null) throw new InvalidFileException();
         if (!file.exists()) throw new FileNotFoundException();
         if (!file.canRead()) throw new InvalidFileException();
+        return true;
     }
 
     private List<String> loadLines(File file) throws InvalidFileException {
@@ -591,9 +596,10 @@ public class GameManager {
 
     private int parseWorldSize(List<String> lines, int index) throws InvalidFileException {
         try {
-            int ws = Integer.parseInt(lines.get(index));
-            if (ws < 2) throw new InvalidFileException();
-            return ws;
+            int worldSize = Integer.parseInt(lines.get(index));
+
+            if (worldSize < 2) throw new InvalidFileException();
+            return worldSize;
         } catch (Exception e) {
             throw new InvalidFileException();
         }
@@ -726,10 +732,12 @@ public class GameManager {
         }
     }
 
-    private void rebuildGame(int worldSize, PlayerData pd, EventData ed, int currentPlayerId, int turnCount) throws InvalidFileException {
+    private boolean rebuildGame(int worldSize, PlayerData pd, EventData ed,
+                                int currentPlayerId, int turnCount) throws InvalidFileException {
         // cria o tabuleiro base com os eventos
-        if (!createInitialBoard(pd.info, worldSize, ed.events))
-            throw new InvalidFileException();
+        if (!createInitialBoard(pd.info, worldSize, ed.events)) {
+            return false; // falhou criar tabuleiro
+        }
 
         // coloca jogadores nas posições corretas
         Map<Integer, Player> map = new HashMap<>();
@@ -771,6 +779,8 @@ public class GameManager {
 
         this.currentPlayerId = currentPlayerId;
         this.turnCount = turnCount;
+
+        return true; // reconstrução feita com sucesso
     }
 
 
