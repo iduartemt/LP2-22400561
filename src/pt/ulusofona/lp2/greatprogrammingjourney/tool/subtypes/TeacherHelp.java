@@ -1,14 +1,15 @@
 package pt.ulusofona.lp2.greatprogrammingjourney.tool.subtypes;
 
+import pt.ulusofona.lp2.greatprogrammingjourney.Player;
 import pt.ulusofona.lp2.greatprogrammingjourney.tool.Tool;
 
 public class TeacherHelp extends Tool {
-    public TeacherHelp(String name, int id, int position, String image) {
+    public TeacherHelp(int position) {
         super("Ajuda do Professor", 5, position, "ajuda-professor.png");
     }
 
     @Override
-    public void playerInteraction() {
+    public void playerInteraction(Player player) {
 
     }
 }

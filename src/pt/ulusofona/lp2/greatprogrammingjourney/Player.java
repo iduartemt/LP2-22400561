@@ -1,17 +1,19 @@
 package pt.ulusofona.lp2.greatprogrammingjourney;
 
+import pt.ulusofona.lp2.greatprogrammingjourney.tool.Tool;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
 public class Player {
-    int id;
-    String name;
-    String language;
-    ArrayList<Event> tools=new ArrayList<>();
-    String color;
-    boolean isAlive = true;
+    private final int id;
+    private final String name;
+    private final String language;
+    private final ArrayList<Tool> tools = new ArrayList<>();
+    private final String color;
+    private final boolean isAlive = true;
 
     public Player(int id, String name, String language, String color) {
         this.id = id;
@@ -20,23 +22,23 @@ public class Player {
         this.color = color;
     }
 
-    int getId() {
+    public int getId() {
         return id;
     }
 
-    String getName() {
+    public String getName() {
         return name;
     }
 
-    String getLanguage() {
+    public String getLanguage() {
         return language;
     }
 
-    ArrayList<Event> getTools() {
+    public ArrayList<Tool> getTools() {
         return tools;
     }
 
-    String getColor() {
+    public String getColor() {
         return color;
     }
 

@@ -209,10 +209,10 @@ public class GameManager {
     }
 
     private int findLowestPlayerId(List<Player> validPlayers) {
-        int lowerId = validPlayers.get(0).id;
+        int lowerId = validPlayers.get(0).getId();
         for (Player player : validPlayers) {
-            if (player.id < lowerId) {
-                lowerId = player.id;
+            if (player.getId() < lowerId) {
+                lowerId = player.getId();
             }
         }
         return lowerId;
@@ -226,6 +226,12 @@ public class GameManager {
         }
         if (nrSquare == board.getNrTotalSlots()) {
             return "glory.png"; // última casa do tabuleiro
+        }
+
+        Slot thisSlot = board.encontraSlot(nrSquare);
+
+        if (thisSlot.getEvent() != null) {
+            return thisSlot.getEvent().getImage();
         }
         return null;
     }
@@ -433,33 +439,7 @@ public class GameManager {
 
         if (event != null) {
 
-            if (event.isTool()) {
-
-                currentPlayer.tools.add(event);
-                currentSlot.removeEvent();
-                return "Recolheu a ferramenta " + event.subtype;
-            } else if (event.isAbyss()) {
-
-                boolean hasTool = false;
-                Event fixTool = null;
-
-                for (Event tool : currentPlayer.tools) {
-                    if (tool.subtype.equals(event.subtype)) {
-
-                        hasTool = true;
-                        fixTool = tool;
-                        break;
-                    }
-                }
-
-                if (hasTool) {
-                    currentSlot.removeEvent();
-                    return "Abismo resolvido com a ferramenta " + fixTool.subtype;
-                }
-
-                currentPlayer.isAlive = false;
-                return "Derrotado pelo abismo " + event.subtype;
-            }
+            event.playerInteraction(currentPlayer);
         }
         return null;
     }
@@ -547,7 +527,7 @@ public class GameManager {
 
     public boolean loadGame(File file) throws InvalidFileException, FileNotFoundException {
 
-       return false;
+        return false;
 
     }
 

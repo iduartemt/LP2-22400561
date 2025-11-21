@@ -1,14 +1,15 @@
 package pt.ulusofona.lp2.greatprogrammingjourney.tool.subtypes;
 
+import pt.ulusofona.lp2.greatprogrammingjourney.Player;
 import pt.ulusofona.lp2.greatprogrammingjourney.tool.Tool;
 
 public class FunctionalProgramming extends Tool {
-    public FunctionalProgramming(String name, int id, int position, String image) {
+    public FunctionalProgramming(int position) {
         super("Programação Funcional", 1, position, "funcional.png");
     }
 
     @Override
-    public void playerInteraction() {
+    public void playerInteraction(Player player) {
 
     }
 }

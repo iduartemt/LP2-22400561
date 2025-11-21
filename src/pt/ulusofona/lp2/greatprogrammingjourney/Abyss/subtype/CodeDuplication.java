@@ -1,7 +1,7 @@
 package pt.ulusofona.lp2.greatprogrammingjourney.Abyss.subtype;
 
 import pt.ulusofona.lp2.greatprogrammingjourney.Abyss.Abyss;
-import pt.ulusofona.lp2.greatprogrammingjourney.tool.Tool;
+import pt.ulusofona.lp2.greatprogrammingjourney.Player;
 
 public class CodeDuplication extends Abyss {
 
@@ -10,7 +10,7 @@ public class CodeDuplication extends Abyss {
     }
 
     @Override
-    public void playerInteraction() {
+    public void playerInteraction(Player player) {
 
     }
 }

@@ -1,5 +1,6 @@
 package pt.ulusofona.lp2.greatprogrammingjourney.tool.subtypes;
 
+import pt.ulusofona.lp2.greatprogrammingjourney.Player;
 import pt.ulusofona.lp2.greatprogrammingjourney.tool.Tool;
 
 public class UnitTests extends Tool {
@@ -8,7 +9,7 @@ public class UnitTests extends Tool {
     }
 
     @Override
-    public void playerInteraction() {
+    public void playerInteraction(Player player) {
 
     }
 }

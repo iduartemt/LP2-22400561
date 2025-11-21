@@ -1,6 +1,7 @@
 package pt.ulusofona.lp2.greatprogrammingjourney.Abyss;
 
 import pt.ulusofona.lp2.greatprogrammingjourney.Event;
+import pt.ulusofona.lp2.greatprogrammingjourney.Player;
 import pt.ulusofona.lp2.greatprogrammingjourney.tool.Tool;
 
 public abstract class Abyss extends Event {
@@ -12,6 +13,6 @@ public abstract class Abyss extends Event {
     }
 
     @Override
-    public abstract void playerInteraction();
+    public abstract void playerInteraction(Player player);
 
 }

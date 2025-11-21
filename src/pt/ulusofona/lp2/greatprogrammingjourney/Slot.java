@@ -54,4 +54,5 @@ public class Slot {
     public Event getEvent() {
         return event;
     }
+
 }

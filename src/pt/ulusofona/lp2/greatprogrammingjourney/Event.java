@@ -10,7 +10,7 @@ public abstract class Event {
         this.name = name;
         this.id = id;
         this.position = position;
-        this.image=image;
+        this.image = image;
     }
 
     public String getName() {
@@ -25,6 +25,10 @@ public abstract class Event {
         return position;
     }
 
-    public abstract void playerInteraction();
+    public String getImage() {
+        return image;
+    }
+
+    public abstract void playerInteraction(Player player);
 
 }

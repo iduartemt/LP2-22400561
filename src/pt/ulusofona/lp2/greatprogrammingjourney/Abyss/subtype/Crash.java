@@ -1,6 +1,7 @@
 package pt.ulusofona.lp2.greatprogrammingjourney.Abyss.subtype;
 
 import pt.ulusofona.lp2.greatprogrammingjourney.Abyss.Abyss;
+import pt.ulusofona.lp2.greatprogrammingjourney.Player;
 
 public class Crash extends Abyss {
 
@@ -9,7 +10,7 @@ public class Crash extends Abyss {
     }
 
     @Override
-    public void playerInteraction() {
+    public void playerInteraction(Player player) {
 
     }
 }
