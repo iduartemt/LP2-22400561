@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Slot {
     public int nrSlot;
-    List<Player> players = new ArrayList<>();
+    public List<Player> players = new ArrayList<>();
     Event event;
 
     public Slot(int nrSlot) {

@@ -37,7 +37,7 @@ public class SyntaxError extends Abyss {
         Slot currentSlot = null;
 
         for (Slot s : board.slots) {
-            if (s.equals(player.getId())) {
+            if (s.players.contains(player)) {
                 currentSlot = s;
                 break;
             }
@@ -47,10 +47,10 @@ public class SyntaxError extends Abyss {
             return;
         }
 
-        Slot destinationSlot = board.encontraSlot(currentSlot.nrSlot);
+        Slot destinationSlot = board.encontraSlot(currentSlot.nrSlot - 1);
 
-    currentSlot.removePlayer(player);
-    destinationSlot.addPlayer(player);
+        currentSlot.removePlayer(player);
+        destinationSlot.addPlayer(player);
     }
 }
 
