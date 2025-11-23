@@ -8,11 +8,10 @@ import pt.ulusofona.lp2.greatprogrammingjourney.Player;
 import pt.ulusofona.lp2.greatprogrammingjourney.tool.Tool;
 
 
-
 public class SyntaxError extends Abyss {
 
     public SyntaxError(int position) {
-        super("Erro de Sintaxe", 0, position,null, "syntax.png", EventType.ABYSS);
+        super("Erro de Sintaxe", 0, position, null, "syntax.png", EventType.ABYSS);
     }
 
     @Override
@@ -22,7 +21,7 @@ public class SyntaxError extends Abyss {
 
         //Verifica se tem a tool IDE
         for (Tool t : player.getTools()) {
-            if (t.getName().equals("IDE")) {
+            if (t.getId() == 4) {
                 ide = t;
                 break;
             }
