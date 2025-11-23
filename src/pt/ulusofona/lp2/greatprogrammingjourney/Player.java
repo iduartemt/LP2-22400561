@@ -13,7 +13,7 @@ public class Player {
     private final String language;
     private final ArrayList<Tool> tools = new ArrayList<>();
     private final String color;
-    private final boolean isAlive = true;
+    private boolean isAlive = true;
 
     public Player(int id, String name, String language, String color) {
         this.id = id;
@@ -40,6 +40,10 @@ public class Player {
 
     public String getColor() {
         return color;
+    }
+
+    public boolean getIsAlive() {
+        return isAlive;
     }
 
     public static String isValidName(String name, HashSet<String> validName) {

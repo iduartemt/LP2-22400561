@@ -1,5 +1,7 @@
 package pt.ulusofona.lp2.greatprogrammingjourney;
 
+import pt.ulusofona.lp2.greatprogrammingjourney.tool.Tool;
+
 import javax.swing.*;
 import java.io.*;
 import java.util.*;
@@ -245,13 +247,13 @@ public class GameManager {
 
         for (Slot slot : board.slots) {
             for (Player player : slot.players) {
-                if (player.id == id) {
+                if (player.getId() == id) {
                     // cria array com informações do jogador
                     String[] foundedPlayer = new String[5];
-                    foundedPlayer[0] = String.valueOf(player.id);
-                    foundedPlayer[1] = player.name;
-                    foundedPlayer[2] = player.language;
-                    foundedPlayer[3] = player.color;
+                    foundedPlayer[0] = String.valueOf(player.getId());
+                    foundedPlayer[1] = player.getName();
+                    foundedPlayer[2] = player.getLanguage();
+                    foundedPlayer[3] = player.getColor();
                     foundedPlayer[4] = String.valueOf(slot.nrSlot);
                     return foundedPlayer;
                 }
@@ -269,11 +271,11 @@ public class GameManager {
         for (Slot slot : board.slots) {
             Player player = slot.findPlayerByID(id);
             if (player != null) {
-                List<String> sortedLanguages = player.getSortedLanguages(player.language);
+                List<String> sortedLanguages = player.getSortedLanguages(player.getLanguage());
                 StringBuilder languagesInfo = player.playerLanguageInfo(sortedLanguages);
 
-                return id + " | " + player.name + " | " +
-                        slot.nrSlot + " | " + languagesInfo + " | Em Jogo";
+                return id + " | " + player.getName() + " | " + slot.nrSlot + " | " + getProgrammersInfo() + " | " +
+                        languagesInfo + " | Em Jogo";
             }
         }
 
@@ -289,30 +291,49 @@ public class GameManager {
 
         for (Slot s : board.slots) {
             for (Player p : s.players) {
-                if (p.isAlive && !alivePlayers.contains(p)) {
+                if (p.getIsAlive() && !alivePlayers.contains(p)) {
                     alivePlayers.add(p);
                 }
             }
+        }
+
+        // Se não houver jogadores vivos, devolve string vazia
+        if (alivePlayers.isEmpty()) {
+            return "";
         }
 
         StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < alivePlayers.size(); i++) {
             Player p = alivePlayers.get(i);
+
             if (i > 0) {
                 sb.append(" | ");
             }
 
-            sb.append(p.getName()).append(" : ");
+            List<Tool> playerTools = p.getTools();
 
-            String tools = p.getTools().toString();
-
-            if (tools == null || tools.isEmpty()) {
+            if (playerTools == null || playerTools.isEmpty()) {
                 sb.append("No tools");
             } else {
-                sb.append((tools));
+                // Obter nomes das ferramentas
+                List<String> toolNames = new ArrayList<>();
+                for (Tool t : playerTools) {
+                    toolNames.add(t.getName());
+                }
+
+                // Ordenar alfabeticamente
+                Collections.sort(toolNames);
+                // Juntar com ", "
+                for (int j = 0; j < toolNames.size(); j++) {
+                    if (j > 0) {
+                        sb.append(", ");
+                    }
+                    sb.append(toolNames.get(j));
+                }
             }
         }
+
         return sb.toString();
     }
 
@@ -384,7 +405,7 @@ public class GameManager {
 
         // Se o jogo acabou, o jogador atual é o vencedor
         if (gameIsOver()) {
-            currentPlayerId = currentPlayer.id;
+            currentPlayerId = currentPlayer.getId();
             return true;
         }
 
@@ -392,14 +413,14 @@ public class GameManager {
         List<Player> allPlayers = new ArrayList<>();
         for (Slot slot : board.slots) {
             for (Player p : slot.players) {
-                if (p.isAlive && !allPlayers.contains(p)) {
+                if (p.getIsAlive() && !allPlayers.contains(p)) {
                     allPlayers.add(p);
                 }
             }
         }
 
         // ordena jogadores por ID
-        allPlayers.sort(Comparator.comparingInt(p -> p.id));
+        allPlayers.sort(Comparator.comparingInt(p -> p.getId()));
 
         // encontra o índice do jogador atual
         int currentIndex = findAtualPlayerIndex(allPlayers);
@@ -410,7 +431,7 @@ public class GameManager {
 
         // calcula o próximo jogador
         int nextIndex = (currentIndex + 1) % allPlayers.size();
-        currentPlayerId = allPlayers.get(nextIndex).id;
+        currentPlayerId = allPlayers.get(nextIndex).getId();
         return true;
     }
 
@@ -446,7 +467,7 @@ public class GameManager {
 
     private int findAtualPlayerIndex(List<Player> allPlayers) {
         for (int i = 0; i < allPlayers.size(); i++) {
-            if (allPlayers.get(i).id == currentPlayerId) {
+            if (allPlayers.get(i).getId() == currentPlayerId) {
                 return i;
             }
         }
@@ -484,8 +505,8 @@ public class GameManager {
         for (int i = board.getNrTotalSlots() - 1; i >= 0; i--) {
             Slot slot = board.slots.get(i);
             for (Player player : slot.players) {
-                if (!player.name.equals(winnerName)) {
-                    lastPlayers.add(player.name + " " + slot.nrSlot);
+                if (!player.getName().equals(winnerName)) {
+                    lastPlayers.add(player.getName() + " " + slot.nrSlot);
                 }
             }
         }
@@ -508,7 +529,7 @@ public class GameManager {
         }
 
         // nome do vencedor
-        String winnerName = winnerSlot.players.get(0).name;
+        String winnerName = winnerSlot.players.get(0).getName();
         // nome dos outros jogadores
         ArrayList<String> lastPlayers = findLastPlayers(winnerName);
 
@@ -525,12 +546,17 @@ public class GameManager {
         return results;
     }
 
+
+
     public boolean loadGame(File file) throws InvalidFileException, FileNotFoundException {
 
         return false;
 
     }
 
+    public boolean saveGame(File file){
+        return false;
+    }
 
     public JPanel getAuthorsPanel() {
         return null;

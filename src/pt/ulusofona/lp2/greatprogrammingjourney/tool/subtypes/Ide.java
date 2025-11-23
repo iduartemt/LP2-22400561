@@ -10,6 +10,6 @@ public class Ide extends Tool {
 
     @Override
     public void playerInteraction(Player player) {
-
+        player.getTools().add(this);
     }
 }

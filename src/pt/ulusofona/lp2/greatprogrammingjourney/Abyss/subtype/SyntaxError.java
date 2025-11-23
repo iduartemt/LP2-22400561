@@ -2,7 +2,6 @@ package pt.ulusofona.lp2.greatprogrammingjourney.Abyss.subtype;
 
 import pt.ulusofona.lp2.greatprogrammingjourney.Abyss.Abyss;
 import pt.ulusofona.lp2.greatprogrammingjourney.Player;
-import pt.ulusofona.lp2.greatprogrammingjourney.Slot;
 import pt.ulusofona.lp2.greatprogrammingjourney.tool.Tool;
 
 public class SyntaxError extends Abyss {
@@ -16,6 +15,7 @@ public class SyntaxError extends Abyss {
         for (Tool t : player.getTools()) {
             if (t.getName().equals("IDE")) {
                 System.out.println("Erro de sintaxe anulado por " + t.getName());
+
             }
         }
     }

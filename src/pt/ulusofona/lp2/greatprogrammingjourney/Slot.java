@@ -22,7 +22,7 @@ public class Slot {
 
     Player findPlayerByID(int currentPlayerId) {
         for (Player p : players) {
-            if (p.id == currentPlayerId) {
+            if (p.getId() == currentPlayerId) {
                 return p;
             }
         }
@@ -38,7 +38,7 @@ public class Slot {
             if (!sb.isEmpty()) {
                 sb.append(",");
             }
-            sb.append(player.id);
+            sb.append(player.getId());
         }
         return sb.toString();
     }
