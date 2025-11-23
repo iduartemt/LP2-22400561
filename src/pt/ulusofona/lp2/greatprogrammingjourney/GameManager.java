@@ -434,7 +434,7 @@ public class GameManager {
         Slot currentSlot = null;
 
         for (Slot s : board.slots) {
-            Player p = s.findPlayerByID(getCurrentPlayerID());
+            Player p = s.findPlayerByID(lastMovedPlayerId);
             if (p != null) {
                 currentPlayer = p;
                 currentSlot = s;
