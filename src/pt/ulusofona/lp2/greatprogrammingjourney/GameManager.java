@@ -299,7 +299,7 @@ public class GameManager {
 
     public String getProgrammersInfo() {
         if (board == null) {
-            return "";
+            return "Erro de sintaxe";
         }
 
         List<Player> alivePlayers = new ArrayList<>();

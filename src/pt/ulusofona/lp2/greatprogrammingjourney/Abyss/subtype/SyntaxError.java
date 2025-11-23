@@ -14,8 +14,11 @@ public class SyntaxError extends Abyss {
     public void playerInteraction(Player player) {
         for (Tool t : player.getTools()) {
             if (t.getName().equals("IDE")) {
+                player.getTools().remove();
                 System.out.println("Erro de sintaxe anulado por " + t.getName());
 
+            } else {
+               player.get
             }
         }
     }
