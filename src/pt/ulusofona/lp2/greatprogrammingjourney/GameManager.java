@@ -299,7 +299,7 @@ public class GameManager {
 
     public String getProgrammersInfo() {
         if (board == null) {
-            return "Erro de sintaxe";
+            return "";
         }
 
         List<Player> alivePlayers = new ArrayList<>();
@@ -318,7 +318,6 @@ public class GameManager {
         }
 
         StringBuilder sb = new StringBuilder();
-
 
 
         return sb.toString();
@@ -426,20 +425,17 @@ public class GameManager {
 
         Player currentPlayer = null;
         Slot currentSlot = null;
-        boolean foundPlayer = false;
 
         for (Slot s : board.slots) {
             Player p = s.findPlayerByID(getCurrentPlayerID());
-
             if (p != null) {
                 currentPlayer = p;
                 currentSlot = s;
-                foundPlayer = true;
                 break;
             }
         }
 
-        if (!foundPlayer) {
+        if (currentPlayer == null || currentSlot == null) {
             return null;
         }
 
@@ -447,7 +443,7 @@ public class GameManager {
 
         if (event != null) {
 
-            event.playerInteraction(currentPlayer);
+            event.playerInteraction(currentPlayer, board);
             return event.getName();
         }
         return null;
@@ -535,14 +531,13 @@ public class GameManager {
     }
 
 
-
     public boolean loadGame(File file) throws InvalidFileException, FileNotFoundException {
 
         return false;
 
     }
 
-    public boolean saveGame(File file){
+    public boolean saveGame(File file) {
         return false;
     }
 

@@ -1,8 +1,7 @@
-package pt.ulusofona.lp2.greatprogrammingjourney.Abyss.subtype;
+package pt.ulusofona.lp2.greatprogrammingjourney.abyss.subtype;
 
-import pt.ulusofona.lp2.greatprogrammingjourney.Abyss.Abyss;
+import pt.ulusofona.lp2.greatprogrammingjourney.abyss.Abyss;
 import pt.ulusofona.lp2.greatprogrammingjourney.Player;
-import pt.ulusofona.lp2.greatprogrammingjourney.tool.Tool;
 
 public class SecundaryEffects extends Abyss {
     public SecundaryEffects(int position) {

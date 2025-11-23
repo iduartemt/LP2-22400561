@@ -1,5 +1,6 @@
-package pt.ulusofona.lp2.greatprogrammingjourney.Abyss;
+package pt.ulusofona.lp2.greatprogrammingjourney.abyss;
 
+import pt.ulusofona.lp2.greatprogrammingjourney.Board;
 import pt.ulusofona.lp2.greatprogrammingjourney.Event;
 import pt.ulusofona.lp2.greatprogrammingjourney.Player;
 import pt.ulusofona.lp2.greatprogrammingjourney.tool.Tool;
@@ -13,6 +14,6 @@ public abstract class Abyss extends Event {
     }
 
     @Override
-    public abstract void playerInteraction(Player player);
+    public abstract void playerInteraction(Player player, Board board);
 
 }

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Slot {
-    int nrSlot;
+    public int nrSlot;
     List<Player> players = new ArrayList<>();
     Event event;
 
@@ -16,7 +16,7 @@ public class Slot {
         players.add(player);
     }
 
-    void removePlayer(Player player) {
+    public void removePlayer(Player player) {
         players.remove(player);
     }
 

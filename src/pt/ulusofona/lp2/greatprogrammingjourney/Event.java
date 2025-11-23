@@ -29,6 +29,6 @@ public abstract class Event {
         return image;
     }
 
-    public abstract void playerInteraction(Player player);
+    public abstract void playerInteraction(Player player, Board board);
 
 }

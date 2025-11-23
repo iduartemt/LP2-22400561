@@ -1,14 +1,14 @@
 package pt.ulusofona.lp2.greatprogrammingjourney;
 
-import pt.ulusofona.lp2.greatprogrammingjourney.Abyss.subtype.*;
-import pt.ulusofona.lp2.greatprogrammingjourney.Abyss.subtype.Exception;
+import pt.ulusofona.lp2.greatprogrammingjourney.abyss.subtype.*;
+import pt.ulusofona.lp2.greatprogrammingjourney.abyss.subtype.Exception;
 import pt.ulusofona.lp2.greatprogrammingjourney.tool.subtypes.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Board {
-    List<Slot> slots = new ArrayList<>();
+    public List<Slot> slots = new ArrayList<>();
 
     public Board(List<Player> players, int worldSize) {
         addSlotList(worldSize);
@@ -34,7 +34,7 @@ public class Board {
         }
     }
 
-    int getNrTotalSlots() {
+    public int getNrTotalSlots() {
         return slots.size();
     }
 

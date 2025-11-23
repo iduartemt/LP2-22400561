@@ -1,6 +1,6 @@
-package pt.ulusofona.lp2.greatprogrammingjourney.Abyss.subtype;
+package pt.ulusofona.lp2.greatprogrammingjourney.abyss.subtype;
 
-import pt.ulusofona.lp2.greatprogrammingjourney.Abyss.Abyss;
+import pt.ulusofona.lp2.greatprogrammingjourney.abyss.Abyss;
 import pt.ulusofona.lp2.greatprogrammingjourney.Player;
 
 public class Crash extends Abyss {
