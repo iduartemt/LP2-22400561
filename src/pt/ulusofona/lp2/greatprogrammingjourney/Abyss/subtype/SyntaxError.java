@@ -12,7 +12,7 @@ public class SyntaxError extends Abyss {
 
     @Override
     public void playerInteraction(Player player) {
-        for (Tool t : player.getTools()) {
+    /*    for (Tool t : player.getTools()) {
             if (t.getName().equals("IDE")) {
                 player.getTools().remove();
                 System.out.println("Erro de sintaxe anulado por " + t.getName());
@@ -20,7 +20,7 @@ public class SyntaxError extends Abyss {
             } else {
                player.get
             }
-        }
+        }*/
     }
 }
 
