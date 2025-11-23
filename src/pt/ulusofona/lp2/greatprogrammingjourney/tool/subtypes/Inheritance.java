@@ -6,7 +6,7 @@ import pt.ulusofona.lp2.greatprogrammingjourney.tool.Tool;
 
 public class Inheritance extends Tool {
     public Inheritance(int position) {
-        super("Herança", 0, position, "inheritance");
+        super("Herança", 0, position, "inheritance.png");
     }
 
     @Override

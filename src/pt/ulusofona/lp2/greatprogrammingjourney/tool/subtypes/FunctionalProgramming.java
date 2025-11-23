@@ -6,7 +6,7 @@ import pt.ulusofona.lp2.greatprogrammingjourney.tool.Tool;
 
 public class FunctionalProgramming extends Tool {
     public FunctionalProgramming(int position) {
-        super("Programação Funcional", 1, position, "funcional.png");
+        super("Programação Funcional", 1, position, "functional.png");
     }
 
     @Override

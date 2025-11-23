@@ -326,12 +326,47 @@ public class GameManager {
 
     // Retorna os IDs dos jogadores presentes numa determinada slot
     public String[] getSlotInfo(int position) {
+        if (board == null) {
+            return null;
+        }
+
         Slot slot = board.encontraSlot(position);
         if (slot == null) {
             return null;
         }
-        return new String[]{slot.buildPlayerIds(), "", ""};
+
+        // [0] -> IDs dos jogadores na casa
+        String playersStr = slot.buildPlayerIds();
+
+        // [1] -> nome do evento (abismo / tool), vazio se não houver
+        String eventName = "";
+
+        // [2] -> tipo do evento (ex: "A:0", "T:3"), vazio se não houver
+        String eventTypeStr = "";
+
+        Event event = slot.getEvent();
+        if (event != null) {
+            eventName = event.getName();
+
+            // Se usares o helper:
+            eventTypeStr = event.getTypeCode();
+
+            // Se não quiseres o helper em Event, podes fazer direto aqui:
+        /*
+        String pkg = event.getClass().getPackageName();
+        String prefix = "A";
+        if (pkg.contains(".tool.")) {
+            prefix = "T";
+        } else if (pkg.contains(".abyss.")) {
+            prefix = "A";
+        }
+        eventTypeStr = prefix + ":" + event.getId();
+        */
+        }
+
+        return new String[]{playersStr, eventName, eventTypeStr};
     }
+
 
     // Devolve o ID do jogador atual
     public int getCurrentPlayerID() {

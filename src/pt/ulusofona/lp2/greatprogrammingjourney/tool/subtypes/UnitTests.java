@@ -6,7 +6,7 @@ import pt.ulusofona.lp2.greatprogrammingjourney.tool.Tool;
 
 public class UnitTests extends Tool {
     public UnitTests(int position) {
-        super("Testes Unitários", 2, position, "units-tests.png");
+        super("Testes Unitários", 2, position, "unit-tests.png");
     }
 
     @Override

@@ -29,6 +29,18 @@ public abstract class Event {
         return image;
     }
 
+    public String getTypeCode() {
+        String pkg = getClass().getPackageName();
+        String prefix = "A"; // default: abismo
+
+        if (pkg.contains(".tool.")) {
+            prefix = "T";
+        } else if (pkg.contains(".abyss.")) {
+            prefix = "A";
+        }
+        return prefix + ":" + id;
+    }
+
     public abstract void playerInteraction(Player player, Board board);
 
 }
