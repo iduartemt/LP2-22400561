@@ -43,9 +43,11 @@ public class SyntaxError extends Abyss {
             }
         }
 
+
         if (currentSlot == null) {
             return;
         }
+
 
         Slot destinationSlot = board.encontraSlot(currentSlot.nrSlot - 1);
 

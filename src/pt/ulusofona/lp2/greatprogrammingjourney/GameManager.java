@@ -24,6 +24,7 @@ public class GameManager {
     Board board;
     int currentPlayerId; // guarda o ID do jogador atual
     int turnCount = 0;   // conta o número de jogadas
+    int lastMovedPlayerId = -1;
     //==================================================================================================================
 
     // Verifica se o número de jogadores está entre 2 e 4
@@ -365,6 +366,9 @@ public class GameManager {
             return false; // jogador não encontrado
         }
 
+
+        lastMovedPlayerId = currentPlayer.getId();
+
         // Calcula destino e trata se passar do fim
         int lastSlot = board.getNrTotalSlots();
         int destination = originSlot.nrSlot + nrSpaces;
@@ -422,6 +426,9 @@ public class GameManager {
     }
 
     public String reactToAbyssOrTool() {
+        if (board == null || lastMovedPlayerId == -1) {
+            return null;
+        }
 
         Player currentPlayer = null;
         Slot currentSlot = null;
