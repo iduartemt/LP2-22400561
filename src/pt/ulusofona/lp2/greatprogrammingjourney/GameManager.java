@@ -246,8 +246,8 @@ public class GameManager {
         }
         // percorre todas as slots e jogadores
 
-        for (Slot slot : board.slots) {
-            for (Player player : slot.players) {
+        for (Slot slot : board.getSlots()) {
+            for (Player player : slot.getPlayers()) {
                 if (player.getId() == id) {
                     // cria array com informações do jogador
                     String[] foundedPlayer = new String[5];
@@ -255,7 +255,7 @@ public class GameManager {
                     foundedPlayer[1] = player.getName();
                     foundedPlayer[2] = player.getLanguage();
                     foundedPlayer[3] = player.getColor();
-                    foundedPlayer[4] = String.valueOf(slot.nrSlot);
+                    foundedPlayer[4] = String.valueOf(slot.getNrSlot());
                     return foundedPlayer;
                 }
             }
@@ -269,7 +269,7 @@ public class GameManager {
             return null;
         }
 
-        for (Slot slot : board.slots) {
+        for (Slot slot : board.getSlots()) {
             Player player = slot.findPlayerByID(id);
 
             if (player != null) {
@@ -290,7 +290,7 @@ public class GameManager {
                     toolsStr = String.join(", ", toolNames);
                 }
 
-                return id + " | " + player.getName() + " | " + slot.nrSlot + " | " + toolsStr + " | " +
+                return id + " | " + player.getName() + " | " + slot.getNrSlot() + " | " + toolsStr + " | " +
                         languagesInfo + " | Em Jogo";
             }
         }
@@ -305,8 +305,8 @@ public class GameManager {
 
         List<Player> alivePlayers = new ArrayList<>();
 
-        for (Slot s : board.slots) {
-            for (Player p : s.players) {
+        for (Slot s : board.getSlots()) {
+            for (Player p : s.getPlayers()) {
                 if (p.getIsAlive() && !alivePlayers.contains(p)) {
                     alivePlayers.add(p);
                 }
@@ -352,7 +352,7 @@ public class GameManager {
         boolean found = false;
 
         // Encontra o jogador atual e a casa onde está
-        for (Slot s : board.slots) {
+        for (Slot s : board.getSlots()) {
             Player p = s.findPlayerByID(getCurrentPlayerID());
             if (p != null) {
                 currentPlayer = p;
@@ -371,11 +371,11 @@ public class GameManager {
 
         // Calcula destino e trata se passar do fim
         int lastSlot = board.getNrTotalSlots();
-        int destination = originSlot.nrSlot + nrSpaces;
+        int destination = originSlot.getNrSlot() + nrSpaces;
 
         // se ultrapassar o final volta para trás
         if (destination > lastSlot) {
-            int tillTheEnd = lastSlot - originSlot.nrSlot;
+            int tillTheEnd = lastSlot - originSlot.getNrSlot();
             int exceed = nrSpaces - tillTheEnd;
             destination = lastSlot - exceed;
         }
@@ -401,8 +401,8 @@ public class GameManager {
 
         // Determina o próximo jogador (ordem crescente de ID)
         List<Player> allPlayers = new ArrayList<>();
-        for (Slot slot : board.slots) {
-            for (Player p : slot.players) {
+        for (Slot slot : board.getSlots()) {
+            for (Player p : slot.getPlayers()) {
                 if (p.getIsAlive() && !allPlayers.contains(p)) {
                     allPlayers.add(p);
                 }
@@ -433,7 +433,7 @@ public class GameManager {
         Player currentPlayer = null;
         Slot currentSlot = null;
 
-        for (Slot s : board.slots) {
+        for (Slot s : board.getSlots()) {
             Player p = s.findPlayerByID(lastMovedPlayerId);
             if (p != null) {
                 currentPlayer = p;
@@ -478,8 +478,8 @@ public class GameManager {
             return null;
         }
 
-        for (Slot slot : board.slots) {
-            if (slot.nrSlot == board.getNrTotalSlots()) {
+        for (Slot slot : board.getSlots()) {
+            if (slot.getNrSlot() == board.getNrTotalSlots()) {
                 return slot;
             }
         }
@@ -494,10 +494,10 @@ public class GameManager {
         }
 
         for (int i = board.getNrTotalSlots() - 1; i >= 0; i--) {
-            Slot slot = board.slots.get(i);
-            for (Player player : slot.players) {
+            Slot slot = board.getSlots().get(i);
+            for (Player player : slot.getPlayers()) {
                 if (!player.getName().equals(winnerName)) {
-                    lastPlayers.add(player.getName() + " " + slot.nrSlot);
+                    lastPlayers.add(player.getName() + " " + slot.getNrSlot());
                 }
             }
         }
@@ -515,12 +515,12 @@ public class GameManager {
         // encontra o vencedor
         Slot winnerSlot = findWinner();
 
-        if (winnerSlot == null || winnerSlot.players.isEmpty()) {
+        if (winnerSlot == null || winnerSlot.getPlayers().isEmpty()) {
             return results;
         }
 
         // nome do vencedor
-        String winnerName = winnerSlot.players.get(0).getName();
+        String winnerName = winnerSlot.getPlayers().get(0).getName();
         // nome dos outros jogadores
         ArrayList<String> lastPlayers = findLastPlayers(winnerName);
 

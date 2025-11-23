@@ -4,12 +4,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Slot {
-    public int nrSlot;
-    public List<Player> players = new ArrayList<>();
+    private int nrSlot;
+    private List<Player> players = new ArrayList<>();
     Event event;
 
     public Slot(int nrSlot) {
         this.nrSlot = nrSlot;
+    }
+
+    public int getNrSlot() {
+        return nrSlot;
+    }
+
+    public List<Player> getPlayers() {
+        return players;
+    }
+
+    public Event getEvent() {
+        return event;
     }
 
     public void addPlayer(Player player) {
@@ -49,10 +61,6 @@ public class Slot {
 
     public void removeEvent() {
         this.event = null;
-    }
-
-    public Event getEvent() {
-        return event;
     }
 
 }

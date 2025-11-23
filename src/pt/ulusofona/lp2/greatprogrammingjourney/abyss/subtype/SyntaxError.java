@@ -36,8 +36,8 @@ public class SyntaxError extends Abyss {
         //Descobre em qual slot esta o player
         Slot currentSlot = null;
 
-        for (Slot s : board.slots) {
-            if (s.players.contains(player)) {
+        for (Slot s : board.getSlots()) {
+            if (s.getPlayers().contains(player)) {
                 currentSlot = s;
                 break;
             }
@@ -49,7 +49,7 @@ public class SyntaxError extends Abyss {
         }
 
 
-        Slot destinationSlot = board.encontraSlot(currentSlot.nrSlot - 1);
+        Slot destinationSlot = board.encontraSlot(currentSlot.getNrSlot() - 1);
 
         currentSlot.removePlayer(player);
         destinationSlot.addPlayer(player);

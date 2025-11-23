@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Board {
-    public List<Slot> slots = new ArrayList<>();
+    private List<Slot> slots = new ArrayList<>();
 
     public Board(List<Player> players, int worldSize) {
         addSlotList(worldSize);
@@ -40,11 +40,15 @@ public class Board {
 
     public Slot encontraSlot(int nrSlot) {
         for (Slot slot : slots) {
-            if (slot.nrSlot == nrSlot) {
+            if (slot.getNrSlot() == nrSlot) {
                 return slot;
             }
         }
         return null;
+    }
+
+    public List<Slot> getSlots() {
+        return slots;
     }
 
     public boolean hasPlayerOnLastSlot() {
@@ -52,7 +56,7 @@ public class Board {
             return false;
         }
         int lastIndex = slots.size() - 1;
-        return !slots.get(lastIndex).players.isEmpty();
+        return !slots.get(lastIndex).getPlayers().isEmpty();
     }
 
     public void addEventsToSlot(String[][] abyssesAndTools) {
