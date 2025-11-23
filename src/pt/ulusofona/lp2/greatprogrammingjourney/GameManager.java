@@ -6,18 +6,6 @@ import javax.swing.*;
 import java.io.*;
 import java.util.*;
 
-enum Color {
-    BROWN,
-    PURPLE,
-    GREEN,
-    BLUE
-}
-
-enum EventType {
-    ABYSS,
-    TOOL
-}
-
 public class GameManager {
 
     //================================================VARIÁVEIS=========================================================
@@ -335,33 +323,19 @@ public class GameManager {
             return null;
         }
 
-        // [0] -> IDs dos jogadores na casa
-        String playersStr = slot.buildPlayerIds();
-
-        // [1] -> nome do evento (abismo / tool), vazio se não houver
+        String playersStr = slot.buildPlayerIds(); // ids dos jogadores na casa
         String eventName = "";
-
-        // [2] -> tipo do evento (ex: "A:0", "T:3"), vazio se não houver
         String eventTypeStr = "";
 
         Event event = slot.getEvent();
         if (event != null) {
             eventName = event.getName();
 
-            // Se usares o helper:
-            eventTypeStr = event.getTypeCode();
-
-            // Se não quiseres o helper em Event, podes fazer direto aqui:
-        /*
-        String pkg = event.getClass().getPackageName();
-        String prefix = "A";
-        if (pkg.contains(".tool.")) {
-            prefix = "T";
-        } else if (pkg.contains(".abyss.")) {
-            prefix = "A";
-        }
-        eventTypeStr = prefix + ":" + event.getId();
-        */
+            if (event.getType() == EventType.ABYSS) {
+                eventTypeStr = "A:" + event.getId();
+            } else if (event.getType() == EventType.TOOL) {
+                eventTypeStr = "T:" + event.getId();
+            }
         }
 
         return new String[]{playersStr, eventName, eventTypeStr};

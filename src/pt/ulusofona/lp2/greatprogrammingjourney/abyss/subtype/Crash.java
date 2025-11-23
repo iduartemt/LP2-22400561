@@ -1,13 +1,14 @@
 package pt.ulusofona.lp2.greatprogrammingjourney.abyss.subtype;
 
 import pt.ulusofona.lp2.greatprogrammingjourney.Board;
+import pt.ulusofona.lp2.greatprogrammingjourney.EventType;
 import pt.ulusofona.lp2.greatprogrammingjourney.abyss.Abyss;
 import pt.ulusofona.lp2.greatprogrammingjourney.Player;
 
 public class Crash extends Abyss {
 
     public Crash(int position) {
-        super("crash", 4, position, null, "crash.png");
+        super("crash", 4, position, null, "crash.png", EventType.ABYSS);
     }
 
     @Override

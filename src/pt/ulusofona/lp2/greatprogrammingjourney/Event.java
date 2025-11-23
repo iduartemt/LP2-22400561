@@ -5,12 +5,14 @@ public abstract class Event {
     private final int id;
     private final int position;
     private final String image;
+    private final EventType type;  // ABYSS ou TOOL
 
-    public Event(String name, int id, int position, String image) {
+    public Event(String name, int id, int position, String image, EventType type) {
         this.name = name;
         this.id = id;
         this.position = position;
         this.image = image;
+        this.type = type;
     }
 
     public String getName() {
@@ -29,16 +31,8 @@ public abstract class Event {
         return image;
     }
 
-    public String getTypeCode() {
-        String pkg = getClass().getPackageName();
-        String prefix = "A"; // default: abismo
-
-        if (pkg.contains(".tool.")) {
-            prefix = "T";
-        } else if (pkg.contains(".abyss.")) {
-            prefix = "A";
-        }
-        return prefix + ":" + id;
+    public EventType getType() {
+        return type;
     }
 
     public abstract void playerInteraction(Player player, Board board);

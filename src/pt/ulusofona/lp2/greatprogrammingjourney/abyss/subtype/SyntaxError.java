@@ -1,16 +1,18 @@
 package pt.ulusofona.lp2.greatprogrammingjourney.abyss.subtype;
 
 import pt.ulusofona.lp2.greatprogrammingjourney.Board;
+import pt.ulusofona.lp2.greatprogrammingjourney.EventType;
 import pt.ulusofona.lp2.greatprogrammingjourney.Slot;
 import pt.ulusofona.lp2.greatprogrammingjourney.abyss.Abyss;
 import pt.ulusofona.lp2.greatprogrammingjourney.Player;
 import pt.ulusofona.lp2.greatprogrammingjourney.tool.Tool;
 
 
+
 public class SyntaxError extends Abyss {
 
     public SyntaxError(int position) {
-        super("Erro de sintaxe", 0, position, null, "syntax.png");
+        super("Erro de Sintaxe", 0, position,null, "syntax.png", EventType.ABYSS);
     }
 
     @Override
