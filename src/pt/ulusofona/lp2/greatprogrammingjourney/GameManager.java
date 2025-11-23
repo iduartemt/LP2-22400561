@@ -270,11 +270,26 @@ public class GameManager {
 
         for (Slot slot : board.slots) {
             Player player = slot.findPlayerByID(id);
+
             if (player != null) {
                 List<String> sortedLanguages = player.getSortedLanguages(player.getLanguage());
                 StringBuilder languagesInfo = player.playerLanguageInfo(sortedLanguages);
 
-                return id + " | " + player.getName() + " | " + slot.nrSlot + " | " + getProgrammersInfo() + " | " +
+                List<Tool> playerTools = player.getTools();
+                String toolsStr;
+
+                if (playerTools == null || playerTools.isEmpty()) {
+                    toolsStr = "No tools";
+                } else {
+                    List<String> toolNames = new ArrayList<>();
+                    for (Tool t : playerTools) {
+                        toolNames.add(t.getName());
+                    }
+                    Collections.sort(toolNames);
+                    toolsStr = String.join(", ", toolNames);
+                }
+
+                return id + " | " + player.getName() + " | " + slot.nrSlot + " | " + toolsStr + " | " +
                         languagesInfo + " | Em Jogo";
             }
         }
@@ -304,35 +319,7 @@ public class GameManager {
 
         StringBuilder sb = new StringBuilder();
 
-        for (int i = 0; i < alivePlayers.size(); i++) {
-            Player p = alivePlayers.get(i);
 
-            if (i > 0) {
-                sb.append(" | ");
-            }
-
-            List<Tool> playerTools = p.getTools();
-
-            if (playerTools == null || playerTools.isEmpty()) {
-                sb.append("No tools");
-            } else {
-                // Obter nomes das ferramentas
-                List<String> toolNames = new ArrayList<>();
-                for (Tool t : playerTools) {
-                    toolNames.add(t.getName());
-                }
-
-                // Ordenar alfabeticamente
-                Collections.sort(toolNames);
-                // Juntar com ", "
-                for (int j = 0; j < toolNames.size(); j++) {
-                    if (j > 0) {
-                        sb.append(", ");
-                    }
-                    sb.append(toolNames.get(j));
-                }
-            }
-        }
 
         return sb.toString();
     }
@@ -443,8 +430,8 @@ public class GameManager {
 
         for (Slot s : board.slots) {
             Player p = s.findPlayerByID(getCurrentPlayerID());
-            if (p != null) {
 
+            if (p != null) {
                 currentPlayer = p;
                 currentSlot = s;
                 foundPlayer = true;
@@ -461,6 +448,7 @@ public class GameManager {
         if (event != null) {
 
             event.playerInteraction(currentPlayer);
+            return event.getName();
         }
         return null;
     }
