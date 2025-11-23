@@ -33,7 +33,7 @@ public class SyntaxError extends Abyss {
             return;
         }
 
-        //Caso nao tenha, tem de recuar -1
+        //Descobre em qual slot esta o player
         Slot currentSlot = null;
 
         for (Slot s : board.slots) {

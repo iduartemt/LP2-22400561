@@ -1,5 +1,6 @@
 package pt.ulusofona.lp2.greatprogrammingjourney.abyss.subtype;
 
+import pt.ulusofona.lp2.greatprogrammingjourney.Board;
 import pt.ulusofona.lp2.greatprogrammingjourney.abyss.Abyss;
 import pt.ulusofona.lp2.greatprogrammingjourney.Player;
 
@@ -10,6 +11,6 @@ public class BlueScreenOfDeath extends Abyss {
     }
 
     @Override
-    public void playerInteraction(Player player) {
+    public void playerInteraction(Player player, Board board) {
     }
 }

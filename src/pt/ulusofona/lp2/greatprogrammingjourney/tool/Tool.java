@@ -1,5 +1,6 @@
 package pt.ulusofona.lp2.greatprogrammingjourney.tool;
 
+import pt.ulusofona.lp2.greatprogrammingjourney.Board;
 import pt.ulusofona.lp2.greatprogrammingjourney.Event;
 import pt.ulusofona.lp2.greatprogrammingjourney.Player;
 
@@ -10,5 +11,5 @@ public abstract class Tool extends Event {
     }
 
     @Override
-    public abstract void playerInteraction(Player player);
+    public abstract void playerInteraction(Player player, Board board);
 }

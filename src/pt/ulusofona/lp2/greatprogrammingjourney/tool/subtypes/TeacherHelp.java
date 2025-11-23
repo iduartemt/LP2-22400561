@@ -1,5 +1,6 @@
 package pt.ulusofona.lp2.greatprogrammingjourney.tool.subtypes;
 
+import pt.ulusofona.lp2.greatprogrammingjourney.Board;
 import pt.ulusofona.lp2.greatprogrammingjourney.Player;
 import pt.ulusofona.lp2.greatprogrammingjourney.tool.Tool;
 
@@ -9,7 +10,7 @@ public class TeacherHelp extends Tool {
     }
 
     @Override
-    public void playerInteraction(Player player) {
+    public void playerInteraction(Player player, Board board) {
         player.getTools().add(this);
     }
 }
