@@ -486,6 +486,7 @@ public class GameManager {
         }
         return null;
 
+
     }
 
     private int findAtualPlayerIndex(List<Player> allPlayers) {
