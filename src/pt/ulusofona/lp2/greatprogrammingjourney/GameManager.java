@@ -393,7 +393,13 @@ public class GameManager {
         }
 
 
-        lastMovedPlayerId = currentPlayer.getId();
+        // o que era previousPosition passa a ser "há 2 jogadas atrás"
+        currentPlayer.setPositionTwoMovesAgo(currentPlayer.getPreviousPosition());
+
+        //previousPosition passa a ser a posição atual antes de mexer
+        currentPlayer.setPreviousPosition(originSlot.getNrSlot());
+
+        //guardar o valor do dado desta jogada (pode ser útil noutros abismos)
         currentPlayer.setLastDiceValue(nrSpaces);
 
         // Calcula destino e trata se passar do fim

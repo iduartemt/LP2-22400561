@@ -14,7 +14,10 @@ public class Player {
     private final ArrayList<Tool> tools = new ArrayList<>();
     private final String color;
     private boolean isAlive = true;
+    //Dados
     private int lastDiceValue;
+    private int previousPosition;
+    private int positionTwoMovesAgo;
 
     public Player(int id, String name, String language, String color) {
         this.id = id;
@@ -47,12 +50,32 @@ public class Player {
         return isAlive;
     }
 
+    public void setIsAlive(boolean isAlive) {
+        this.isAlive = isAlive;
+    }
+
     public int getLastDiceValue() {
         return lastDiceValue;
     }
 
-    public void setLastDiceValue(int value){
+    public void setLastDiceValue(int value) {
         this.lastDiceValue = value;
+    }
+
+    public int getPreviousPosition() {
+        return previousPosition;
+    }
+
+    public void setPreviousPosition(int previousPosition) {
+        this.previousPosition = previousPosition;
+    }
+
+    public int getPositionTwoMovesAgo() {
+        return positionTwoMovesAgo;
+    }
+
+    public void setPositionTwoMovesAgo(int positionTwoMovesAgo) {
+        this.positionTwoMovesAgo = positionTwoMovesAgo;
     }
 
     public static String isValidName(String name, HashSet<String> validName) {
