@@ -18,7 +18,7 @@ public class Exception extends Abyss {
         Tool unitTests = null;
 
         for (Tool t : player.getTools()) {
-            if (player.getTools().contains(t)) {
+            if (t.getId() == 2) {
                 unitTests = t;
                 break;
             }

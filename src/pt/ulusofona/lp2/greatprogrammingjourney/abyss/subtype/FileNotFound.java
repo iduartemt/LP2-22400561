@@ -18,7 +18,7 @@ public class FileNotFound extends Abyss {
         Tool exceptionHandling = null;
 
         for (Tool t : player.getTools()) {
-            if (player.getTools().contains(t)) {
+            if (t.getId() == 3) {
                 exceptionHandling = t;
                 break;
             }
