@@ -237,14 +237,31 @@ public class GameManager {
         for (Slot slot : board.getSlots()) {
             for (Player player : slot.getPlayers()) {
                 if (player.getId() == id) {
-                    // cria array com informações do jogador
-                    String[] foundedPlayer = new String[5];
-                    foundedPlayer[0] = String.valueOf(player.getId());
-                    foundedPlayer[1] = player.getName();
-                    foundedPlayer[2] = player.getLanguage();
-                    foundedPlayer[3] = player.getColor();
-                    foundedPlayer[4] = String.valueOf(slot.getNrSlot());
-                    return foundedPlayer;
+                    String[] infoPlayer = new String[7];
+                    infoPlayer[0] = String.valueOf(player.getId());
+                    infoPlayer[1] = player.getName();
+                    infoPlayer[2] = player.getLanguage();
+                    infoPlayer[3] = player.getColor();
+                    infoPlayer[4] = String.valueOf(slot.getNrSlot());
+
+                    List<Tool> tools = player.getTools();
+                    if (tools == null || tools.isEmpty()) {
+                        infoPlayer[5] = "No tools";
+                    } else {
+                        List<String> toolNames = new ArrayList<>();
+                        for (Tool t : tools) {
+                            toolNames.add(t.getName());
+                        }
+                        Collections.sort(toolNames);
+                        infoPlayer[5] = String.join(",", toolNames);
+                    }
+
+                    if (!player.getIsAlive()) {
+                        infoPlayer[6] = "Derrotado";
+                    } else {
+                        infoPlayer[6] = "Em jogo";
+                    }
+                    return infoPlayer;
                 }
             }
         }
