@@ -14,6 +14,7 @@ public class Player {
     private final ArrayList<Tool> tools = new ArrayList<>();
     private final String color;
     private boolean isAlive = true;
+    private int lastDiceValue;
 
     public Player(int id, String name, String language, String color) {
         this.id = id;
@@ -44,6 +45,14 @@ public class Player {
 
     public boolean getIsAlive() {
         return isAlive;
+    }
+
+    public int getLastDiceValue() {
+        return lastDiceValue;
+    }
+
+    public void setLastDiceValue(int value){
+        this.lastDiceValue = value;
     }
 
     public static String isValidName(String name, HashSet<String> validName) {

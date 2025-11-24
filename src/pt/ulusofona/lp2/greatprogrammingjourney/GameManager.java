@@ -9,10 +9,10 @@ import java.util.*;
 public class GameManager {
 
     //================================================VARIÁVEIS=========================================================
-    Board board;
-    int currentPlayerId; // guarda o ID do jogador atual
-    int turnCount = 0;   // conta o número de jogadas
-    int lastMovedPlayerId = -1;
+    private Board board;
+    private int currentPlayerId; // guarda o ID do jogador atual
+    private int turnCount = 0;   // conta o número de jogadas
+    private int lastMovedPlayerId = -1;
     //==================================================================================================================
 
     // Verifica se o número de jogadores está entre 2 e 4
@@ -377,6 +377,7 @@ public class GameManager {
 
 
         lastMovedPlayerId = currentPlayer.getId();
+        currentPlayer.setLastDiceValue(nrSpaces);
 
         // Calcula destino e trata se passar do fim
         int lastSlot = board.getNrTotalSlots();
