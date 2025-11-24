@@ -138,18 +138,19 @@ public class GameManager {
     }
 
     public boolean createInitialBoard(String[][] playerInfo, int worldSize, String[][] abyssesAndTools) {
-
-        // Primeiro: criar o tabuleiro "normal"
-        if (!createInitialBoard(playerInfo, worldSize)) {
+        if (abyssesAndTools == null) {
             return false;
         }
 
-        // Se não houver abysses/tools, está feito
-        if (abyssesAndTools == null) {
-            return true;
+        if (!nrValidPlayers(playerInfo)) {
+            return false;
         }
 
-        // Validar as linhas de abysses/tools
+        if (worldSize < playerInfo.length * 2) {
+            return false;
+        }
+
+        //validar a linha
         for (String[] line : abyssesAndTools) {
             if (line == null || line.length != 3) {
                 return false;
@@ -190,12 +191,13 @@ public class GameManager {
             }
         }
 
-        // Depois de tudo validado, adiciona os eventos
+        if (!createInitialBoard(playerInfo, worldSize)) {
+            return false;
+        }
+
         board.addEventsToSlot(abyssesAndTools);
-        turnCount = 0;
         return true;
     }
-
 
     private int findLowestPlayerId(List<Player> validPlayers) {
         int lowerId = validPlayers.get(0).getId();
@@ -476,17 +478,9 @@ public class GameManager {
         if (event != null) {
 
             event.playerInteraction(currentPlayer, board);
-            if (event.getType() == EventType.TOOL) {
-                return "Jogador agarrou " + event.getName();
-            }
-
-            if (event.getId() == 7) {
-                return event.getName() + "! O jogador morreu :(";
-            }
+            return event.getName();
         }
         return null;
-
-
     }
 
     private int findAtualPlayerIndex(List<Player> allPlayers) {
@@ -528,16 +522,11 @@ public class GameManager {
 
         for (int i = board.getNrTotalSlots() - 1; i >= 0; i--) {
             Slot slot = board.getSlots().get(i);
-
-            List<String> temp = new ArrayList<>();
-
             for (Player player : slot.getPlayers()) {
                 if (!player.getName().equals(winnerName)) {
-                    temp.add(player.getName() + " " + slot.getNrSlot());
+                    lastPlayers.add(player.getName() + " " + slot.getNrSlot());
                 }
             }
-            Collections.sort(temp);
-            lastPlayers.addAll(temp);
         }
         return lastPlayers;
     }
@@ -565,7 +554,7 @@ public class GameManager {
         results.add("THE GREAT PROGRAMMING JOURNEY");
         results.add("");
         results.add("NR. DE TURNOS");
-        results.add(String.valueOf(turnCount + 1));
+        results.add((turnCount + 1) + "");
         results.add("");
         results.add("VENCEDOR");
         results.add(winnerName);
