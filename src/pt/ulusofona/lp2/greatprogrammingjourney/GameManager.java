@@ -484,7 +484,7 @@ public class GameManager {
                 return event.getName() + "! O jogador morreu :(";
             }
         }
-        return event.getName();
+        return null;
 
     }
 
