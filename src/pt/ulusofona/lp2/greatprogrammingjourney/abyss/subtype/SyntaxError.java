@@ -11,7 +11,7 @@ import pt.ulusofona.lp2.greatprogrammingjourney.tool.Tool;
 public class SyntaxError extends Abyss {
 
     public SyntaxError(int position) {
-        super("Erro de Sintaxe", 0, position, null, "syntax.png", EventType.ABYSS);
+        super("Erro de sintaxe", 0, position, null, "syntax.png", EventType.ABYSS);
     }
 
     @Override
