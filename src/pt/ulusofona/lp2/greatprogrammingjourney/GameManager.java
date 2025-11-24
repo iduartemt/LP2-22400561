@@ -139,64 +139,63 @@ public class GameManager {
 
     public boolean createInitialBoard(String[][] playerInfo, int worldSize, String[][] abyssesAndTools) {
 
-        if (!nrValidPlayers(playerInfo)) {
+        // Primeiro: criar o tabuleiro "normal"
+        if (!createInitialBoard(playerInfo, worldSize)) {
             return false;
         }
 
-        if (worldSize < playerInfo.length * 2) {
-            return false;
+        // Se não houver abysses/tools, está feito
+        if (abyssesAndTools == null) {
+            return true;
         }
 
-        //validar a linha
-        if (abyssesAndTools != null) {
-            for (String[] line : abyssesAndTools) {
-                if (line == null || line.length != 3) {
-                    return false;
-                }
-
-                String type = line[0];
-                String subTypeStr = line[1];
-                String boardPositionStr = line[2];
-
-                if (!"0".equals(type) && !"1".equals(type)) {
-                    return false;
-                }
-
-                int subType;
-                int boardPosition;
-
-                try {
-                    subType = Integer.parseInt(subTypeStr);
-                    boardPosition = Integer.parseInt(boardPositionStr);
-                } catch (NumberFormatException e) {
-                    return false;
-                }
-
-                if (type.equals("0")) {
-                    if (subType < 0 || subType > 9) {
-                        return false;
-                    }
-                }
-
-                if (type.equals("1")) {
-                    if (subType < 0 || subType > 5) {
-                        return false;
-                    }
-                }
-
-                if (boardPosition < 1 || boardPosition > worldSize) {
-                    return false;
-                }
-            }
-
-            if (!createInitialBoard(playerInfo, worldSize)) {
+        // Validar as linhas de abysses/tools
+        for (String[] line : abyssesAndTools) {
+            if (line == null || line.length != 3) {
                 return false;
             }
 
-            board.addEventsToSlot(abyssesAndTools);
+            String type = line[0];
+            String subTypeStr = line[1];
+            String boardPositionStr = line[2];
+
+            if (!"0".equals(type) && !"1".equals(type)) {
+                return false;
+            }
+
+            int subType;
+            int boardPosition;
+
+            try {
+                subType = Integer.parseInt(subTypeStr);
+                boardPosition = Integer.parseInt(boardPositionStr);
+            } catch (NumberFormatException e) {
+                return false;
+            }
+
+            if (type.equals("0")) {
+                if (subType < 0 || subType > 9) {
+                    return false;
+                }
+            }
+
+            if (type.equals("1")) {
+                if (subType < 0 || subType > 5) {
+                    return false;
+                }
+            }
+
+            if (boardPosition < 1 || boardPosition > worldSize) {
+                return false;
+            }
         }
+
+        // Depois de tudo validado, adiciona os eventos
+        board.addEventsToSlot(abyssesAndTools);
+        turnCount = 0;
         return true;
     }
+
 
     private int findLowestPlayerId(List<Player> validPlayers) {
         int lowerId = validPlayers.get(0).getId();
@@ -485,7 +484,7 @@ public class GameManager {
                 return event.getName() + "! O jogador morreu :(";
             }
         }
-        return null;
+        return event.getName();
 
     }
 
@@ -565,7 +564,7 @@ public class GameManager {
         results.add("THE GREAT PROGRAMMING JOURNEY");
         results.add("");
         results.add("NR. DE TURNOS");
-        results.add(String.valueOf(turnCount));
+        results.add(String.valueOf(turnCount + 1));
         results.add("");
         results.add("VENCEDOR");
         results.add(winnerName);
