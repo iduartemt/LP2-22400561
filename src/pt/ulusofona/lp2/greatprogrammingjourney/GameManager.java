@@ -393,13 +393,7 @@ public class GameManager {
         }
 
 
-        // o que era previousPosition passa a ser "há 2 jogadas atrás"
-        currentPlayer.setPositionTwoMovesAgo(currentPlayer.getPreviousPosition());
-
-        //previousPosition passa a ser a posição atual antes de mexer
-        currentPlayer.setPreviousPosition(originSlot.getNrSlot());
-
-        //guardar o valor do dado desta jogada (pode ser útil noutros abismos)
+        lastMovedPlayerId = currentPlayer.getId();
         currentPlayer.setLastDiceValue(nrSpaces);
 
         // Calcula destino e trata se passar do fim
@@ -484,9 +478,16 @@ public class GameManager {
         if (event != null) {
 
             event.playerInteraction(currentPlayer, board);
-            return event.getName();
+            if (event.getType() == EventType.TOOL) {
+                return "Jogador agarrou " + event.getName();
+            }
+
+            if (event.getId() == 7) {
+                return event.getName() + "! O jogador morreu :(";
+            }
         }
         return null;
+
     }
 
     private int findAtualPlayerIndex(List<Player> allPlayers) {
