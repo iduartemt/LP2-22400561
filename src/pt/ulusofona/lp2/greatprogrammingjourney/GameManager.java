@@ -336,7 +336,7 @@ public class GameManager {
             sb.append(player.getName() + " : ");
             int toolNr = 0;
             for (Tool t : player.getTools()) {
-                sb.append(t);
+                sb.append(t.getName());
                 toolNr++;
                 if (toolNr != player.getTools().size()) {
                     sb.append(";");
@@ -596,7 +596,29 @@ public class GameManager {
     }
 
     public boolean saveGame(File file) {
-        return false;
+        try {
+            FileWriter writer = new FileWriter(file);
+
+             //primeira linha tamanho do board
+            writer.write(board.getNrTotalSlots() + "\n");
+
+            //por cada ferramenta/abisdmo do board
+            //temos pos:abismo/ferramenta(0/1):tipo(0-5/0-9)
+            for (Slot slot : board.getSlots()) {
+                Event event = slot.getEvent();
+                if (event != null) {
+                    String eventType = event.getType() == EventType.ABYSS ? "0" : "1";
+                    writer.write(slot.getNrSlot()+":"+eventType+":"+ event.getId());
+                }
+                writer.write(",");
+            }
+            writer.write("\n");
+
+
+        } catch (IOException e) {
+            return false;
+        }
+        return true;
     }
 
     public JPanel getAuthorsPanel() {
