@@ -343,6 +343,10 @@ public class GameManager {
                 }
             }
 
+            if (toolNr ==0){
+                sb.append("No tools");
+            }
+
             playerNr++;
 
             if (playerNr != alivePlayers.size()) {
@@ -609,15 +613,33 @@ public class GameManager {
                 if (event != null) {
                     String eventType = event.getType() == EventType.ABYSS ? "0" : "1";
                     writer.write(slot.getNrSlot()+":"+eventType+":"+ event.getId());
+                    writer.write(",");
                 }
-                writer.write(",");
+
             }
             writer.write("\n");
 
+            //escrever info sobre os jogadores
+            for (Slot slot :board.getSlots()) {
+                List<Player> players = slot.getPlayers();
+                for (Player player : players) {
+                    writer.write(getProgrammerInfoAsStr(player.getId()));
+                    writer.write(",");
+                }
+            }
+            writer.write("\n");
 
+            // escrever jogador atual e numero do turno (jogAtual:nrTurno)
+            writer.write(currentPlayerId+":"+turnCount);
+            writer.write("\n");
+            writer.close();
         } catch (IOException e) {
+            System.out.println("falhou");
+            e.printStackTrace();
             return false;
         }
+        System.out.println("sucesso a salvar em " + file.getAbsolutePath());
+
         return true;
     }
 
