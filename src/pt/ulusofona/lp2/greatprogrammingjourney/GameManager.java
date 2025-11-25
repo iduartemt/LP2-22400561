@@ -330,6 +330,25 @@ public class GameManager {
 
         StringBuilder sb = new StringBuilder();
 
+        int playerNr = 0;
+
+        for (Player player : alivePlayers) {
+            sb.append(player.getName() + " : ");
+            int toolNr = 0;
+            for (Tool t : player.getTools()) {
+                sb.append(t);
+                toolNr++;
+                if (toolNr != player.getTools().size()) {
+                    sb.append(";");
+                }
+            }
+
+            playerNr++;
+
+            if (playerNr != alivePlayers.size()) {
+                sb.append(" | ");
+            }
+        }
 
         return sb.toString();
     }
