@@ -97,7 +97,7 @@ public class Player {
         return language;
     }
 
-    public StringBuilder playerLanguageInfo(List<String> sortLanguage) {
+    public String playerLanguageInfo(List<String> sortLanguage) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < sortLanguage.size(); i++) {
             sb.append(sortLanguage.get(i));
@@ -105,7 +105,7 @@ public class Player {
                 sb.append("; ");
             }
         }
-        return sb;
+        return sb.toString();
     }
 
     public List<String> getSortedLanguages(String languageStr) {

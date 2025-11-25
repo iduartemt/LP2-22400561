@@ -142,14 +142,6 @@ public class GameManager {
             return false;
         }
 
-        if (!nrValidPlayers(playerInfo)) {
-            return false;
-        }
-
-        if (worldSize < playerInfo.length * 2) {
-            return false;
-        }
-
         //validar a linha
         for (String[] line : abyssesAndTools) {
             if (line == null || line.length != 3) {
@@ -195,7 +187,12 @@ public class GameManager {
             return false;
         }
 
-        board.addEventsToSlot(abyssesAndTools);
+        try {
+            board.addEventsToSlot(abyssesAndTools);
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+
         return true;
     }
 
@@ -253,7 +250,7 @@ public class GameManager {
                             toolNames.add(t.getName());
                         }
                         Collections.sort(toolNames);
-                        infoPlayer[5] = String.join(",", toolNames);
+                        infoPlayer[5] = String.join(";", toolNames);
                     }
 
                     if (!player.getIsAlive()) {
@@ -279,7 +276,7 @@ public class GameManager {
 
             if (player != null) {
                 List<String> sortedLanguages = player.getSortedLanguages(player.getLanguage());
-                StringBuilder languagesInfo = player.playerLanguageInfo(sortedLanguages);
+                String languagesInfo = player.playerLanguageInfo(sortedLanguages);
 
                 List<Tool> playerTools = player.getTools();
                 String toolsStr;
@@ -292,11 +289,18 @@ public class GameManager {
                         toolNames.add(t.getName());
                     }
                     Collections.sort(toolNames);
-                    toolsStr = String.join(", ", toolNames);
+                    toolsStr = String.join(";", toolNames);
                 }
 
+                String isAliveText;
+                if (player.getIsAlive()) {
+                    isAliveText = "Em Jogo";
+                } else {
+                    isAliveText = "Derrotado";
+                }
                 return id + " | " + player.getName() + " | " + slot.getNrSlot() + " | " + toolsStr + " | " +
-                        languagesInfo + " | Em Jogo";
+                        languagesInfo + " | " + isAliveText;
+
             }
         }
 
@@ -310,6 +314,7 @@ public class GameManager {
 
         List<Player> alivePlayers = new ArrayList<>();
 
+        // RP: isto pode ser um metodo do board
         for (Slot s : board.getSlots()) {
             for (Player p : s.getPlayers()) {
                 if (p.getIsAlive() && !alivePlayers.contains(p)) {
