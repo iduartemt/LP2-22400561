@@ -2,16 +2,13 @@ package pt.ulusofona.lp2.greatprogrammingjourney;
 
 import pt.ulusofona.lp2.greatprogrammingjourney.tool.Tool;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 public class Player {
     private final int id;
     private final String name;
     private final String language;
-    private final ArrayList<Tool> tools = new ArrayList<>();
+    private final ArrayList<Tool> tools;
     private final String color;
     private boolean isAlive = true;
     //Dados
@@ -24,7 +21,24 @@ public class Player {
         this.name = name;
         this.language = language;
         this.color = color;
+        this.tools = new ArrayList<>();
     }
+
+    public Player(int id, String name, String language, String color,
+                  boolean isAlive, int lastDiceValue,
+                  int previousPosition, int positionTwoMovesAgo) {
+        this.id = id;
+        this.name = name;
+        this.language = language;
+        this.color = color;
+        this.tools = new ArrayList<>();
+        this.isAlive = isAlive;
+        this.lastDiceValue = lastDiceValue;
+        this.previousPosition = previousPosition;
+        this.positionTwoMovesAgo = positionTwoMovesAgo;
+    }
+
+
 
     public int getId() {
         return id;
@@ -40,6 +54,14 @@ public class Player {
 
     public ArrayList<Tool> getTools() {
         return tools;
+    }
+
+    public boolean addTool(Tool tool) {
+        return this.tools.add(tool);
+    }
+
+    public boolean removeTool(Tool tool){
+        return this.tools.remove(tool);
     }
 
     public String getColor() {

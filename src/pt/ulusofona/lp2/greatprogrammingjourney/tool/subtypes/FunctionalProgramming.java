@@ -12,6 +12,6 @@ public class FunctionalProgramming extends Tool {
 
     @Override
     public void playerInteraction(Player player, Board board) {
-        player.getTools().add(this);
+        player.addTool(this);
     }
 }

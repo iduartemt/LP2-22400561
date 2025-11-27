@@ -129,6 +129,7 @@ public class GameManager {
 
         // cria o tabuleiro com os jogadores e slots
         board = new Board(validPlayers, worldSize);
+
         turnCount = 0;
 
         // escolhe o jogador com ID mais baixo para começar
@@ -343,7 +344,7 @@ public class GameManager {
                 }
             }
 
-            if (toolNr ==0){
+            if (toolNr == 0) {
                 sb.append("No tools");
             }
 
@@ -593,9 +594,102 @@ public class GameManager {
     }
 
 
-    public boolean loadGame(File file) throws InvalidFileException, FileNotFoundException {
+    public void loadGame(File file) throws InvalidFileException, FileNotFoundException {
+        if (file == null) {
+            return;
+        }
 
-        return false;
+        try {
+            Scanner scanner = new Scanner(file);
+            if (!scanner.hasNextLine()) {
+                throw new InvalidFileException();
+            }
+            int worldSize = Integer.parseInt(scanner.nextLine());
+            if (!scanner.hasNextLine()) {
+                throw new InvalidFileException();
+            }
+            List<String[]> abyssesAndTools = new ArrayList<>();
+            String[] events = scanner.nextLine().split(",");
+            for (String event : events) {
+
+                String[] eventLines = event.split(":");
+                String[] formatedEventLines = {eventLines[1], eventLines[2], eventLines[0]};
+                abyssesAndTools.add(formatedEventLines);
+            }
+            if (!scanner.hasNextLine()) {
+                throw new InvalidFileException();
+            }
+            String[] playersStr = scanner.nextLine().split(",");
+            Map<Integer, Player> players = new HashMap<>();
+            List<Player> playersList = new ArrayList<>();
+            HashMap<Integer, String[]> toolsOfPlayers = new HashMap<>();
+            for (String playerStr : playersStr) {
+                System.out.println(playerStr);
+                String[] playerInfo =  playerStr.split(":");
+                int playerId = Integer.parseInt(playerInfo[0]);
+                String playerName = playerInfo[1];
+                String playerLanguage = playerInfo[2];
+                String[] playerTools = playerInfo[3].split(";");
+                toolsOfPlayers.put(playerId, playerTools);
+                String playerColor = playerInfo[4];
+                boolean playerIsAlive = Boolean.parseBoolean(playerInfo[5]);
+                int playerLastDiceValue = Integer.parseInt(playerInfo[6]);
+                int playerPreviousPosition = Integer.parseInt(playerInfo[7]);
+                int positionTwoMovesAgo = Integer.parseInt(playerInfo[8]);
+                Player player = new Player(playerId, playerName, playerLanguage,
+                        playerColor, playerIsAlive, playerLastDiceValue,
+                        playerPreviousPosition, positionTwoMovesAgo
+                );
+                players.put(playerId,player);
+                playersList.add(player);
+            }
+            // ler id current player e nrTurno
+            String[][] abyssesAndToolsFormated = new String[abyssesAndTools.size()][3];
+            for (int i = 0; i < abyssesAndTools.size(); i++) {
+                abyssesAndToolsFormated[i] = abyssesAndTools.get(i);
+            }
+            board = new Board(playersList, worldSize, abyssesAndToolsFormated);
+            for (Player player : board.getPlayers()) {
+                for (String toolStr :toolsOfPlayers.get(player.getId())) {
+                    Tool tool = board.getToolsHashMap().get(toolStr);
+                    player.addTool(tool);
+                }
+            }
+            if (!scanner.hasNext()) {
+                throw new InvalidFileException();
+            }
+            String[] currentGameInfo = scanner.nextLine().split(":");
+            String currentPlayerId = currentGameInfo[0];
+            String turnCount = currentGameInfo[1];
+            String lastMovedPlayerId = currentGameInfo[2];
+
+            this.currentPlayerId = Integer.parseInt(currentPlayerId);
+            this.turnCount = Integer.parseInt(turnCount);
+            this.lastMovedPlayerId = Integer.parseInt(lastMovedPlayerId);
+
+            if (!scanner.hasNextLine()) {
+                throw new InvalidFileException();
+            }
+            String playersPositionStr = scanner.nextLine();
+            for (String playersPosAndIdStr : playersPositionStr.split(",")) {
+                String[] playerPosAndId = playersPosAndIdStr.split(":");
+                int playerPos = Integer.parseInt(playerPosAndId[0]);
+                int playerId = Integer.parseInt(playerPosAndId[1]);
+                for (Slot slot : board.getSlots()) {
+                    if (slot.getNrSlot() == playerPos) {
+                        slot.addPlayer(players.get(playerId));
+                    }
+                }
+            }
+
+            scanner.close();
+        } catch (InvalidFileException | FileNotFoundException e) {
+            e.printStackTrace();
+            throw e;
+        } catch (IndexOutOfBoundsException e) {
+            e.printStackTrace();
+            throw new InvalidFileException();
+        }
 
     }
 
@@ -603,7 +697,7 @@ public class GameManager {
         try {
             FileWriter writer = new FileWriter(file);
 
-             //primeira linha tamanho do board
+            //primeira linha tamanho do board
             writer.write(board.getNrTotalSlots() + "\n");
 
             //por cada ferramenta/abisdmo do board
@@ -612,7 +706,7 @@ public class GameManager {
                 Event event = slot.getEvent();
                 if (event != null) {
                     String eventType = event.getType() == EventType.ABYSS ? "0" : "1";
-                    writer.write(slot.getNrSlot()+":"+eventType+":"+ event.getId());
+                    writer.write(slot.getNrSlot() + ":" + eventType + ":" + event.getId());
                     writer.write(",");
                 }
 
@@ -620,21 +714,38 @@ public class GameManager {
             writer.write("\n");
 
             //escrever info sobre os jogadores
-            for (Slot slot :board.getSlots()) {
+            for (Slot slot : board.getSlots()) {
                 List<Player> players = slot.getPlayers();
                 for (Player player : players) {
-                    writer.write(getProgrammerInfoAsStr(player.getId()));
+                    writer.write(player.getId() + ":");
+                    writer.write(player.getName() + ":");
+                    writer.write(player.getLanguage() + ":");
+                    for (Tool t : player.getTools()) {
+                        writer.write(t.getName());
+                        writer.write(";");
+                    }
+                    writer.write(":");
+                    writer.write(player.getColor() + ":");
+                    writer.write(player.getIsAlive() + ":");
+                    writer.write(player.getLastDiceValue() + ":");
+                    writer.write(player.getPreviousPosition() + ":");
+                    writer.write(player.getPositionTwoMovesAgo() + ":");
                     writer.write(",");
                 }
             }
             writer.write("\n");
 
             // escrever jogador atual e numero do turno (jogAtual:nrTurno)
-            writer.write(currentPlayerId+":"+turnCount);
+            writer.write(currentPlayerId + ":" + turnCount + ":" + lastMovedPlayerId);
             writer.write("\n");
+
+            for (Slot slot : board.getSlots()) {
+                for (Player player : slot.getPlayers()) {
+                    writer.write(slot.getNrSlot() + ":" + player.getId() + ",");
+                }
+            }
             writer.close();
         } catch (IOException e) {
-            System.out.println("falhou");
             e.printStackTrace();
             return false;
         }

@@ -2,22 +2,40 @@ package pt.ulusofona.lp2.greatprogrammingjourney;
 
 import pt.ulusofona.lp2.greatprogrammingjourney.abyss.subtype.*;
 import pt.ulusofona.lp2.greatprogrammingjourney.abyss.subtype.Exception;
+import pt.ulusofona.lp2.greatprogrammingjourney.tool.Tool;
 import pt.ulusofona.lp2.greatprogrammingjourney.tool.subtypes.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Board {
-    private List<Slot> slots = new ArrayList<>();
+    private final List<Slot> slots = new ArrayList<>();
+    private final HashMap<String, Tool> tools = new HashMap<>();
+    private final List<Player> players;
 
     public Board(List<Player> players, int worldSize) {
         addSlotList(worldSize);
         addPlayerSlotFirstSlot(players);
+        this.players = players;
     }
 
     public Board(List<Player> players, int worldSize, String[][] abyssesAndTools) {
         addSlotList(worldSize);
-        addPlayerSlotFirstSlot(players);
+        addEventsToSlot(abyssesAndTools);
+        this.players = players;
+    }
+
+    public List<Player> getPlayers() {
+        return players;
+    }
+
+    public List<Tool> getTools() {
+        return (List<Tool>) tools.values();
+    }
+
+    public HashMap<String, Tool> getToolsHashMap() {
+        return tools;
     }
 
     //adiciona cada slot a lista de slots
@@ -87,14 +105,18 @@ public class Board {
                     case "9" -> slot.addEvent(new SegmentationFault(positionInt));
                 }
             } else if (typeStr.equals("1")) {
+                Tool tool ;
                 switch (subTypeStr) {
-                    case "0" -> slot.addEvent(new Inheritance(positionInt));
-                    case "1" -> slot.addEvent(new FunctionalProgramming(positionInt));
-                    case "2" -> slot.addEvent(new UnitTests(positionInt));
-                    case "3" -> slot.addEvent(new ExceptionHandling(positionInt));
-                    case "4" -> slot.addEvent(new Ide(positionInt));
-                    case "5" -> slot.addEvent(new TeacherHelp(positionInt));
+                    case "0" -> tool = (new Inheritance(positionInt));
+                    case "1" -> tool = (new FunctionalProgramming(positionInt));
+                    case "2" -> tool = (new UnitTests(positionInt));
+                    case "3" -> tool = (new ExceptionHandling(positionInt));
+                    case "4" -> tool = (new Ide(positionInt));
+                    case "5" -> tool = (new TeacherHelp(positionInt));
+                    default -> throw new IllegalArgumentException("Tipo de ferramenta invalida");
                 }
+                slot.addEvent(tool);
+                this.tools.put(tool.getName(), tool);
             } else {
                 throw new IllegalArgumentException();
             }
