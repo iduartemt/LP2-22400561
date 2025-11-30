@@ -113,7 +113,7 @@ public class Player {
     }
 
     public static String isValidLanguage(String language) {
-        if (language == null) {
+        if (language == null || language.trim().isEmpty()) {
             return null;
         }
         return language;
