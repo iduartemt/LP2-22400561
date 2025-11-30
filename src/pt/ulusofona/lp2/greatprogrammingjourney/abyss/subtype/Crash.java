@@ -28,6 +28,7 @@ public class Crash extends Abyss {
         if (ide != null) {
             player.getTools().remove(ide);
             System.out.println("Crash anulado por " + ide.getName());
+return;
         }
 
         Slot currentSlot = null;

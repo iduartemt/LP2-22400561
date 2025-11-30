@@ -27,6 +27,7 @@ public class CodeDuplication extends Abyss {
         if (inheritance != null) {
             player.getTools().remove(inheritance);
             System.out.println("Código duplicado anulado por " + inheritance.getName());
+            return;
         }
 
         Slot currentSlot = null;

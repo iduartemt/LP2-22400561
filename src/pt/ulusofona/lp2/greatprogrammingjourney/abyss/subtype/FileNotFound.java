@@ -26,6 +26,7 @@ public class FileNotFound extends Abyss {
 
         if (exceptionHandling != null) {
             player.getTools().remove(exceptionHandling);
+            System.out.println("File not found anulado por " + exceptionHandling.getName());
             return;
         }
 

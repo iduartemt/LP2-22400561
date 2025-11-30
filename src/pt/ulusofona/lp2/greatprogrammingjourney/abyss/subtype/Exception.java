@@ -27,6 +27,7 @@ public class Exception extends Abyss {
         if (unitTests != null) {
             player.getTools().remove(unitTests);
             System.out.println("Exception anulado por " + unitTests.getName());
+            return;
         }
 
         Slot currentSlot = null;

@@ -27,6 +27,7 @@ public class SecundaryEffects extends Abyss {
         if (unitTests != null) {
             player.getTools().remove(unitTests);
             System.out.println("Efeitos secundários anulado por " + unitTests.getName());
+            return;
         }
 
         Slot currentSlot = null;
@@ -37,6 +38,7 @@ public class SecundaryEffects extends Abyss {
                 break;
             }
         }
+
         if (currentSlot == null) {
             return;
         }

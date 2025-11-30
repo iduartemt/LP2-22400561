@@ -27,6 +27,7 @@ public class LogicError extends Abyss {
         if (unitTests != null) {
             player.getTools().remove(unitTests);
             System.out.println("Erro de lógica anulado por " + unitTests.getName());
+            return;
         }
 
         Slot currentSlot = null;
