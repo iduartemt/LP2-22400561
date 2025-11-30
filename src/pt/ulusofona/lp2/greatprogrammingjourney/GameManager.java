@@ -86,6 +86,7 @@ public class GameManager {
 
         for (int i = 0; i < playerInfo.length; i++) {
             String[] validLine = playerInfo[i];
+
             if (!isValidLine(validLine)) {
                 return null;
             }
@@ -96,16 +97,24 @@ public class GameManager {
             String colorStr = validLine[3].trim();
 
             Integer id = isValidPlayer(idStr, validId);
-            if (id == null) return null;
+            if (id == null){
+                return null;
+            }
 
             String name = Player.isValidName(nameStr, validName);
-            if (name == null) return null;
+            if (name == null){
+                return null;
+            }
 
             String language = Player.isValidLanguage(langStr);
-            if (language == null) return null;
+            if (language == null){
+                return null;
+            }
 
             String color = isValidColor(colorStr, validColor); // Usa a versão corrigida abaixo
-            if (color == null) return null;
+            if (color == null){
+                return null;
+            }
 
             validPlayers.add(new Player(id, name, language, color));
         }
@@ -556,13 +565,15 @@ private Slot findWinner() {
 
 private ArrayList<String> findLastPlayers(String winnerName) {
     ArrayList<String> lastPlayers = new ArrayList<>();
-
     if (board == null) {
         return null;
     }
 
     for (int i = board.getNrTotalSlots() - 1; i >= 0; i--) {
         Slot slot = board.getSlots().get(i);
+        List<Player> playersInSlot = new ArrayList<>(slot.getPlayers());
+        playersInSlot.sort(Comparator.comparingInt(Player::getId));
+
         for (Player player : slot.getPlayers()) {
             if (!player.getName().equals(winnerName)) {
                 lastPlayers.add(player.getName() + " " + slot.getNrSlot());
@@ -595,7 +606,7 @@ public ArrayList<String> getGameResults() {
     results.add("THE GREAT PROGRAMMING JOURNEY");
     results.add("");
     results.add("NR. DE TURNOS");
-    results.add((turnCount + 1) + "");
+    results.add((turnCount ) + "");
     results.add("");
     results.add("VENCEDOR");
     results.add(winnerName);
