@@ -259,6 +259,7 @@ public class GameManager {
                     } else {
                         infoPlayer[6] = "Em jogo";
                     }
+
                     return infoPlayer;
                 }
             }
@@ -328,6 +329,7 @@ public class GameManager {
         if (alivePlayers.isEmpty()) {
             return "";
         }
+
 
         StringBuilder sb = new StringBuilder();
 
@@ -630,7 +632,7 @@ public class GameManager {
             HashMap<Integer, String[]> toolsOfPlayers = new HashMap<>();
             for (String playerStr : playersStr) {
                 System.out.println(playerStr);
-                String[] playerInfo =  playerStr.split(":");
+                String[] playerInfo = playerStr.split(":");
                 int playerId = Integer.parseInt(playerInfo[0]);
                 String playerName = playerInfo[1];
                 String playerLanguage = playerInfo[2];
@@ -645,7 +647,7 @@ public class GameManager {
                         playerColor, playerIsAlive, playerLastDiceValue,
                         playerPreviousPosition, positionTwoMovesAgo
                 );
-                players.put(playerId,player);
+                players.put(playerId, player);
                 playersList.add(player);
             }
             // ler id current player e nrTurno
@@ -655,7 +657,7 @@ public class GameManager {
             }
             board = new Board(playersList, worldSize, abyssesAndToolsFormated);
             for (Player player : board.getPlayers()) {
-                for (String toolStr :toolsOfPlayers.get(player.getId())) {
+                for (String toolStr : toolsOfPlayers.get(player.getId())) {
                     Tool tool = board.getToolsHashMap().get(toolStr);
                     player.addTool(tool);
                 }
