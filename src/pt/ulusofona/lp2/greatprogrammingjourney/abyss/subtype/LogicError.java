@@ -18,7 +18,7 @@ public class LogicError extends Abyss {
         Tool unitTests = null;
 
         for (Tool t : player.getTools()) {
-            if (t.getId() == 1) {
+            if (t.getId() == 2) {
                 unitTests = t;
                 break;
             }
