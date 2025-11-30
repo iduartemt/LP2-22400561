@@ -38,8 +38,7 @@ public class Player {
         this.positionTwoMovesAgo = positionTwoMovesAgo;
     }
 
-
-
+    //=====================================================GETTERS======================================================
     public int getId() {
         return id;
     }
@@ -56,12 +55,8 @@ public class Player {
         return tools;
     }
 
-    public boolean addTool(Tool tool) {
-        return this.tools.add(tool);
-    }
-
-    public boolean removeTool(Tool tool){
-        return this.tools.remove(tool);
+    public int getPositionTwoMovesAgo() {
+        return positionTwoMovesAgo;
     }
 
     public String getColor() {
@@ -72,32 +67,51 @@ public class Player {
         return isAlive;
     }
 
-    public void setIsAlive(boolean isAlive) {
-        this.isAlive = isAlive;
+    public int getPreviousPosition() {
+        return previousPosition;
     }
 
     public int getLastDiceValue() {
         return lastDiceValue;
     }
 
+    public List<String> getSortedLanguages(String languageStr) {
+        List<String> languages = new ArrayList<>(List.of(languageStr.split(";")));
+        for (int i = 0; i < languages.size(); i++) {
+            languages.set(i, languages.get(i).trim());
+        }
+        Collections.sort(languages);
+        return languages;
+    }
+
+    //=====================================================SETTERS=====================================================
+
+    public void setIsAlive(boolean isAlive) {
+        this.isAlive = isAlive;
+    }
+
     public void setLastDiceValue(int value) {
         this.lastDiceValue = value;
     }
 
-    public int getPreviousPosition() {
-        return previousPosition;
-    }
 
     public void setPreviousPosition(int previousPosition) {
         this.previousPosition = previousPosition;
     }
 
-    public int getPositionTwoMovesAgo() {
-        return positionTwoMovesAgo;
-    }
 
     public void setPositionTwoMovesAgo(int positionTwoMovesAgo) {
         this.positionTwoMovesAgo = positionTwoMovesAgo;
+    }
+
+    //=====================================================METODOS======================================================
+
+    public boolean addTool(Tool tool) {
+        return this.tools.add(tool);
+    }
+
+    public boolean removeTool(Tool tool) {
+        return this.tools.remove(tool);
     }
 
     public static String isValidName(String name, HashSet<String> validName) {
@@ -128,15 +142,6 @@ public class Player {
             }
         }
         return sb.toString();
-    }
-
-    public List<String> getSortedLanguages(String languageStr) {
-        List<String> languages = new ArrayList<>(List.of(languageStr.split(";")));
-        for (int i = 0; i < languages.size(); i++) {
-            languages.set(i, languages.get(i).trim());
-        }
-        Collections.sort(languages);
-        return languages;
     }
 
 
