@@ -425,6 +425,11 @@ public class GameManager {
         lastMovedPlayerId = currentPlayer.getId();
         currentPlayer.setLastDiceValue(nrSpaces);
 
+        // Atualiza o histórico: O que era "anterior" passa a ser "há 2 jogadas"
+        currentPlayer.setPositionTwoMovesAgo(currentPlayer.getPreviousPosition());
+        // A posição onde estou agora (antes de me mover) passa a ser a "anterior"
+        currentPlayer.setPreviousPosition(originSlot.getNrSlot());
+
         // Calcula destino e trata se passar do fim
         int lastSlot = board.getNrTotalSlots();
         int destination = originSlot.getNrSlot() + nrSpaces;

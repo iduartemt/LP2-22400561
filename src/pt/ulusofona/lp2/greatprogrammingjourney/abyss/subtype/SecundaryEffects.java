@@ -44,6 +44,11 @@ public class SecundaryEffects extends Abyss {
         }
 
         int posTwoMovesAgo = player.getPositionTwoMovesAgo();
+
+        if (posTwoMovesAgo < 1) {
+            posTwoMovesAgo = 1;
+        }
+
         Slot destinationSlot = board.encontraSlot(posTwoMovesAgo);
 
         if (destinationSlot == null) {
