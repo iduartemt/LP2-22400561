@@ -15,18 +15,18 @@ public class SecundaryEffects extends Abyss {
     @Override
     public void playerInteraction(Player player, Board board) {
 
-        Tool unitTests = null;
+        Tool FunctionalProgramming = null;
 
         for (Tool t : player.getTools()) {
-            if (t.getId() == 2) {
-                unitTests = t;
+            if (t.getId() == 1) {
+                FunctionalProgramming = t;
                 break;
             }
         }
 
-        if (unitTests != null) {
-            player.getTools().remove(unitTests);
-            System.out.println("Efeitos secundários anulado por " + unitTests.getName());
+        if (FunctionalProgramming != null) {
+            player.getTools().remove(FunctionalProgramming);
+            System.out.println("Efeitos secundários anulado por " + FunctionalProgramming.getName());
             return;
         }
 

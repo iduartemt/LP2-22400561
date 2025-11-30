@@ -15,18 +15,18 @@ public class Exception extends Abyss {
     @Override
     public void playerInteraction(Player player, Board board) {
 
-        Tool unitTests = null;
+        Tool ExpectionHandling = null;
 
         for (Tool t : player.getTools()) {
-            if (t.getId() == 2) {
-                unitTests = t;
+            if (t.getId() == 3) {
+                ExpectionHandling = t;
                 break;
             }
         }
 
-        if (unitTests != null) {
-            player.getTools().remove(unitTests);
-            System.out.println("Exception anulado por " + unitTests.getName());
+        if (ExpectionHandling != null) {
+            player.getTools().remove(ExpectionHandling);
+            System.out.println("Exception anulado por " + ExpectionHandling.getName());
             return;
         }
 

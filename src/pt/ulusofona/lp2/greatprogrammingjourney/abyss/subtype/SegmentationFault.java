@@ -29,9 +29,9 @@ public class SegmentationFault extends Abyss {
                 Slot destinationSlot = board.encontraSlot(destinySlot);
 
                 if (slot.getPlayers().size() >= 2) {
-                    List<Player> vitimas = new ArrayList<>(slot.getPlayers());
+                    List<Player> players = new ArrayList<>(slot.getPlayers());
 
-                    for (Player p : vitimas) {
+                    for (Player p : players) {
                         slot.removePlayer(p);
                         destinationSlot.addPlayer(p);
                     }
