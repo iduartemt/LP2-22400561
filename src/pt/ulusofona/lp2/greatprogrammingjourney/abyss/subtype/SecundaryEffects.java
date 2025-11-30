@@ -55,12 +55,6 @@ public class SecundaryEffects extends Abyss {
             return;
         }
 
-        if (posTwoMovesAgo < 1) {
-            destinationSlot = board.encontraSlot(1);
-            currentSlot.removePlayer(player);
-            destinationSlot.addPlayer(player);
-        }
-
         currentSlot.removePlayer(player);
         destinationSlot.addPlayer(player);
     }

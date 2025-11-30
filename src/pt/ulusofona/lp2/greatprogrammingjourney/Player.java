@@ -116,7 +116,7 @@ public class Player {
         if (language == null || language.trim().isEmpty()) {
             return null;
         }
-        return language;
+        return language.trim();
     }
 
     public String playerLanguageInfo(List<String> sortLanguage) {
