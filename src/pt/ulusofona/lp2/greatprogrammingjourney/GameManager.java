@@ -35,7 +35,7 @@ public class GameManager {
     private boolean isValidLine(String[] validLine) {
 
         // Cada linha contém a informação de um jogador
-        if (validLine == null || validLine.length <4) {
+        if (validLine == null || validLine.length < 4) {
             return false;
         }
         return true;
@@ -50,13 +50,13 @@ public class GameManager {
         }
         try {
             int id = Integer.parseInt(idString);
-            if (id < 0){
+            if (id < 0) {
                 return null;
             }
 
             return id;
         } catch (NumberFormatException e) {
-            return null; // Retorna null se não for número, em vez de crashar
+            return null;
         }
     }
 
@@ -144,7 +144,7 @@ public class GameManager {
         // cria o tabuleiro com os jogadores e slots
         board = new Board(validPlayers, worldSize);
 
-        turnCount = 0;
+        turnCount = 1;
 
         // escolhe o jogador com ID mais baixo para começar
         currentPlayerId = findLowestPlayerId(validPlayers);
@@ -163,9 +163,9 @@ public class GameManager {
                 return false;
             }
 
-            String type = line[0];
-            String subTypeStr = line[1];
-            String boardPositionStr = line[2];
+            String type = line[0].trim();
+            String subTypeStr = line[1].trim();
+            String boardPositionStr = line[2].trim();
 
             if (!"0".equals(type) && !"1".equals(type)) {
                 return false;
@@ -390,6 +390,7 @@ public class GameManager {
 
         return sb.toString();
     }
+
     // Retorna os IDs dos jogadores presentes numa determinada slot
     public String[] getSlotInfo(int position) {
         if (board == null) {
@@ -601,6 +602,7 @@ public class GameManager {
         }
         return lastPlayers;
     }
+
     // Gera um relatório com os resultados finais do jogo
     public ArrayList<String> getGameResults() {
         ArrayList<String> results = new ArrayList<>();
