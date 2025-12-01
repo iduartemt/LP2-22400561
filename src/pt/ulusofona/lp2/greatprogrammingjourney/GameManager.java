@@ -332,25 +332,21 @@ public class GameManager {
 
         // Percorre os slots para manter a ordem do tabuleiro (Slot 1, Slot 2...)
         for (Slot s : board.getSlots()) {
-            List<Player> playersInSlot = new ArrayList<>();
-
+            //List<Player> playersInSlot = new ArrayList<>();
             // Recolhe jogadores vivos neste slot
             for (Player p : s.getPlayers()) {
                 if (p.getIsAlive()) {
-                    playersInSlot.add(p);
+                    alivePlayers.add(p);
                 }
             }
-
-            // ORDENA POR ID (Critério de desempate dentro da mesma casa)
-            playersInSlot.sort(Comparator.comparingInt(Player::getId));
-
-            alivePlayers.addAll(playersInSlot);
         }
-
         // Se não houver jogadores vivos, devolve string vazia
         if (alivePlayers.isEmpty()) {
             return "";
         }
+
+        // ORDENA POR ID (Critério de desempate dentro da mesma casa)
+        alivePlayers.sort(Comparator.comparingInt(Player::getId));
 
         StringBuilder sb = new StringBuilder();
         int playerNr = 0;
@@ -362,24 +358,14 @@ public class GameManager {
             if (tools == null || tools.isEmpty()) {
                 sb.append("No tools");
             } else {
-                // As ferramentas também devem ser ordenadas (já tinhas esta lógica no getProgrammerInfo individual)
+                // Garante que as ferramentas também estão ordenadas alfabeticamente
                 List<String> toolNames = new ArrayList<>();
                 for (Tool t : tools) {
                     toolNames.add(t.getName());
                 }
-                // Ordenar ferramentas alfabeticamente? O teu código original não ordenava aqui,
-                // mas o teste espera "Programação Funcional" antes de "Tratamento...".
-                // O teu código original fazia append direto. Vamos manter simples para já.
-                // Se o teste falhar na ordem das ferramentas, usamos Collections.sort(toolNames).
+                Collections.sort(toolNames); // Ordena ferramentas
 
-                int toolCount = 0;
-                for (Tool t : player.getTools()) {
-                    sb.append(t.getName());
-                    toolCount++;
-                    if (toolCount != player.getTools().size()) {
-                        sb.append(";");
-                    }
-                }
+                sb.append(String.join(";", toolNames));
             }
 
             playerNr++;
@@ -543,9 +529,30 @@ public class GameManager {
         Event event = currentSlot.getEvent();
 
         if (event != null) {
+            // 1. Guardar quantas ferramentas o jogador tem ANTES da interação
+            int toolsBefore = currentPlayer.getTools().size();
 
+            // 2. A interação acontece (ferramentas podem ser removidas aqui)
             event.playerInteraction(currentPlayer, board);
-            return event.getName();
+
+            // Verificação especial para BSOD (Morte)
+            if (event.getName().equals("Blue Screen of Death") && !currentPlayer.getIsAlive()) {
+                return "O jogador caiu no " + event.getName() + " e perdeu o jogo :(";
+            }
+
+            // 3. Lógica para ABISMOS
+            if (event.getType() == EventType.ABYSS){
+                // Se tem MENOS ferramentas agora do que antes, é porque usou uma para se salvar
+                if (currentPlayer.getTools().size() < toolsBefore) {
+                    return "O abismo " + event.getName() + " foi anulado por uma!";
+                } else {
+                    // Se o número é igual, sofreu a penalidade
+                    return "Caiu no abismo " + event.getName();
+                }
+            }
+
+            // Caso seja uma Ferramenta (que apenas se apanha)
+            return "Jogador agarrou " + event.getName();
         }
         return null;
     }
