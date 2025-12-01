@@ -50,7 +50,10 @@ public class SyntaxError extends Abyss {
         }
 
 
-        Slot destinationSlot = board.encontraSlot(currentSlot.getNrSlot() - 1);
+        int targetPos = currentSlot.getNrSlot() - 1;
+
+        if (targetPos < 1) targetPos = 1;
+        Slot destinationSlot = board.encontraSlot(targetPos);
 
         currentSlot.removePlayer(player);
         destinationSlot.addPlayer(player);

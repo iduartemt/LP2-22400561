@@ -43,9 +43,10 @@ public class Exception extends Abyss {
             return;
         }
 
-        //Recuar 2 casas
-        Slot destination = board.encontraSlot(currentSlot.getNrSlot() - 2);
-        //remover o player da slot atual
+        int targetPos = currentSlot.getNrSlot() - 2;
+        if (targetPos < 1) targetPos = 1;
+        Slot destination = board.encontraSlot(targetPos);
+
         currentSlot.removePlayer(player);
         //adicionar o player à nova slot
         destination.addPlayer(player);

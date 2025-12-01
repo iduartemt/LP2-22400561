@@ -43,8 +43,9 @@ public class FileNotFound extends Abyss {
             return;
         }
 
-        Slot destination = board.encontraSlot(currentSlot.getNrSlot() - 3);
-        currentSlot.removePlayer(player);
+        int targetPos = currentSlot.getNrSlot() - 3;
+        if (targetPos < 1) targetPos = 1;
+        Slot destination = board.encontraSlot(targetPos);        currentSlot.removePlayer(player);
         destination.addPlayer(player);
     }
 }

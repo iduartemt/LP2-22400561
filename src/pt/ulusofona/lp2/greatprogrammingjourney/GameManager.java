@@ -50,7 +50,10 @@ public class GameManager {
         }
         try {
             int id = Integer.parseInt(idString);
-            if (id < 0) return null;
+            if (id < 0){
+                return null;
+            }
+
             return id;
         } catch (NumberFormatException e) {
             return null; // Retorna null se não for número, em vez de crashar

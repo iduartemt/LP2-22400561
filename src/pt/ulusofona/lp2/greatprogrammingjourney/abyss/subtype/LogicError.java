@@ -44,16 +44,22 @@ public class LogicError extends Abyss {
         }
 
         //Dividir o valor do dado por 2
-        int splitNrSpaces = player.getLastDiceValue()/2;
+        int splitNrSpaces = player.getLastDiceValue() / 2;
         //subtrair a posicao do slot atual pelo valor do dado arrendondado por baixo
         int findDestinationSlot = currentSlot.getNrSlot() - splitNrSpaces;
 
+        if (findDestinationSlot < 1) {
+            findDestinationSlot = 1;
+        }
+
         //Guardar o slot para onde o jogador vai recuar
         Slot destinationSlot = board.encontraSlot(findDestinationSlot);
-        //remover o jogador da posicao atual
-        currentSlot.removePlayer(player);
-        //colocar o jogador na sua nova posicao (recuo)
-        destinationSlot.addPlayer(player);
 
+        if (destinationSlot != null) {
+            currentSlot.removePlayer(player);
+            //colocar o jogador na sua nova posicao (recuo)
+            destinationSlot.addPlayer(player);
+
+        }
     }
 }
