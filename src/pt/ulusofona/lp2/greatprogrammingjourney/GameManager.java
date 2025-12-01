@@ -220,7 +220,7 @@ public class GameManager {
 
         try {
 
-            board.addEventsToSlot(abyssesAndTools);
+            board.addEventsToSlot(cleanAbysses);
 
             //  board.addEventsToSlot(abyssesAndTools);
         } catch (IllegalArgumentException e) {
