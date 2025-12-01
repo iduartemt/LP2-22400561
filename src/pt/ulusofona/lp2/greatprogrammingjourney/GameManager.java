@@ -157,31 +157,15 @@ public class GameManager {
             return false;
         }
 
-        String[][] cleanAbysses = new String[abyssesAndTools.length][3];
-        for (int i = 0; i < abyssesAndTools.length; i++) {
-            String[] line = abyssesAndTools[i];
-
-            // Validação de segurança do array
-            if (line == null || line.length != 3) {
-                return false;
-            }
-
-            // Guardar os valores limpos no novo array
-            cleanAbysses[i][0] = line[0].trim();
-            cleanAbysses[i][1] = line[1].trim();
-            cleanAbysses[i][2] = line[2].trim();
-            String type = cleanAbysses[i][0];
-            String subTypeStr = cleanAbysses[i][1];
-            String boardPositionStr = cleanAbysses[i][2];
         //validar a linha
-       /* for (String[] line : abyssesAndTools) {
+        for (String[] line : abyssesAndTools) {
             if (line == null || line.length != 3) {
                 return false;
             }
 
             String type = line[0].trim();
             String subTypeStr = line[1].trim();
-            String boardPositionStr = line[2].trim();*/
+            String boardPositionStr = line[2].trim();
 
             if (!"0".equals(type) && !"1".equals(type)) {
                 return false;
@@ -219,10 +203,7 @@ public class GameManager {
         }
 
         try {
-
-            board.addEventsToSlot(cleanAbysses);
-
-            //  board.addEventsToSlot(abyssesAndTools);
+            board.addEventsToSlot(abyssesAndTools);
         } catch (IllegalArgumentException e) {
             return false;
         }
