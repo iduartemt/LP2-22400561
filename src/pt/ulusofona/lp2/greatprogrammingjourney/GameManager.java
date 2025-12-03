@@ -440,6 +440,12 @@ public class GameManager {
             return false; // jogador não encontrado
         }
 
+        if (currentPlayer.getLanguage().equals("Assembly") && nrSpaces > 2) {
+            return false;
+        } else if (currentPlayer.getLanguage().equals("C") && nrSpaces > 3) {
+            return false;
+        }
+
 
         lastMovedPlayerId = currentPlayer.getId();
         currentPlayer.setLastDiceValue(nrSpaces);
@@ -474,14 +480,17 @@ public class GameManager {
         turnCount++; // aumenta o número de jogadas
 
         // Se o jogo acabou, o jogador atual é o vencedor
-        if (gameIsOver()) {
+        if (
+
+                gameIsOver()) {
             currentPlayerId = currentPlayer.getId();
             return true;
         }
 
         // Determina o próximo jogador (ordem crescente de ID)
         List<Player> allPlayers = new ArrayList<>();
-        for (Slot slot : board.getSlots()) {
+        for (
+                Slot slot : board.getSlots()) {
             for (Player p : slot.getPlayers()) {
                 if (p.getIsAlive() && !allPlayers.contains(p)) {
                     allPlayers.add(p);
@@ -501,7 +510,9 @@ public class GameManager {
 
         // calcula o próximo jogador
         int nextIndex = (currentIndex + 1) % allPlayers.size();
-        currentPlayerId = allPlayers.get(nextIndex).getId();
+        currentPlayerId = allPlayers.get(nextIndex).
+
+                getId();
         return true;
     }
 
@@ -541,7 +552,7 @@ public class GameManager {
             }
 
             // 3. Lógica para ABISMOS
-            if (event.getType() == EventType.ABYSS){
+            if (event.getType() == EventType.ABYSS) {
                 // Se tem MENOS ferramentas agora do que antes, é porque usou uma para se salvar
                 if (currentPlayer.getTools().size() < toolsBefore) {
                     return "O abismo " + event.getName() + " foi anulado por uma!";
