@@ -10,8 +10,9 @@ public class Player {
     private final String language;
     private final ArrayList<Tool> tools;
     private final String color;
-    private boolean isAlive = true;
     //Dados
+    private boolean isAlive = true;
+    private boolean isTrapped = false; // Novo atributo
     private int lastDiceValue;
     private int previousPosition;
     private int positionTwoMovesAgo;
@@ -104,6 +105,9 @@ public class Player {
         this.positionTwoMovesAgo = positionTwoMovesAgo;
     }
 
+    public void setTrapped(boolean trapped) {
+        isTrapped = trapped;
+    }
     //=====================================================METODOS======================================================
 
     public boolean addTool(Tool tool) {
@@ -131,6 +135,10 @@ public class Player {
             return null;
         }
         return language.trim();
+    }
+
+    public boolean isTrapped() {
+        return isTrapped;
     }
 
     public String playerLanguageInfo(List<String> sortLanguage) {

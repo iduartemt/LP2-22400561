@@ -309,10 +309,12 @@ public class GameManager {
                 }
 
                 String isAliveText;
-                if (player.getIsAlive()) {
-                    isAliveText = "Em Jogo";
-                } else {
+                if (!player.getIsAlive()) {
                     isAliveText = "Derrotado";
+                } else if (player.isTrapped()) { // <--- ADICIONA ISTO
+                    isAliveText = "Preso";
+                } else {
+                    isAliveText = "Em Jogo";
                 }
                 return id + " | " + player.getName() + " | " + slot.getNrSlot() + " | " + toolsStr + " | " +
                         languagesInfo + " | " + isAliveText;
@@ -412,6 +414,23 @@ public class GameManager {
         return currentPlayerId;
     }
 
+    private void passTurnToNextPlayer() {
+        List<Player> allPlayers = new ArrayList<>();
+        for (Slot slot : board.getSlots()) {
+            for (Player p : slot.getPlayers()) {
+                if (p.getIsAlive() && !allPlayers.contains(p)) {
+                    allPlayers.add(p);
+                }
+            }
+        }
+        allPlayers.sort(Comparator.comparingInt(Player::getId));
+        int currentIndex = findAtualPlayerIndex(allPlayers);
+        if (currentIndex != -1) {
+            int nextIndex = (currentIndex + 1) % allPlayers.size();
+            currentPlayerId = allPlayers.get(nextIndex).getId();
+        }
+    }
+
     // Move o jogador atual pelo tabuleiro
     public boolean moveCurrentPlayer(int nrSpaces) {
         if (board == null || nrSpaces < 1 || nrSpaces > 6) {
@@ -438,6 +457,19 @@ public class GameManager {
 
         if (!found) {
             return false; // jogador não encontrado
+        }
+
+        if (currentPlayer.isTrapped()) {
+            // O jogador está preso no Infinite Loop.
+            // Ele não se move, mas o turno conta-se como "jogado" (passa a vez).
+            System.out.println(currentPlayer.getName() + " está preso e não se pode mover.");
+
+            turnCount++; // Conta como uma jogada
+
+            // Passar ao próximo jogador (copiado da lógica de fim de método)
+            passTurnToNextPlayer();
+
+            return true; // Retorna true porque a ação de "passar a vez preso" foi válida
         }
 
         String[] splitLanguages = currentPlayer.getLanguage().split(";");
