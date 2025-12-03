@@ -440,9 +440,12 @@ public class GameManager {
             return false; // jogador não encontrado
         }
 
-        if (currentPlayer.getLanguage().equals("Assembly") && nrSpaces > 2) {
+        String[] splitLanguages = currentPlayer.getLanguage().split(";");
+        String firstLanguage = splitLanguages[0].trim();
+
+        if (firstLanguage.equals("Assembly") && nrSpaces > 2) {
             return false;
-        } else if (currentPlayer.getLanguage().equals("C") && nrSpaces > 3) {
+        } else if (firstLanguage.equals("C") && nrSpaces > 3) {
             return false;
         }
 
