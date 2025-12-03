@@ -153,9 +153,9 @@ public class GameManager {
     }
 
     public boolean createInitialBoard(String[][] playerInfo, int worldSize, String[][] abyssesAndTools) {
-        if (abyssesAndTools == null) {
+       /* if (abyssesAndTools == null) {
             return false;
-        }
+        }*/
 
         //validar a linha
         for (String[] line : abyssesAndTools) {
