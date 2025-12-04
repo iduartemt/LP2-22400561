@@ -32,6 +32,8 @@ public class TestMoveCurrentPlayer {
 
         assertEquals(2, gm.getCurrentPlayerID());
 
+        assertEquals(2, gm.getCurrentPlayerID());
+
         moveInvalid=gm.moveCurrentPlayer(3);
         assertFalse(moveInvalid, "O jogador nao se pode mover mais do que 2 slots");
 

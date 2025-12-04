@@ -416,13 +416,13 @@ public class GameManager {
 
     private void passTurnToNextPlayer() {
         List<Player> allPlayers = new ArrayList<>();
-
-        for (Player p : board.getPlayers()) {
-            if (!allPlayers.contains(p)) {
-                allPlayers.add(p);
+        for (Slot slot : board.getSlots()) {
+            for (Player p : slot.getPlayers()) {
+                if (p.getIsAlive() && !allPlayers.contains(p)) {
+                    allPlayers.add(p);
+                }
             }
         }
-
         allPlayers.sort(Comparator.comparingInt(Player::getId));
         int currentIndex = findAtualPlayerIndex(allPlayers);
         if (currentIndex != -1) {
@@ -528,7 +528,7 @@ public class GameManager {
         Slot currentSlot = null;
 
         for (Slot s : board.getSlots()) {
-            Player p = s.findPlayerByID(currentPlayerId);
+            Player p = s.findPlayerByID(lastMovedPlayerId);
             if (p != null) {
                 currentPlayer = p;
                 currentSlot = s;
@@ -551,29 +551,30 @@ public class GameManager {
             // 2. A interação acontece (ferramentas podem ser removidas aqui)
             event.playerInteraction(currentPlayer, board);
 
-            // Passar ao próximo jogador (copiado da lógica de fim de método)
-            passTurnToNextPlayer();
-
             // Verificação especial para BSOD (Morte)
             if (event.getName().equals("Blue Screen of Death") && !currentPlayer.getIsAlive()) {
-                return "O jogador caiu no " + event.getName() + " e perdeu o jogo :(";
+                returnText = "O jogador caiu no " + event.getName() + " e perdeu o jogo :(";
             }
 
             // 3. Lógica para ABISMOS
             if (event.getType() == EventType.ABYSS) {
                 // Se tem MENOS ferramentas agora do que antes, é porque usou uma para se salvar
                 if (currentPlayer.getTools().size() < toolsBefore) {
-                    return "O abismo " + event.getName() + " foi anulado por uma!";
+                    returnText = "O abismo " + event.getName() + " foi anulado por uma!";
                 } else {
                     // Se o número é igual, sofreu a penalidade
-                    return "Caiu no abismo " + event.getName();
+                    returnText = "Caiu no abismo " + event.getName();
                 }
             }
 
             // Caso seja uma Ferramenta (que apenas se apanha)
-            return  "Jogador agarrou " + event.getName();
+            returnText = "Jogador agarrou " + event.getName();
         }
-         return null;
+
+        // Passar ao próximo jogador (copiado da lógica de fim de método)
+        passTurnToNextPlayer();
+
+        return returnText;
     }
 
     private int findAtualPlayerIndex(List<Player> allPlayers) {
