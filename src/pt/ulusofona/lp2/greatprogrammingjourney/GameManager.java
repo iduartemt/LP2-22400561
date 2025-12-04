@@ -429,6 +429,7 @@ public class GameManager {
             int nextIndex = (currentIndex + 1) % allPlayers.size();
             currentPlayerId = allPlayers.get(nextIndex).getId();
         }
+        turnCount++;
     }
 
     // Move o jogador atual pelo tabuleiro
@@ -463,11 +464,6 @@ public class GameManager {
             // O jogador está preso no Infinite Loop.
             // Ele não se move, mas o turno conta-se como "jogado" (passa a vez).
             System.out.println(currentPlayer.getName() + " está preso e não se pode mover.");
-
-            turnCount++; // Conta como uma jogada
-
-            // Passar ao próximo jogador (copiado da lógica de fim de método)
-            passTurnToNextPlayer();
 
             return true; // Retorna true porque a ação de "passar a vez preso" foi válida
         }
@@ -512,8 +508,6 @@ public class GameManager {
         originSlot.removePlayer(currentPlayer);
         destinationSlot.addPlayer(currentPlayer);
 
-        turnCount++; // aumenta o número de jogadas
-
         // Se o jogo acabou, o jogador atual é o vencedor
         if (
 
@@ -522,32 +516,6 @@ public class GameManager {
             return true;
         }
 
-        // Determina o próximo jogador (ordem crescente de ID)
-        List<Player> allPlayers = new ArrayList<>();
-        for (
-                Slot slot : board.getSlots()) {
-            for (Player p : slot.getPlayers()) {
-                if (p.getIsAlive() && !allPlayers.contains(p)) {
-                    allPlayers.add(p);
-                }
-            }
-        }
-
-        // ordena jogadores por ID
-        allPlayers.sort(Comparator.comparingInt(p -> p.getId()));
-
-        // encontra o índice do jogador atual
-        int currentIndex = findAtualPlayerIndex(allPlayers);
-
-        if (currentIndex == -1) {
-            return false;
-        }
-
-        // calcula o próximo jogador
-        int nextIndex = (currentIndex + 1) % allPlayers.size();
-        currentPlayerId = allPlayers.get(nextIndex).
-
-                getId();
         return true;
     }
 
@@ -574,6 +542,8 @@ public class GameManager {
 
         Event event = currentSlot.getEvent();
 
+        String returnText = null;
+
         if (event != null) {
             // 1. Guardar quantas ferramentas o jogador tem ANTES da interação
             int toolsBefore = currentPlayer.getTools().size();
@@ -583,24 +553,28 @@ public class GameManager {
 
             // Verificação especial para BSOD (Morte)
             if (event.getName().equals("Blue Screen of Death") && !currentPlayer.getIsAlive()) {
-                return "O jogador caiu no " + event.getName() + " e perdeu o jogo :(";
+                returnText = "O jogador caiu no " + event.getName() + " e perdeu o jogo :(";
             }
 
             // 3. Lógica para ABISMOS
             if (event.getType() == EventType.ABYSS) {
                 // Se tem MENOS ferramentas agora do que antes, é porque usou uma para se salvar
                 if (currentPlayer.getTools().size() < toolsBefore) {
-                    return "O abismo " + event.getName() + " foi anulado por uma!";
+                    returnText = "O abismo " + event.getName() + " foi anulado por uma!";
                 } else {
                     // Se o número é igual, sofreu a penalidade
-                    return "Caiu no abismo " + event.getName();
+                    returnText = "Caiu no abismo " + event.getName();
                 }
             }
 
             // Caso seja uma Ferramenta (que apenas se apanha)
-            return "Jogador agarrou " + event.getName();
+            returnText = "Jogador agarrou " + event.getName();
         }
-        return null;
+
+        // Passar ao próximo jogador (copiado da lógica de fim de método)
+        passTurnToNextPlayer();
+
+        return returnText;
     }
 
     private int findAtualPlayerIndex(List<Player> allPlayers) {
