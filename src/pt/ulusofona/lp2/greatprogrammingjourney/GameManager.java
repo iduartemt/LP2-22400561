@@ -153,8 +153,10 @@ public class GameManager {
     }
 
     public boolean createInitialBoard(String[][] playerInfo, int worldSize, String[][] abyssesAndTools) {
+        // ========================LANGUAGE RESTRICTIONS ==============================
+        //falha aqui, pode etrar logo aqui e nao no primeiro create
         if (abyssesAndTools == null) {
-            return false;
+            createInitialBoard(playerInfo, worldSize);
         }
 
         //validar a linha
@@ -411,6 +413,7 @@ public class GameManager {
 
     // Devolve o ID do jogador atual
     public int getCurrentPlayerID() {
+        //
         return currentPlayerId;
     }
 
@@ -459,6 +462,8 @@ public class GameManager {
         if (!found) {
             return false; // jogador não encontrado
         }
+
+        passTurnToNextPlayer();
 
         if (currentPlayer.isTrapped()) {
             // O jogador está preso no Infinite Loop.
@@ -509,9 +514,7 @@ public class GameManager {
         destinationSlot.addPlayer(currentPlayer);
 
         // Se o jogo acabou, o jogador atual é o vencedor
-        if (
-
-                gameIsOver()) {
+        if (gameIsOver()) {
             currentPlayerId = currentPlayer.getId();
             return true;
         }
@@ -542,7 +545,6 @@ public class GameManager {
 
         Event event = currentSlot.getEvent();
 
-        String returnText = null;
 
         if (event != null) {
             // 1. Guardar quantas ferramentas o jogador tem ANTES da interação
@@ -553,28 +555,28 @@ public class GameManager {
 
             // Verificação especial para BSOD (Morte)
             if (event.getName().equals("Blue Screen of Death") && !currentPlayer.getIsAlive()) {
-                returnText = "O jogador caiu no " + event.getName() + " e perdeu o jogo :(";
+                return "O jogador caiu no " + event.getName() + " e perdeu o jogo :(";
             }
 
             // 3. Lógica para ABISMOS
             if (event.getType() == EventType.ABYSS) {
                 // Se tem MENOS ferramentas agora do que antes, é porque usou uma para se salvar
                 if (currentPlayer.getTools().size() < toolsBefore) {
-                    returnText = "O abismo " + event.getName() + " foi anulado por uma!";
+                    return "O abismo " + event.getName() + " foi anulado por uma!";
                 } else {
                     // Se o número é igual, sofreu a penalidade
-                    returnText = "Caiu no abismo " + event.getName();
+                    return "Caiu no abismo " + event.getName();
                 }
             }
 
             // Caso seja uma Ferramenta (que apenas se apanha)
-            returnText = "Jogador agarrou " + event.getName();
+            return "Jogador agarrou " + event.getName();
         }
 
-        // Passar ao próximo jogador (copiado da lógica de fim de método)
-        passTurnToNextPlayer();
+        //devia estar no move ( so da pass caso haja react e se o evento nao for null)
+        //   passTurnToNextPlayer();
 
-        return returnText;
+        return null;
     }
 
     private int findAtualPlayerIndex(List<Player> allPlayers) {
