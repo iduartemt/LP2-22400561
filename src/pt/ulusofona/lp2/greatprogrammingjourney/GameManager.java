@@ -154,9 +154,9 @@ public class GameManager {
 
     public boolean createInitialBoard(String[][] playerInfo, int worldSize, String[][] abyssesAndTools) {
         // ========================LANGUAGE RESTRICTIONS ==============================
-        //falha aqui, pode etrar logo aqui e nao no primeiro create
+        //falha aqui, pode entrar logo aqui e nao no primeiro create
         if (abyssesAndTools == null) {
-            createInitialBoard(playerInfo, worldSize);
+           return createInitialBoard(playerInfo, worldSize);
         }
 
         //validar a linha

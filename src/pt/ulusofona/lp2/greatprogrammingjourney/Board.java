@@ -23,6 +23,7 @@ public class Board {
     public Board(List<Player> players, int worldSize, String[][] abyssesAndTools) {
         addSlotList(worldSize);
         addEventsToSlot(abyssesAndTools);
+        addPlayerSlotFirstSlot(players);
         this.players = players;
     }
 
