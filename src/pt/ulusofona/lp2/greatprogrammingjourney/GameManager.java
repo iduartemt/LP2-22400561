@@ -793,6 +793,7 @@ public class GameManager {
             }
             writer.write("\n");
 
+
             //escrever info sobre os jogadores
             for (Slot slot : board.getSlots()) {
                 List<Player> players = slot.getPlayers();
