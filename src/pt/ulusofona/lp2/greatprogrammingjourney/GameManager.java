@@ -467,10 +467,11 @@ public class GameManager {
             return false; // jogador não encontrado
         }
 
+        if (!currentPlayer.getIsAlive()){
+            return false;
+        }
+
         if (currentPlayer.isTrapped()) {
-            // O jogador está preso no Infinite Loop.
-            // Ele não se move, mas o turno conta-se como "jogado" (passa a vez).
-            //passTurnToNextPlayer();
             System.out.println(currentPlayer.getName() + " está preso e não se pode mover.");
 
             return false; // Retorna true porque a ação de "passar a vez preso" foi válida
