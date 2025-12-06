@@ -781,8 +781,6 @@ public class GameManager {
             //primeira linha tamanho do board
             writer.write(board.getNrTotalSlots() + "\n");
 
-
-
             //por cada ferramenta/abisdmo do board
             //temos pos:abismo/ferramenta(0/1):tipo(0-5/0-9)
             for (Slot slot : board.getSlots()) {
