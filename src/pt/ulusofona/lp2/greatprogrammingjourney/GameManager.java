@@ -155,6 +155,13 @@ public class GameManager {
     public boolean createInitialBoard(String[][] playerInfo, int worldSize, String[][] abyssesAndTools) {
         // ========================LANGUAGE RESTRICTIONS ==============================
         //falha aqui, pode entrar logo aqui e nao no primeiro create
+
+        // SO PARA TESTES
+        for (int i= 1; i<abyssesAndTools.length-1;i++){
+            abyssesAndTools[i][0] = "0";
+            abyssesAndTools[i][1] = "7";
+            abyssesAndTools[i][2] = i+"";
+        }
         if (abyssesAndTools == null) {
            return createInitialBoard(playerInfo, worldSize);
         }
@@ -272,6 +279,8 @@ public class GameManager {
 
                     if (!player.getIsAlive()) {
                         infoPlayer[6] = "Derrotado";
+                    } else if (player.isTrapped()) {
+                        infoPlayer[6] = "Preso";
                     } else {
                         infoPlayer[6] = "Em jogo";
                     }
@@ -427,7 +436,7 @@ public class GameManager {
                 int nextIndex = (currentIndex + 1) % board.getPlayers().size();
                 Player currentPlayer = board.getPlayers().get(nextIndex);
                 currentPlayerId = currentPlayer.getId();
-                if (currentPlayer.isLastMoveIsValid()) {
+                if (currentPlayer.isLastMoveIsValid() && currentPlayer.getIsAlive() && !currentPlayer.isTrapped()) {
                     nextPlayerIsValid = true;
                 }
             }
