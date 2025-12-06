@@ -264,7 +264,9 @@ public class GameManager {
                     } else {
                         List<String> toolNames = new ArrayList<>();
                         for (Tool t : tools) {
-                            toolNames.add(t.getName());
+                            if (t != null) {
+                                toolNames.add(t.getName());
+                            }
                         }
                         Collections.sort(toolNames);
                         infoPlayer[5] = String.join(";", toolNames);
@@ -306,7 +308,9 @@ public class GameManager {
                 } else {
                     List<String> toolNames = new ArrayList<>();
                     for (Tool t : playerTools) {
-                        toolNames.add(t.getName());
+                        if (t != null) {
+                            toolNames.add(t.getName());
+                        }
                     }
                     Collections.sort(toolNames);
                     toolsStr = String.join(";", toolNames);
@@ -367,7 +371,9 @@ public class GameManager {
                 // Garante que as ferramentas também estão ordenadas alfabeticamente
                 List<String> toolNames = new ArrayList<>();
                 for (Tool t : tools) {
-                    toolNames.add(t.getName());
+                    if (t != null) {
+                        toolNames.add(t.getName());
+                    }
                 }
                 Collections.sort(toolNames); // Ordena ferramentas
 
@@ -415,7 +421,6 @@ public class GameManager {
 
     // Devolve o ID do jogador atual
     public int getCurrentPlayerID() {
-        //
         return currentPlayerId;
     }
 
@@ -732,9 +737,16 @@ public class GameManager {
             }
             board = new Board(playersList, worldSize, abyssesAndToolsFormated);
             for (Player player : board.getPlayers()) {
-                for (String toolStr : toolsOfPlayers.get(player.getId())) {
-                    Tool tool = board.getToolsHashMap().get(toolStr);
-                    player.addTool(tool);
+                String[] playerToolNames = toolsOfPlayers.get(player.getId());
+                if (playerToolNames != null) {
+                    for (String toolStr : playerToolNames) {
+                        if (toolStr != null && !toolStr.trim().isEmpty()) {
+                            Tool tool = board.getToolsHashMap().get(toolStr.trim());
+                            if (tool != null) {
+                                player.addTool(tool);
+                            }
+                        }
+                    }
                 }
             }
             if (!scanner.hasNext()) {
@@ -803,8 +815,10 @@ public class GameManager {
                     writer.write(player.getName() + ":");
                     writer.write(player.getLanguage() + ":");
                     for (Tool t : player.getTools()) {
-                        writer.write(t.getName());
-                        writer.write(";");
+                        if (t != null) {
+                            writer.write(t.getName());
+                            writer.write(";");
+                        }
                     }
                     writer.write(":");
                     writer.write(player.getColor() + ":");
