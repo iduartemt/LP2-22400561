@@ -15,6 +15,37 @@ public class GameManager {
     private int lastMovedPlayerId = -1;
     //==================================================================================================================
 
+    //================================================GETTERS/SETTERS===================================================
+
+    public Board getBoard() {
+        return board;
+    }
+
+    public int getTurnCount() {
+        return turnCount;
+    }
+
+    public int getLastMovedPlayerId() {
+        return lastMovedPlayerId;
+    }
+
+    public void setBoard(Board board) {
+        this.board = board;
+    }
+
+    public void setCurrentPlayerId(int currentPlayerId) {
+        this.currentPlayerId = currentPlayerId;
+    }
+
+    public void setTurnCount(int turnCount) {
+        this.turnCount = turnCount;
+    }
+
+    public void setLastMovedPlayerId(int lastMovedPlayerId) {
+        this.lastMovedPlayerId = lastMovedPlayerId;
+    }
+    //==================================================================================================================
+
     // Verifica se o número de jogadores está entre 2 e 4
     private boolean nrValidPlayers(String[][] playerInfo) {
         if (playerInfo == null || playerInfo.length < 2 || playerInfo.length > 4) {
@@ -289,48 +320,50 @@ public class GameManager {
 
     // Retorna informações formatadas de um jogador em forma de string
     public String getProgrammerInfoAsStr(int id) {
-        if (board == null || id < 1) {
+        if (!isValidPlayerId(id)) {
             return null;
         }
 
-        for (Slot slot : board.getSlots()) {
-            Player player = slot.findPlayerByID(id);
-
-            if (player != null) {
-                List<String> sortedLanguages = player.getSortedLanguages(player.getLanguage());
-                String languagesInfo = player.playerLanguageInfo(sortedLanguages);
-
-                List<Tool> playerTools = player.getTools();
-                String toolsStr;
-
-                if (playerTools == null || playerTools.isEmpty()) {
-                    toolsStr = "No tools";
-                } else {
-                    List<String> toolNames = new ArrayList<>();
-                    for (Tool t : playerTools) {
-                        if (t != null) {
-                            toolNames.add(t.getName());
-                        }
-                    }
-                    Collections.sort(toolNames);
-                    toolsStr = String.join(";", toolNames);
-                }
-
-                String isAliveText;
-                if (!player.getIsAlive()) {
-                    isAliveText = "Derrotado";
-                } else if (player.isTrapped()) { // <--- ADICIONA ISTO
-                    isAliveText = "Preso";
-                } else {
-                    isAliveText = "Em Jogo";
-                }
-                return id + " | " + player.getName() + " | " + slot.getNrSlot() + " | " + toolsStr + " | " +
-                        languagesInfo + " | " + isAliveText;
-
-            }
+        Player player = findPlayerById(id);
+        if (player == null) {
+            return null;
         }
 
-        return null;
+        Slot playerSlot = findSlotWithPlayer(player);
+        if (playerSlot == null) {
+            return null;
+        }
+
+        String toolsInfo = formatPlayerTools(player);
+        String languageInfo = getPlayerLanguageInfo(player);
+        String statusInfo = getPlayerStatusText(player);
+
+        return buildFormattedPlayerInfo(id, player, playerSlot, toolsInfo, languageInfo, statusInfo);
+    }
+
+    private boolean isValidPlayerId(int id) {
+        return board != null && id >= 1;
+    }
+
+    private String getPlayerLanguageInfo(Player player) {
+        List<String> sortedLanguages = player.getSortedLanguages(player.getLanguage());
+        return player.playerLanguageInfo(sortedLanguages);
+    }
+
+    private String getPlayerStatusText(Player player) {
+        if (!player.getIsAlive()) {
+            return "Derrotado";
+        } else if (player.isTrapped()) {
+            return "Preso";
+        } else {
+            return "Em Jogo";
+        }
+    }
+
+    private String buildFormattedPlayerInfo(int id, Player player, Slot slot, String toolsInfo,
+                                           String languageInfo, String statusInfo) {
+        return id + " | " + player.getName() + " | " + slot.getNrSlot() + " | " + toolsInfo + " | " +
+                languageInfo + " | " + statusInfo;
     }
 
     public String getProgrammersInfo() {
@@ -338,55 +371,79 @@ public class GameManager {
             return "";
         }
 
-        List<Player> alivePlayers = new ArrayList<>();
+        List<Player> alivePlayers = collectAlivePlayers();
 
-        // Percorre os slots para manter a ordem do tabuleiro (Slot 1, Slot 2...)
-        for (Slot s : board.getSlots()) {
-            //List<Player> playersInSlot = new ArrayList<>();
-            // Recolhe jogadores vivos neste slot
-            for (Player p : s.getPlayers()) {
-                if (p.getIsAlive()) {
-                    alivePlayers.add(p);
-                }
-            }
-        }
-        // Se não houver jogadores vivos, devolve string vazia
         if (alivePlayers.isEmpty()) {
             return "";
         }
 
-        // ORDENA POR ID (Critério de desempate dentro da mesma casa)
-        alivePlayers.sort(Comparator.comparingInt(Player::getId));
+        sortPlayersById(alivePlayers);
 
+        return buildAlivePlayersInfo(alivePlayers);
+    }
+
+    private List<Player> collectAlivePlayers() {
+        List<Player> alivePlayers = new ArrayList<>();
+
+        for (Slot slot : board.getSlots()) {
+            for (Player player : slot.getPlayers()) {
+                if (player.getIsAlive()) {
+                    alivePlayers.add(player);
+                }
+            }
+        }
+
+        return alivePlayers;
+    }
+
+    private void sortPlayersById(List<Player> players) {
+        players.sort(Comparator.comparingInt(Player::getId));
+    }
+
+    private String buildAlivePlayersInfo(List<Player> alivePlayers) {
         StringBuilder sb = new StringBuilder();
         int playerNr = 0;
 
         for (Player player : alivePlayers) {
-            sb.append(player.getName()).append(" : ");
-
-            List<Tool> tools = player.getTools();
-            if (tools == null || tools.isEmpty()) {
-                sb.append("No tools");
-            } else {
-                // Garante que as ferramentas também estão ordenadas alfabeticamente
-                List<String> toolNames = new ArrayList<>();
-                for (Tool t : tools) {
-                    if (t != null) {
-                        toolNames.add(t.getName());
-                    }
-                }
-                Collections.sort(toolNames); // Ordena ferramentas
-
-                sb.append(String.join(";", toolNames));
-            }
-
+            appendPlayerInfo(sb, player, playerNr < alivePlayers.size() - 1);
             playerNr++;
-            if (playerNr != alivePlayers.size()) {
-                sb.append(" | ");
-            }
         }
 
         return sb.toString();
+    }
+
+    private void appendPlayerInfo(StringBuilder sb, Player player, boolean hasMorePlayers) {
+        sb.append(player.getName()).append(" : ");
+        sb.append(formatPlayerTools(player));
+
+        if (hasMorePlayers) {
+            sb.append(" | ");
+        }
+    }
+
+    private String formatPlayerTools(Player player) {
+        List<Tool> tools = player.getTools();
+        if (tools == null || tools.isEmpty()) {
+            return "No tools";
+        }
+
+        List<String> toolNames = getValidToolNames(tools);
+        if (toolNames.isEmpty()) {
+            return "No tools";
+        }
+
+        Collections.sort(toolNames);
+        return String.join(";", toolNames);
+    }
+
+    private List<String> getValidToolNames(List<Tool> tools) {
+        List<String> toolNames = new ArrayList<>();
+        for (Tool tool : tools) {
+            if (tool != null) {
+                toolNames.add(tool.getName());
+            }
+        }
+        return toolNames;
     }
 
     // Retorna os IDs dos jogadores presentes numa determinada slot
@@ -447,92 +504,113 @@ public class GameManager {
 
     // Move o jogador atual pelo tabuleiro
     public boolean moveCurrentPlayer(int nrSpaces) {
-        if (board == null || nrSpaces < 1 || nrSpaces > 6) {
-            return false;
-        }
-        if (gameIsOver()) {
+        if (!isValidMoveRequest(nrSpaces)) {
             return false;
         }
 
-        Player currentPlayer = null;
-        Slot originSlot = null;
-        boolean found = false;
+        Player currentPlayer = findCurrentPlayer();
+        Slot originSlot = findPlayerSlot(currentPlayer);
 
-        // Encontra o jogador atual e a casa onde está
-        for (Slot s : board.getSlots()) {
-            Player p = s.findPlayerByID(getCurrentPlayerID());
-            if (p != null) {
-                currentPlayer = p;
-                originSlot = s;
-                found = true;
-                break;
-            }
-        }
-
-        if (!found) {
+        if (currentPlayer == null || originSlot == null) {
             return false; // jogador não encontrado
         }
 
         if (currentPlayer.isTrapped()) {
-            // O jogador está preso no Infinite Loop.
-            // Ele não se move, mas o turno conta-se como "jogado" (passa a vez).
-            //passTurnToNextPlayer();
-            System.out.println(currentPlayer.getName() + " está preso e não se pode mover.");
-
-            return false; // Retorna true porque a ação de "passar a vez preso" foi válida
+            handleTrappedPlayer(currentPlayer);
+            return false;
         }
 
-        String[] splitLanguages = currentPlayer.getLanguage().split(";");
-        String firstLanguage = splitLanguages[0].trim();
-
-        if (firstLanguage.equals("Assembly") && nrSpaces > 2) {
-            currentPlayer.setLastMoveIsValid(false);
-            return false;
-        } else if (firstLanguage.equals("C") && nrSpaces > 3) {
+        if (!isValidMoveForLanguage(currentPlayer, nrSpaces)) {
             currentPlayer.setLastMoveIsValid(false);
             return false;
         }
+
         currentPlayer.setLastMoveIsValid(true);
 
-        // passTurnToNextPlayer();
-
         lastMovedPlayerId = currentPlayer.getId();
+        updatePlayerHistory(currentPlayer, originSlot.getNrSlot());
         currentPlayer.setLastDiceValue(nrSpaces);
 
-        // Atualiza o histórico: O que era "anterior" passa a ser "há 2 jogadas"
-        currentPlayer.setPositionTwoMovesAgo(currentPlayer.getPreviousPosition());
-        // A posição onde estou agora (antes de me mover) passa a ser a "anterior"
-        currentPlayer.setPreviousPosition(originSlot.getNrSlot());
+        int destination = calculateDestination(originSlot.getNrSlot(), nrSpaces);
 
-        // Calcula destino e trata se passar do fim
-        int lastSlot = board.getNrTotalSlots();
-        int destination = originSlot.getNrSlot() + nrSpaces;
-
-        // se ultrapassar o final volta para trás
-        if (destination > lastSlot) {
-            int tillTheEnd = lastSlot - originSlot.getNrSlot();
-            int exceed = nrSpaces - tillTheEnd;
-            destination = lastSlot - exceed;
-        }
-
-        // encontra a slot de destino
         Slot destinationSlot = board.encontraSlot(destination);
-
         if (destinationSlot == null) {
             return false;
         }
 
-        // move o jogador da casa atual para a nova
-        originSlot.removePlayer(currentPlayer);
-        destinationSlot.addPlayer(currentPlayer);
+        movePlayerBetweenSlots(currentPlayer, originSlot, destinationSlot);
 
-        // Se o jogo acabou, o jogador atual é o vencedor
         if (gameIsOver()) {
             currentPlayerId = currentPlayer.getId();
-            return true;
         }
 
         return true;
+    }
+
+    private boolean isValidMoveRequest(int nrSpaces) {
+        return board != null && nrSpaces >= 1 && nrSpaces <= 6 && !gameIsOver();
+    }
+
+    private Player findCurrentPlayer() {
+        for (Slot s : board.getSlots()) {
+            Player p = s.findPlayerByID(getCurrentPlayerID());
+            if (p != null) {
+                return p;
+            }
+        }
+        return null;
+    }
+
+    private Slot findPlayerSlot(Player player) {
+        if (player == null) {
+            return null;
+        }
+
+        for (Slot s : board.getSlots()) {
+            if (s.findPlayerByID(player.getId()) != null) {
+                return s;
+            }
+        }
+        return null;
+    }
+
+    private void handleTrappedPlayer(Player player) {
+        System.out.println(player.getName() + " está preso e não se pode mover.");
+    }
+
+    private boolean isValidMoveForLanguage(Player player, int nrSpaces) {
+        String[] splitLanguages = player.getLanguage().split(";");
+        String firstLanguage = splitLanguages[0].trim();
+
+        if (firstLanguage.equals("Assembly") && nrSpaces > 2) {
+            return false;
+        } else if (firstLanguage.equals("C") && nrSpaces > 3) {
+            return false;
+        }
+        return true;
+    }
+
+    private void updatePlayerHistory(Player player, int currentSlotNr) {
+        player.setPositionTwoMovesAgo(player.getPreviousPosition());
+        player.setPreviousPosition(currentSlotNr);
+    }
+
+    private int calculateDestination(int originPosition, int nrSpaces) {
+        int lastSlot = board.getNrTotalSlots();
+        int destination = originPosition + nrSpaces;
+
+        if (destination > lastSlot) {
+            int tillTheEnd = lastSlot - originPosition;
+            int exceed = nrSpaces - tillTheEnd;
+            destination = lastSlot - exceed;
+        }
+
+        return destination;
+    }
+
+    private void movePlayerBetweenSlots(Player player, Slot originSlot, Slot destinationSlot) {
+        originSlot.removePlayer(player);
+        destinationSlot.addPlayer(player);
     }
 
     public String reactToAbyssOrTool() {
@@ -540,58 +618,73 @@ public class GameManager {
             return null;
         }
 
-        Player currentPlayer = null;
-        Slot currentSlot = null;
-
-        for (Slot s : board.getSlots()) {
-            Player p = s.findPlayerByID(lastMovedPlayerId);
-            if (p != null) {
-                currentPlayer = p;
-                currentSlot = s;
-                break;
-            }
-        }
+        Player currentPlayer = findPlayerById(lastMovedPlayerId);
+        Slot currentSlot = findSlotWithPlayer(currentPlayer);
 
         if (currentPlayer == null || currentSlot == null) {
             return null;
         }
 
         Event event = currentSlot.getEvent();
-
-
-        if (event != null) {
-            // 1. Guardar quantas ferramentas o jogador tem ANTES da interação
-            int toolsBefore = currentPlayer.getTools().size();
-
-            // 2. A interação acontece (ferramentas podem ser removidas aqui)
-            event.playerInteraction(currentPlayer, board);
-
+        if (event == null) {
             passTurnToNextPlayer();
-
-            // Verificação especial para BSOD (Morte)
-            if (event.getName().equals("Blue Screen of Death") && !currentPlayer.getIsAlive()) {
-                return "O jogador caiu no " + event.getName() + " e perdeu o jogo :(";
-            }
-
-            // 3. Lógica para ABISMOS
-            if (event.getType() == EventType.ABYSS) {
-                // Se tem MENOS ferramentas agora do que antes, é porque usou uma para se salvar
-                if (currentPlayer.getTools().size() < toolsBefore) {
-                    return "O abismo " + event.getName() + " foi anulado por uma!";
-                } else {
-                    // Se o número é igual, sofreu a penalidade
-                    return "Caiu no abismo " + event.getName();
-                }
-            }
-
-            // Caso seja uma Ferramenta (que apenas se apanha)
-            return "Jogador agarrou " + event.getName();
+            return null;
         }
 
-        //devia estar no move ( so da pass caso haja react e se o evento nao for null)
+        return processEventInteraction(currentPlayer, currentSlot, event);
+    }
+
+    private Player findPlayerById(int playerId) {
+        for (Slot s : board.getSlots()) {
+            Player p = s.findPlayerByID(playerId);
+            if (p != null) {
+                return p;
+            }
+        }
+        return null;
+    }
+
+    private Slot findSlotWithPlayer(Player player) {
+        if (player == null) {
+            return null;
+        }
+
+        for (Slot s : board.getSlots()) {
+            if (s.findPlayerByID(player.getId()) != null) {
+                return s;
+            }
+        }
+        return null;
+    }
+
+    private String processEventInteraction(Player player, Slot slot, Event event) {
+        int toolsBeforeInteraction = player.getTools().size();
+
+        event.playerInteraction(player, board);
+
         passTurnToNextPlayer();
 
-        return null;
+        if (isBlueScreenOfDeathEvent(event, player)) {
+            return "O jogador caiu no " + event.getName() + " e perdeu o jogo :(";
+        }
+
+        if (event.getType() == EventType.ABYSS) {
+            return processAbyssResult(event, toolsBeforeInteraction, player);
+        }
+
+        return "Jogador agarrou " + event.getName();
+    }
+
+    private boolean isBlueScreenOfDeathEvent(Event event, Player player) {
+        return event.getName().equals("Blue Screen of Death") && !player.getIsAlive();
+    }
+
+    private String processAbyssResult(Event event, int toolsBefore, Player player) {
+        if (player.getTools().size() < toolsBefore) {
+            return "O abismo " + event.getName() + " foi anulado por uma!";
+        } else {
+            return "Caiu no abismo " + event.getName();
+        }
     }
 
     private int findAtualPlayerIndex(List<Player> allPlayers) {
@@ -686,168 +779,17 @@ public class GameManager {
             return;
         }
 
-        try {
-            Scanner scanner = new Scanner(file);
-            if (!scanner.hasNextLine()) {
-                throw new InvalidFileException();
-            }
-            int worldSize = Integer.parseInt(scanner.nextLine());
-            if (!scanner.hasNextLine()) {
-                throw new InvalidFileException();
-            }
-            List<String[]> abyssesAndTools = new ArrayList<>();
-            String[] events = scanner.nextLine().split(",");
-            for (String event : events) {
+        GameManager loadedGameManager = GamePersistenceManager.loadGame(file);
 
-                String[] eventLines = event.split(":");
-                String[] formatedEventLines = {eventLines[1], eventLines[2], eventLines[0]};
-                abyssesAndTools.add(formatedEventLines);
-            }
-            if (!scanner.hasNextLine()) {
-                throw new InvalidFileException();
-            }
-            String[] playersStr = scanner.nextLine().split(",");
-            Map<Integer, Player> players = new HashMap<>();
-            List<Player> playersList = new ArrayList<>();
-            HashMap<Integer, String[]> toolsOfPlayers = new HashMap<>();
-            for (String playerStr : playersStr) {
-                System.out.println(playerStr);
-                String[] playerInfo = playerStr.split(":");
-                int playerId = Integer.parseInt(playerInfo[0]);
-                String playerName = playerInfo[1];
-                String playerLanguage = playerInfo[2];
-                String[] playerTools = playerInfo[3].split(";");
-                toolsOfPlayers.put(playerId, playerTools);
-                String playerColor = playerInfo[4];
-                boolean playerIsAlive = Boolean.parseBoolean(playerInfo[5]);
-                int playerLastDiceValue = Integer.parseInt(playerInfo[6]);
-                int playerPreviousPosition = Integer.parseInt(playerInfo[7]);
-                int positionTwoMovesAgo = Integer.parseInt(playerInfo[8]);
-                Player player = new Player(playerId, playerName, playerLanguage,
-                        playerColor, playerIsAlive, playerLastDiceValue,
-                        playerPreviousPosition, positionTwoMovesAgo
-                );
-                players.put(playerId, player);
-                playersList.add(player);
-            }
-            // ler id current player e nrTurno
-            String[][] abyssesAndToolsFormated = new String[abyssesAndTools.size()][3];
-            for (int i = 0; i < abyssesAndTools.size(); i++) {
-                abyssesAndToolsFormated[i] = abyssesAndTools.get(i);
-            }
-            board = new Board(playersList, worldSize, abyssesAndToolsFormated);
-            for (Player player : board.getPlayers()) {
-                String[] playerToolNames = toolsOfPlayers.get(player.getId());
-                if (playerToolNames != null) {
-                    for (String toolStr : playerToolNames) {
-                        if (toolStr != null && !toolStr.trim().isEmpty()) {
-                            Tool tool = board.getToolsHashMap().get(toolStr.trim());
-                            if (tool != null) {
-                                player.addTool(tool);
-                            }
-                        }
-                    }
-                }
-            }
-            if (!scanner.hasNext()) {
-                throw new InvalidFileException();
-            }
-            String[] currentGameInfo = scanner.nextLine().split(":");
-            String currentPlayerId = currentGameInfo[0];
-            String turnCount = currentGameInfo[1];
-            String lastMovedPlayerId = currentGameInfo[2];
-
-            this.currentPlayerId = Integer.parseInt(currentPlayerId);
-            this.turnCount = Integer.parseInt(turnCount);
-            this.lastMovedPlayerId = Integer.parseInt(lastMovedPlayerId);
-
-            if (!scanner.hasNextLine()) {
-                throw new InvalidFileException();
-            }
-            String playersPositionStr = scanner.nextLine();
-            for (String playersPosAndIdStr : playersPositionStr.split(",")) {
-                String[] playerPosAndId = playersPosAndIdStr.split(":");
-                int playerPos = Integer.parseInt(playerPosAndId[0]);
-                int playerId = Integer.parseInt(playerPosAndId[1]);
-                for (Slot slot : board.getSlots()) {
-                    if (slot.getNrSlot() == playerPos) {
-                        slot.addPlayer(players.get(playerId));
-                    }
-                }
-            }
-
-            scanner.close();
-        } catch (InvalidFileException | FileNotFoundException e) {
-            e.printStackTrace();
-            throw e;
-        } catch (IndexOutOfBoundsException e) {
-            e.printStackTrace();
-            throw new InvalidFileException();
-        }
-
+        // Copy the loaded state to this instance
+        this.board = loadedGameManager.board;
+        this.currentPlayerId = loadedGameManager.currentPlayerId;
+        this.turnCount = loadedGameManager.turnCount;
+        this.lastMovedPlayerId = loadedGameManager.lastMovedPlayerId;
     }
 
     public boolean saveGame(File file) {
-        try {
-            FileWriter writer = new FileWriter(file);
-
-            //primeira linha tamanho do board
-            writer.write(board.getNrTotalSlots() + "\n");
-
-            //por cada ferramenta/abisdmo do board
-            //temos pos:abismo/ferramenta(0/1):tipo(0-5/0-9)
-            for (Slot slot : board.getSlots()) {
-                Event event = slot.getEvent();
-                if (event != null) {
-                    String eventType = event.getType() == EventType.ABYSS ? "0" : "1";
-                    writer.write(slot.getNrSlot() + ":" + eventType + ":" + event.getId());
-                    writer.write(",");
-                }
-
-            }
-            writer.write("\n");
-
-            //escrever info sobre os jogadores
-            for (Slot slot : board.getSlots()) {
-                List<Player> players = slot.getPlayers();
-                for (Player player : players) {
-                    writer.write(player.getId() + ":");
-                    writer.write(player.getName() + ":");
-                    writer.write(player.getLanguage() + ":");
-                    for (Tool t : player.getTools()) {
-                        if (t != null) {
-                            writer.write(t.getName());
-                            writer.write(";");
-                        }
-                    }
-                    writer.write(":");
-                    writer.write(player.getColor() + ":");
-                    writer.write(player.getIsAlive() + ":");
-                    writer.write(player.getLastDiceValue() + ":");
-                    writer.write(player.getPreviousPosition() + ":");
-                    writer.write(player.getPositionTwoMovesAgo() + ":");
-                    writer.write(",");
-                }
-            }
-            writer.write("\n");
-
-            // escrever jogador atual e numero do turno (jogAtual:nrTurno)
-            writer.write(currentPlayerId + ":" + turnCount + ":" + lastMovedPlayerId);
-            writer.write("\n");
-
-            for (Slot slot : board.getSlots()) {
-                for (Player player : slot.getPlayers()) {
-                    writer.write(slot.getNrSlot() + ":" + player.getId() + ",");
-                }
-            }
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-        System.out.println("sucesso a salvar em " + file.getAbsolutePath());
-
-        return true;
+        return GamePersistenceManager.saveGame(this, file);
     }
 
     public JPanel getAuthorsPanel() {
