@@ -16,6 +16,7 @@ public class Player {
     private int lastDiceValue;
     private int previousPosition;
     private int positionTwoMovesAgo;
+    private boolean lastMoveIsValid = true;
 
     public Player(int id, String name, String language, String color) {
         this.id = id;
@@ -42,6 +43,14 @@ public class Player {
     //=====================================================GETTERS======================================================
     public int getId() {
         return id;
+    }
+
+    public boolean isLastMoveIsValid() {
+        return lastMoveIsValid;
+    }
+
+    public void setLastMoveIsValid(boolean lastMoveIsValid) {
+        this.lastMoveIsValid = lastMoveIsValid;
     }
 
     public String getName() {

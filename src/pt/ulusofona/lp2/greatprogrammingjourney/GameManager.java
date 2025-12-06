@@ -418,19 +418,22 @@ public class GameManager {
     }
 
     private void passTurnToNextPlayer() {
-        List<Player> allPlayers = new ArrayList<>();
-        for (Slot slot : board.getSlots()) {
-            for (Player p : slot.getPlayers()) {
-                if (p.getIsAlive() && !allPlayers.contains(p)) {
-                    allPlayers.add(p);
+        boolean nextPlayerIsValid = false;
+        List<Player> sortedPlayers = board.getPlayers();
+        sortedPlayers.sort(Comparator.comparingInt(Player::getId));
+        while (!nextPlayerIsValid) {
+            int currentIndex = findAtualPlayerIndex(board.getPlayers());
+            if (currentIndex != -1) {
+                int nextIndex = (currentIndex + 1) % board.getPlayers().size();
+                Player currentPlayer = board.getPlayers().get(nextIndex);
+                currentPlayerId = currentPlayer.getId();
+                if (currentPlayer.isLastMoveIsValid()) {
+                    nextPlayerIsValid = true;
                 }
             }
         }
-        allPlayers.sort(Comparator.comparingInt(Player::getId));
-        int currentIndex = findAtualPlayerIndex(allPlayers);
-        if (currentIndex != -1) {
-            int nextIndex = (currentIndex + 1) % allPlayers.size();
-            currentPlayerId = allPlayers.get(nextIndex).getId();
+        for (Player player : sortedPlayers) {
+            player.setLastMoveIsValid(true);
         }
         turnCount++;
     }
@@ -466,24 +469,25 @@ public class GameManager {
         if (currentPlayer.isTrapped()) {
             // O jogador está preso no Infinite Loop.
             // Ele não se move, mas o turno conta-se como "jogado" (passa a vez).
-            passTurnToNextPlayer();
+            //passTurnToNextPlayer();
             System.out.println(currentPlayer.getName() + " está preso e não se pode mover.");
 
-            return true; // Retorna true porque a ação de "passar a vez preso" foi válida
+            return false; // Retorna true porque a ação de "passar a vez preso" foi válida
         }
 
         String[] splitLanguages = currentPlayer.getLanguage().split(";");
         String firstLanguage = splitLanguages[0].trim();
 
         if (firstLanguage.equals("Assembly") && nrSpaces > 2) {
-            passTurnToNextPlayer();
+            currentPlayer.setLastMoveIsValid(false);
             return false;
         } else if (firstLanguage.equals("C") && nrSpaces > 3) {
-            passTurnToNextPlayer();
+            currentPlayer.setLastMoveIsValid(false);
             return false;
         }
+        currentPlayer.setLastMoveIsValid(true);
 
-        passTurnToNextPlayer();
+        // passTurnToNextPlayer();
 
         lastMovedPlayerId = currentPlayer.getId();
         currentPlayer.setLastDiceValue(nrSpaces);
@@ -555,6 +559,8 @@ public class GameManager {
             // 2. A interação acontece (ferramentas podem ser removidas aqui)
             event.playerInteraction(currentPlayer, board);
 
+            passTurnToNextPlayer();
+
             // Verificação especial para BSOD (Morte)
             if (event.getName().equals("Blue Screen of Death") && !currentPlayer.getIsAlive()) {
                 return "O jogador caiu no " + event.getName() + " e perdeu o jogo :(";
@@ -576,7 +582,7 @@ public class GameManager {
         }
 
         //devia estar no move ( so da pass caso haja react e se o evento nao for null)
-        //   passTurnToNextPlayer();
+        passTurnToNextPlayer();
 
         return null;
     }
