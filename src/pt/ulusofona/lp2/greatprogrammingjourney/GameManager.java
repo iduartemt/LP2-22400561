@@ -790,7 +790,6 @@ public class GameManager {
                     writer.write(slot.getNrSlot() + ":" + eventType + ":" + event.getId());
                     writer.write(",");
                 }
-
             }
             writer.write("\n");
 
