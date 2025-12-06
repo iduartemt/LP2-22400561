@@ -463,11 +463,10 @@ public class GameManager {
             return false; // jogador não encontrado
         }
 
-        passTurnToNextPlayer();
-
         if (currentPlayer.isTrapped()) {
             // O jogador está preso no Infinite Loop.
             // Ele não se move, mas o turno conta-se como "jogado" (passa a vez).
+            passTurnToNextPlayer();
             System.out.println(currentPlayer.getName() + " está preso e não se pode mover.");
 
             return true; // Retorna true porque a ação de "passar a vez preso" foi válida
@@ -477,11 +476,14 @@ public class GameManager {
         String firstLanguage = splitLanguages[0].trim();
 
         if (firstLanguage.equals("Assembly") && nrSpaces > 2) {
+            passTurnToNextPlayer();
             return false;
         } else if (firstLanguage.equals("C") && nrSpaces > 3) {
+            passTurnToNextPlayer();
             return false;
         }
 
+        passTurnToNextPlayer();
 
         lastMovedPlayerId = currentPlayer.getId();
         currentPlayer.setLastDiceValue(nrSpaces);
