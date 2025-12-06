@@ -156,7 +156,7 @@ public class GameManager {
         // ========================LANGUAGE RESTRICTIONS ==============================
         //falha aqui, pode entrar logo aqui e nao no primeiro create
         if (abyssesAndTools == null) {
-           return createInitialBoard(playerInfo, worldSize);
+            return createInitialBoard(playerInfo, worldSize);
         }
 
         //validar a linha
@@ -272,6 +272,8 @@ public class GameManager {
 
                     if (!player.getIsAlive()) {
                         infoPlayer[6] = "Derrotado";
+                    } else if (player.isTrapped()) {
+                        infoPlayer[6] = "Preso";
                     } else {
                         infoPlayer[6] = "Em jogo";
                     }
