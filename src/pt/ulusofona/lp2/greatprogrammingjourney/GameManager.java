@@ -725,6 +725,7 @@ public class GameManager {
                 players.put(playerId, player);
                 playersList.add(player);
             }
+
             // ler id current player e nrTurno
             String[][] abyssesAndToolsFormated = new String[abyssesAndTools.size()][3];
             for (int i = 0; i < abyssesAndTools.size(); i++) {
