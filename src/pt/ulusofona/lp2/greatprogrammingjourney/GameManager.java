@@ -447,22 +447,36 @@ public class GameManager {
     }
 
     private void passTurnToNextPlayer() {
-        boolean nextPlayerIsValid = false;
-        List<Player> sortedPlayers = board.getPlayers();
+        List<Player> sortedPlayers = new ArrayList<>(board.getPlayers());
         sortedPlayers.sort(Comparator.comparingInt(Player::getId));
-        while (!nextPlayerIsValid) {
-            int currentIndex = findAtualPlayerIndex(board.getPlayers());
-            if (currentIndex != -1) {
-                int nextIndex = (currentIndex + 1) % board.getPlayers().size();
-                Player currentPlayer = board.getPlayers().get(nextIndex);
-                currentPlayerId = currentPlayer.getId();
-                if (currentPlayer.getState() != PlayerState.DERROTADO) {
-                    nextPlayerIsValid = true;
-                }
+
+        int currentIndex = -1;
+        for (int i = 0; i < sortedPlayers.size(); i++) {
+            if (sortedPlayers.get(i).getId() == currentPlayerId) {
+                currentIndex = i;
+                break;
             }
         }
-        for (Player player : sortedPlayers) {
-            player.setLastMoveIsValid(true);
+
+        if (currentIndex == -1) {
+            return; // Should not happen in a valid game
+        }
+
+        // Start looking for the next valid player from the one after the current one
+        for (int i = 1; i <= sortedPlayers.size(); i++) {
+            int nextIndex = (currentIndex + i) % sortedPlayers.size();
+            Player nextPlayer = sortedPlayers.get(nextIndex);
+
+            if (nextPlayer.getState() != PlayerState.DERROTADO) {
+                currentPlayerId = nextPlayer.getId();
+                turnCount++;
+
+                // Reset move validation for all players for the new turn
+                for (Player player : board.getPlayers()) {
+                    player.setLastMoveIsValid(true);
+                }
+                return; // Found the next player, so exit
+            }
         }
         turnCount++;
     }
@@ -552,7 +566,7 @@ public class GameManager {
 
         if (currentPlayer.getState() == PlayerState.PRESO) {
             passTurnToNextPlayer();
-            return null;
+            return "Ciclo Infinito! O jogador ficou preso na casa.";
         }
 
         // 3. Verificar se existe evento (Abismo ou Ferramenta)
@@ -570,15 +584,6 @@ public class GameManager {
         passTurnToNextPlayer();
 
         return message;
-    }
-
-    private int findAtualPlayerIndex(List<Player> allPlayers) {
-        for (int i = 0; i < allPlayers.size(); i++) {
-            if (allPlayers.get(i).getId() == currentPlayerId) {
-                return i;
-            }
-        }
-        return -1;
     }
 
     // Verifica se o jogo terminou

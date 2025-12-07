@@ -14,5 +14,6 @@ public class TeacherHelp extends Tool {
     public void playerInteraction(Player player, Board board) {
         if (!player.hasTool(this)) {
             player.getTools().add(this);
-        }    }
+        }
+    }
 }
