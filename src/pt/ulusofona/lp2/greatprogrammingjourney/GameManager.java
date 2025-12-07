@@ -552,6 +552,64 @@ public class GameManager {
 
         return true;
     }
+    private String getGameStateDump(String title) {
+        StringBuilder gameState = new StringBuilder();
+        gameState.append("\n--- ").append(title).append(" ---\n");
+        gameState.append("Turn: ").append(turnCount).append("\n");
+        gameState.append("Current Player ID: ").append(currentPlayerId).append("\n");
+        gameState.append("Board Size: ").append(board.getNrTotalSlots()).append("\n");
+
+        gameState.append("\n--- PLAYERS (Full List) ---\n");
+        List<Player> allPlayers = new ArrayList<>(board.getPlayers()); // Assuming board.getPlayers() returns ALL players, even defeated ones
+        allPlayers.sort(Comparator.comparingInt(Player::getId));
+        for (Player p : allPlayers) {
+            Slot playerSlot = board.getSlotOfPlayer(p.getId());
+            String slotInfo = (playerSlot != null) ? String.valueOf(playerSlot.getNrSlot()) : "N/A";
+
+            List<Tool> playerTools = p.getTools();
+            String toolsStr;
+            if (playerTools == null || playerTools.isEmpty()) {
+                toolsStr = "No tools";
+            } else {
+                List<String> toolNames = new ArrayList<>();
+                for (Tool t : playerTools) {
+                    toolNames.add(t.getName());
+                }
+                Collections.sort(toolNames);
+                toolsStr = String.join(";", toolNames);
+            }
+
+            gameState.append(p.getId()).append(" | ")
+                    .append(p.getName()).append(" | ")
+                    .append("Pos: ").append(slotInfo).append(" | ")
+                    .append("Tools: ").append(toolsStr).append(" | ")
+                    .append("Lang: ").append(p.getLanguage()).append(" | ")
+                    .append("State: ").append(p.getState())
+                    .append("\n");
+        }
+
+        gameState.append("\n--- BOARD LAYOUT ---\n");
+        for (Slot s : board.getSlots()) {
+            gameState.append("Slot ").append(s.getNrSlot()).append(": ");
+            if (s.getEvent() != null) {
+                gameState.append("Event: ").append(s.getEvent().getName()).append(" | ");
+            }
+            if (!s.getPlayers().isEmpty()) {
+                List<String> playerNames = new ArrayList<>();
+                for(Player p : s.getPlayers()) {
+                    playerNames.add(p.getName() + "(ID:" + p.getId() + ")");
+                }
+                gameState.append("Players: ").append(String.join(", ", playerNames));
+            } else {
+                gameState.append("Players: (empty)");
+            }
+            gameState.append("\n");
+        }
+        gameState.append("--- END ").append(title).append(" ---\n");
+        return gameState.toString();
+    }
+
+
     public String reactToAbyssOrTool() {
         // 1. Validações iniciais (Guard Clauses)
         if (board == null || currentPlayerId == -1) {
@@ -578,10 +636,23 @@ public class GameManager {
         String message = null;
 
         if (event != null) {
+            String beforeState = null;
+            String afterState = null;
+
+            //DEBUG BSOD
+            if (event.getName().equals("Blue Screen of Death")) {
+                beforeState = getGameStateDump("BSOD - BEFORE");
+            }
+
             // Se houver evento, interage e define a mensagem de retorno
             message = event.playerInteraction(currentPlayer, board);
             if (message == null) {
                 message = "O jogador encontrou: " + event.getName();
+            }
+
+            if (beforeState != null) {
+                afterState = getGameStateDump("BSOD - AFTER");
+                throw new RuntimeException(beforeState + afterState);
             }
         }
 
