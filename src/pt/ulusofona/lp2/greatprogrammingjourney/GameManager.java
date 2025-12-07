@@ -488,7 +488,7 @@ public class GameManager {
         // Retornamos 'true' para indicar que a "ação" foi processada (mesmo que nula).
         if (currentPlayer.getState() == PlayerState.PRESO) {
             System.out.println(currentPlayer.getName() + " está preso e não se pode mover.");
-            return true;
+            return false;
         }
 
         // Validação de Linguagens (Assembly/C)
@@ -660,7 +660,7 @@ public class GameManager {
 
 
     public void loadGame(File file) throws InvalidFileException, FileNotFoundException {
-        if (file == null) {
+      /*  if (file == null) {
             return;
         }
 
@@ -754,12 +754,12 @@ public class GameManager {
         } catch (IndexOutOfBoundsException e) {
             e.printStackTrace();
             throw new InvalidFileException();
-        }
+        }*/
 
     }
 
     public boolean saveGame(File file) {
-        try {
+       /* try {
             FileWriter writer = new FileWriter(file);
 
             //primeira linha tamanho do board
@@ -815,7 +815,7 @@ public class GameManager {
             return false;
         }
         System.out.println("sucesso a salvar em " + file.getAbsolutePath());
-
+*/
         return true;
     }
 

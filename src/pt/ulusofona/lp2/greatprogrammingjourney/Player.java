@@ -11,7 +11,7 @@ public class Player {
     private final ArrayList<Tool> tools;
     private final String color;
     //Dados
-    private PlayerState state = PlayerState.EM_JOGO;
+    private PlayerState state;
     private int lastDiceValue;
     private int previousPosition;
     private int positionTwoMovesAgo;
