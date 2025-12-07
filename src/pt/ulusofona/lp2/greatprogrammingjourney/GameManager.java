@@ -456,7 +456,7 @@ public class GameManager {
                 int nextIndex = (currentIndex + 1) % board.getPlayers().size();
                 Player currentPlayer = board.getPlayers().get(nextIndex);
                 currentPlayerId = currentPlayer.getId();
-                if (currentPlayer.isLastMoveIsValid() && currentPlayer.getState() != PlayerState.DERROTADO) {
+                if (currentPlayer.getState() == PlayerState.DERROTADO) {
                     nextPlayerIsValid = true;
                 }
             }
@@ -469,6 +469,7 @@ public class GameManager {
 
     // Move o jogador atual pelo tabuleiro
     public boolean moveCurrentPlayer(int nrSpaces) {
+        // Validações básicas iniciais
         if (board == null || nrSpaces < 1 || nrSpaces > 6) {
             return false;
         }
@@ -477,56 +478,55 @@ public class GameManager {
         }
 
         Slot originSlot = board.getSlotOfPlayer(getCurrentPlayerID());
-
         if (originSlot == null) {
             return false; // Jogador não encontrado
         }
 
         Player currentPlayer = originSlot.findPlayerByID(getCurrentPlayerID());
 
+        // Se o jogador estiver PRESO, não se pode mover.
+        // Retornamos 'true' para indicar que a "ação" foi processada (mesmo que nula).
         if (currentPlayer.getState() == PlayerState.PRESO) {
             System.out.println(currentPlayer.getName() + " está preso e não se pode mover.");
-
-            return true; // Retorna true porque a ação de "passar a vez preso" foi válida
+            return true;
         }
 
+        // Validação de Linguagens (Assembly/C)
         if (!currentPlayer.canMove(nrSpaces)) {
             currentPlayer.setLastMoveIsValid(false);
             return false;
         }
 
         currentPlayer.setLastMoveIsValid(true);
-
         currentPlayer.setLastDiceValue(nrSpaces);
 
-        // Atualiza o histórico: O que era "anterior" passa a ser "há 2 jogadas"
+        // Atualiza o histórico de posições
         currentPlayer.setPositionTwoMovesAgo(currentPlayer.getPreviousPosition());
-        // A posição onde estou agora (antes de me mover) passa a ser a "anterior"
         currentPlayer.setPreviousPosition(originSlot.getNrSlot());
 
-        // Calcula destino e trata se passar do fim
+        // Calcula o destino
         int lastSlot = board.getNrTotalSlots();
         int destination = originSlot.getNrSlot() + nrSpaces;
 
-        // se ultrapassar o final volta para trás
+        // Regra do ricochete (voltar para trás se passar o fim)
         if (destination > lastSlot) {
             int tillTheEnd = lastSlot - originSlot.getNrSlot();
             int exceed = nrSpaces - tillTheEnd;
             destination = lastSlot - exceed;
         }
 
-        // encontra a slot de destino
+        // Encontra a slot de destino
         Slot destinationSlot = board.encontraSlot(destination);
 
         if (destinationSlot == null) {
             return false;
         }
 
-        // move o jogador da casa atual para a nova
+        // Realiza o movimento
         originSlot.removePlayer(currentPlayer);
         destinationSlot.addPlayer(currentPlayer);
 
-        // Se o jogo acabou, o jogador atual é o vencedor
+        // Verifica vitória imediata
         if (gameIsOver()) {
             currentPlayerId = currentPlayer.getId();
             return true;
@@ -534,7 +534,6 @@ public class GameManager {
 
         return true;
     }
-
     public String reactToAbyssOrTool() {
         // 1. Validações iniciais (Guard Clauses)
         if (board == null || currentPlayerId == -1) {
