@@ -120,10 +120,16 @@ public class Player {
     //=====================================================METODOS======================================================
 
     public boolean addTool(Tool tool) {
+        if (tool == null) {
+            return false;
+        }
         return this.tools.add(tool);
     }
 
     public boolean removeTool(Tool tool) {
+        if (tool == null) {
+            return false;
+        }
         return this.tools.remove(tool);
     }
 
