@@ -609,12 +609,15 @@ public class GameManager {
             return null;
         }
 
+        // Percorre do último slot para o primeiro
         for (int i = board.getNrTotalSlots() - 1; i >= 0; i--) {
             Slot slot = board.getSlots().get(i);
 
-            // Cria cópia e ordena por ID
+            // Cria cópia da lista de jogadores
             List<Player> sortedPlayers = new ArrayList<>(slot.getPlayers());
-            sortedPlayers.sort(Comparator.comparingInt(Player::getId));
+
+            // CORREÇÃO: Alterar a ordenação de ID para NOME
+            sortedPlayers.sort(Comparator.comparing(Player::getName));
 
             for (Player player : sortedPlayers) {
                 if (!player.getName().equals(winnerName)) {
@@ -624,7 +627,6 @@ public class GameManager {
         }
         return lastPlayers;
     }
-
     // Gera um relatório com os resultados finais do jogo
     public ArrayList<String> getGameResults() {
         ArrayList<String> results = new ArrayList<>();
