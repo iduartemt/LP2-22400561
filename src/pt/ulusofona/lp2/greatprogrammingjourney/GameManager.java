@@ -456,7 +456,7 @@ public class GameManager {
                 int nextIndex = (currentIndex + 1) % board.getPlayers().size();
                 Player currentPlayer = board.getPlayers().get(nextIndex);
                 currentPlayerId = currentPlayer.getId();
-                if (currentPlayer.isLastMoveIsValid() && currentPlayer.getState() == PlayerState.EM_JOGO) {
+                if (currentPlayer.isLastMoveIsValid() && currentPlayer.getState() != PlayerState.DERROTADO) {
                     nextPlayerIsValid = true;
                 }
             }
@@ -487,7 +487,7 @@ public class GameManager {
         if (currentPlayer.getState() == PlayerState.PRESO) {
             System.out.println(currentPlayer.getName() + " está preso e não se pode mover.");
 
-            return false; // Retorna true porque a ação de "passar a vez preso" foi válida
+            return true; // Retorna true porque a ação de "passar a vez preso" foi válida
         }
 
         if (!currentPlayer.canMove(nrSpaces)) {
@@ -547,8 +547,14 @@ public class GameManager {
             return null;
         }
 
+
         // Como já temos o slot, buscar o objeto Player é direto
         Player currentPlayer = currentSlot.findPlayerByID(currentPlayerId);
+
+        if (currentPlayer.getState() == PlayerState.PRESO) {
+            passTurnToNextPlayer();
+            return null;
+        }
 
         // 3. Verificar se existe evento (Abismo ou Ferramenta)
         Event event = currentSlot.getEvent();
