@@ -6,6 +6,7 @@ import pt.ulusofona.lp2.greatprogrammingjourney.tool.Tool;
 import pt.ulusofona.lp2.greatprogrammingjourney.tool.subtypes.*;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -131,6 +132,109 @@ public class Board {
             }
         }
         return null;
+    }
+
+    public String getImagePng(int nrSquare) {
+        if (nrSquare < 1 || nrSquare > getNrTotalSlots()) {
+            return null;
+        }
+        if (nrSquare == getNrTotalSlots()) {
+            return "glory.png"; // última casa do tabuleiro
+        }
+
+        Slot thisSlot = encontraSlot(nrSquare);
+
+        if (thisSlot.getEvent() != null) {
+            return thisSlot.getEvent().getImage();
+        }
+        return null;
+    }
+    public String[] getSlotInfo(int position) {
+        Slot slot = encontraSlot(position);
+        if (slot == null) {
+            return null;
+        }
+
+        String playersStr = slot.buildPlayerIds(); // ids dos jogadores na casa
+        String eventName = "";
+        String eventTypeStr = "";
+
+        Event event = slot.getEvent();
+        if (event != null) {
+            eventName = event.getName();
+
+            if (event.getType() == EventType.ABYSS) {
+                eventTypeStr = "A:" + event.getId();
+            } else if (event.getType() == EventType.TOOL) {
+                eventTypeStr = "T:" + event.getId();
+            }
+        }
+
+        return new String[]{playersStr, eventName, eventTypeStr};
+    }
+
+    public Slot findWinner() {
+        for (Slot slot : slots) {
+            if (slot.getNrSlot() == getNrTotalSlots()) {
+                return slot;
+            }
+        }
+        return null;
+    }
+
+    public ArrayList<String> findLastPlayers(String winnerName) {
+        ArrayList<String> lastPlayers = new ArrayList<>();
+
+        // Percorre do último slot para o primeiro
+        for (int i = getNrTotalSlots() - 1; i >= 0; i--) {
+            Slot slot = getSlots().get(i);
+
+            // Cria cópia da lista de jogadores
+            List<Player> sortedPlayers = new ArrayList<>(slot.getPlayers());
+
+            // CORREÇÃO: Alterar a ordenação de ID para NOME
+            sortedPlayers.sort(Comparator.comparing(Player::getName));
+
+            for (Player player : sortedPlayers) {
+                if (!player.getName().equals(winnerName)) {
+                    lastPlayers.add(player.getName() + " " + slot.getNrSlot());
+                }
+            }
+        }
+        return lastPlayers;
+    }
+
+    // Adicionar ao Board.java
+    public boolean movePlayer(Player player, int nrSpaces) {
+        Slot originSlot = getSlotOfPlayer(player.getId());
+        if (originSlot == null) {
+            return false; // Jogador não está no tabuleiro
+        }
+
+        // Atualiza o histórico de posições
+        player.setPositionTwoMovesAgo(player.getPreviousPosition());
+        player.setPreviousPosition(originSlot.getNrSlot());
+
+        // Calcula o destino
+        int lastSlot = getNrTotalSlots();
+        int destination = originSlot.getNrSlot() + nrSpaces;
+
+        // Regra do ricochete
+        if (destination > lastSlot) {
+            int tillTheEnd = lastSlot - originSlot.getNrSlot();
+            int exceed = nrSpaces - tillTheEnd;
+            destination = lastSlot - exceed;
+        }
+
+        Slot destinationSlot = encontraSlot(destination);
+        if (destinationSlot == null) {
+            return false;
+        }
+
+        // Realiza o movimento
+        originSlot.removePlayer(player);
+        destinationSlot.addPlayer(player);
+        return true;
     }
 
 }

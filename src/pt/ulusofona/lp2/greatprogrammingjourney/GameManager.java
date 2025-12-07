@@ -240,20 +240,7 @@ public class GameManager {
 
     // Devolve o nome da imagem associada a uma casa específica
     public String getImagePng(int nrSquare) {
-
-        if (nrSquare < 1 || nrSquare > board.getNrTotalSlots()) {
-            return null;
-        }
-        if (nrSquare == board.getNrTotalSlots()) {
-            return "glory.png"; // última casa do tabuleiro
-        }
-
-        Slot thisSlot = board.encontraSlot(nrSquare);
-
-        if (thisSlot.getEvent() != null) {
-            return thisSlot.getEvent().getImage();
-        }
-        return null;
+        return board.getImagePng(nrSquare);
     }
 
     // Retorna as informações de um programador (player) num array de strings
@@ -314,7 +301,7 @@ public class GameManager {
         Player player = slot.findPlayerByID(id);
 
         List<String> sortedLanguages = player.getSortedLanguages(player.getLanguage());
-        String languagesInfo = String.join(";",sortedLanguages);
+        String languagesInfo = String.join("; ", sortedLanguages);
 
         List<Tool> playerTools = player.getTools();
         String toolsStr;
@@ -355,11 +342,11 @@ public class GameManager {
         List<Player> alivePlayers = new ArrayList<>();
 
         // Percorre os slots para manter a ordem do tabuleiro (Slot 1, Slot 2...)
-            for (Player player : board.getPlayers()) {
-                if (player.getState() != PlayerState.DERROTADO) {
-                    alivePlayers.add(player);
-                }
+        for (Player player : board.getPlayers()) {
+            if (player.getState() != PlayerState.DERROTADO) {
+                alivePlayers.add(player);
             }
+        }
         // Se não houver jogadores vivos, devolve string vazia
         if (alivePlayers.isEmpty()) {
             return "";
@@ -399,33 +386,8 @@ public class GameManager {
 
     // Retorna os IDs dos jogadores presentes numa determinada slot
     public String[] getSlotInfo(int position) {
-        if (board == null) {
-            return null;
-        }
-
-        Slot slot = board.encontraSlot(position);
-        if (slot == null) {
-            return null;
-        }
-
-        String playersStr = slot.buildPlayerIds(); // ids dos jogadores na casa
-        String eventName = "";
-        String eventTypeStr = "";
-
-        Event event = slot.getEvent();
-        if (event != null) {
-            eventName = event.getName();
-
-            if (event.getType() == EventType.ABYSS) {
-                eventTypeStr = "A:" + event.getId();
-            } else if (event.getType() == EventType.TOOL) {
-                eventTypeStr = "T:" + event.getId();
-            }
-        }
-
-        return new String[]{playersStr, eventName, eventTypeStr};
+        return board.getSlotInfo(position);
     }
-
 
     // Devolve o ID do jogador atual
     public int getCurrentPlayerID() {
@@ -468,31 +430,22 @@ public class GameManager {
     }
 
     // Move o jogador atual pelo tabuleiro
+// Em GameManager.java
     public boolean moveCurrentPlayer(int nrSpaces) {
-        // Validações básicas iniciais
-        if (board == null || nrSpaces < 1 || nrSpaces > 6) {
-            System.out.println("board null");
-            return false;
-        }
-        if (gameIsOver()) {
+        if (board == null || nrSpaces < 1 || nrSpaces > 6 || gameIsOver()) {
             return false;
         }
 
-        Slot originSlot = board.getSlotOfPlayer(getCurrentPlayerID());
-        if (originSlot == null) {
-            System.out.println("nao encontra jog");
-            return false; // Jogador não encontrado
+        Player currentPlayer = board.getSlotOfPlayer(getCurrentPlayerID()).findPlayerByID(getCurrentPlayerID());
+        if (currentPlayer == null) {
+            return false;
         }
 
-        Player currentPlayer = originSlot.findPlayerByID(getCurrentPlayerID());
-
-        // Se o jogador estiver PRESO, não se pode mover.
         if (currentPlayer.getState() == PlayerState.PRESO) {
             System.out.println(currentPlayer.getName() + " está preso e não se pode mover.");
             return false;
         }
 
-        // Validação de Linguagens (Assembly/C)
         if (!currentPlayer.canMove(nrSpaces)) {
             currentPlayer.setLastMoveIsValid(false);
             System.out.println("linguagem invalida");
@@ -502,41 +455,16 @@ public class GameManager {
         currentPlayer.setLastMoveIsValid(true);
         currentPlayer.setLastDiceValue(nrSpaces);
 
-        // Atualiza o histórico de posições
-        currentPlayer.setPositionTwoMovesAgo(currentPlayer.getPreviousPosition());
-        currentPlayer.setPreviousPosition(originSlot.getNrSlot());
+        // A chamada agora é delegada ao Board
+        boolean moved = board.movePlayer(currentPlayer, nrSpaces);
 
-        // Calcula o destino
-        int lastSlot = board.getNrTotalSlots();
-        int destination = originSlot.getNrSlot() + nrSpaces;
-
-        // Regra do ricochete (voltar para trás se passar o fim)
-        if (destination > lastSlot) {
-            int tillTheEnd = lastSlot - originSlot.getNrSlot();
-            int exceed = nrSpaces - tillTheEnd;
-            destination = lastSlot - exceed;
-        }
-
-        // Encontra a slot de destino
-        Slot destinationSlot = board.encontraSlot(destination);
-
-        if (destinationSlot == null) {
-            System.out.println("destinationSlot null");
-            return false;
-        }
-
-        // Realiza o movimento
-        originSlot.removePlayer(currentPlayer);
-        destinationSlot.addPlayer(currentPlayer);
-
-        // Verifica vitória imediata
-        if (gameIsOver()) {
+        if (moved && gameIsOver()) {
             currentPlayerId = currentPlayer.getId();
-            return true;
         }
 
-        return true;
+        return moved;
     }
+
     private String getGameStateDump(String title) {
         StringBuilder gameState = new StringBuilder();
         gameState.append("\n--- ").append(title).append(" ---\n");
@@ -581,7 +509,7 @@ public class GameManager {
             }
             if (!s.getPlayers().isEmpty()) {
                 List<String> playerNames = new ArrayList<>();
-                for(Player p : s.getPlayers()) {
+                for (Player p : s.getPlayers()) {
                     playerNames.add(p.getName() + "(ID:" + p.getId() + ")");
                 }
                 gameState.append("Players: ").append(String.join(", ", playerNames));
@@ -593,6 +521,7 @@ public class GameManager {
         gameState.append("--- END ").append(title).append(" ---\n");
         return gameState.toString();
     }
+
     public String reactToAbyssOrTool() {
         // 1. Validações iniciais (Guard Clauses)
         if (board == null || currentPlayerId == -1) {
@@ -643,43 +572,13 @@ public class GameManager {
     }
 
     private Slot findWinner() {
-        if (board == null) {
-            return null;
-        }
-
-        for (Slot slot : board.getSlots()) {
-            if (slot.getNrSlot() == board.getNrTotalSlots()) {
-                return slot;
-            }
-        }
-        return null;
+        return board.findWinner();
     }
 
     private ArrayList<String> findLastPlayers(String winnerName) {
-        ArrayList<String> lastPlayers = new ArrayList<>();
-
-        if (board == null) {
-            return null;
-        }
-
-        // Percorre do último slot para o primeiro
-        for (int i = board.getNrTotalSlots() - 1; i >= 0; i--) {
-            Slot slot = board.getSlots().get(i);
-
-            // Cria cópia da lista de jogadores
-            List<Player> sortedPlayers = new ArrayList<>(slot.getPlayers());
-
-            // CORREÇÃO: Alterar a ordenação de ID para NOME
-            sortedPlayers.sort(Comparator.comparing(Player::getName));
-
-            for (Player player : sortedPlayers) {
-                if (!player.getName().equals(winnerName)) {
-                    lastPlayers.add(player.getName() + " " + slot.getNrSlot());
-                }
-            }
-        }
-        return lastPlayers;
+        return board.findLastPlayers(winnerName);
     }
+
     // Gera um relatório com os resultados finais do jogo
     public ArrayList<String> getGameResults() {
         ArrayList<String> results = new ArrayList<>();
