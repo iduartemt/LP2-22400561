@@ -503,8 +503,7 @@ public class GameManager {
         // Se o jogador estiver PRESO, não se pode mover.
         if (currentPlayer.getState() == PlayerState.PRESO) {
             System.out.println(currentPlayer.getName() + " está preso e não se pode mover.");
-            // Throw an exception with the game state to help debug the test failure.
-            throw new RuntimeException(getGameStateDump("Player is PRESO in moveCurrentPlayer"));
+            return false;
         }
 
         // Validação de Linguagens (Assembly/C)

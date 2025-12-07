@@ -16,10 +16,6 @@ public class BlueScreenOfDeath extends Abyss {
     @Override
     public String playerInteraction(Player player, Board board) {
         player.setState(PlayerState.DERROTADO);
-        Slot playerSlot = board.getSlotOfPlayer(player.getId());
-        if (playerSlot != null) {
-            playerSlot.removePlayer(player);
-        }
         return null;
     }
 }

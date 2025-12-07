@@ -16,21 +16,6 @@ public class Crash extends Abyss {
     @Override
     public String playerInteraction(Player player, Board board) {
 
-        Tool ide = null;
-
-        for (Tool t : player.getTools()) {
-            if (t.getId()==4) {
-                ide = t;
-                break;
-            }
-        }
-
-        if (ide != null) {
-            player.getTools().remove(ide);
-            System.out.println("Crash anulado por " + ide.getName());
-            return null;
-        }
-
         Slot currentSlot = null;
 
         for (Slot s : board.getSlots()) {

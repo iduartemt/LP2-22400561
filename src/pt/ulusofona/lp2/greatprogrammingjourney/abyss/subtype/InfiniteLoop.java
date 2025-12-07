@@ -16,22 +16,21 @@ public class InfiniteLoop extends Abyss {
     @Override
     public String playerInteraction(Player player, Board board) {
 
-        // 1. TENTAR USAR A FERRAMENTA DE PROTEÇÃO (TeacherHelp - ID 5)
-        Tool teacherHelp = null;
+        Tool functionalProgramming = null;
 
         for (Tool t : player.getTools()) {
-            if (t.getId() == 5) { // ID 5 corresponde ao TeacherHelp
-                teacherHelp = t;
+            if (t.getId() == 1) {
+                functionalProgramming = t;
                 break;
             }
         }
 
-        if (teacherHelp != null) {
-            player.getTools().remove(teacherHelp);
-            System.out.println("Ciclo Infinito anulado por " + teacherHelp.getName());
+        if (functionalProgramming != null) {
+            player.getTools().remove(functionalProgramming);
+            System.out.println("Ciclo Infinito anulado por " + functionalProgramming.getName());
             // REGRA: "não fica preso, mas também não liberta o que lá estava"
             // Por isso, fazemos return imediato.
-            return "Ciclo Infinito anulado por " + teacherHelp.getName();
+            return "Ciclo Infinito anulado por " + functionalProgramming.getName();
         }
 
         // 2. ENCONTRAR O SLOT ATUAL
