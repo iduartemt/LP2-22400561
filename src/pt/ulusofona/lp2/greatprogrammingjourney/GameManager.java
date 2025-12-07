@@ -456,7 +456,7 @@ public class GameManager {
                 int nextIndex = (currentIndex + 1) % board.getPlayers().size();
                 Player currentPlayer = board.getPlayers().get(nextIndex);
                 currentPlayerId = currentPlayer.getId();
-                if (currentPlayer.getState() == PlayerState.EM_JOGO) {
+                if (currentPlayer.getState() != PlayerState.DERROTADO) {
                     nextPlayerIsValid = true;
                 }
             }
