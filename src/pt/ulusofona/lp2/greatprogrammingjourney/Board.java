@@ -18,14 +18,14 @@ public class Board {
     public Board(List<Player> players, int worldSize) {
         addSlotList(worldSize);
         addPlayerSlotFirstSlot(players);
-        this.players = players;
+        this.players = new ArrayList<>(players);
     }
 
     public Board(List<Player> players, int worldSize, String[][] abyssesAndTools) {
         addSlotList(worldSize);
         addEventsToSlot(abyssesAndTools);
         addPlayerSlotFirstSlot(players);
-        this.players = players;
+        this.players = new ArrayList<>(players);
     }
 
     public List<Player> getPlayers() {

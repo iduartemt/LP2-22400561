@@ -51,7 +51,7 @@ public class Player {
                 return null;
             }
             return id;
-            } catch (NumberFormatException e) {
+        } catch (NumberFormatException e) {
             return null;
         }
     }
