@@ -41,6 +41,21 @@ public class Player {
         this.positionTwoMovesAgo = positionTwoMovesAgo;
     }
 
+    public static Integer isValidId(String idStr) {
+        if (idStr == null || idStr.isEmpty()) {
+            return null;
+        }
+        try {
+            int id = Integer.parseInt(idStr);
+            if (id < 0) {
+                return null;
+            }
+            return id;
+            } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
     //=====================================================GETTERS======================================================
     public int getId() {
         return id;
@@ -114,27 +129,8 @@ public class Player {
         this.state = state;
     }    //=====================================================METODOS======================================================
 
-    public boolean addTool(Tool tool) {
-        if (tool == null) {
-            return false;
-        }
-        return this.tools.add(tool);
-    }
-
-    public boolean removeTool(Tool tool) {
-        if (tool == null) {
-            return false;
-        }
-        return this.tools.remove(tool);
-    }
-
-    public static String isValidName(String name, HashSet<String> validName) {
+    public static String isValidName(String name) {
         if (name == null || name.isEmpty()) {
-            return null;
-        }
-
-        //duplicados
-        if (!validName.add(name)) {
             return null;
         }
         return name;
@@ -145,17 +141,6 @@ public class Player {
             return null;
         }
         return language.trim();
-    }
-
-    public String playerLanguageInfo(List<String> sortLanguage) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < sortLanguage.size(); i++) {
-            sb.append(sortLanguage.get(i));
-            if (i != sortLanguage.size() - 1) {
-                sb.append("; ");
-            }
-        }
-        return sb.toString();
     }
 
     public boolean hasTool(Tool tool) {

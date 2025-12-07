@@ -31,14 +31,6 @@ public class GameManager {
         return false;
     }
 
-    private boolean isValidLine(String[] validLine) {
-        // Cada linha contém a informação de um jogador
-        if (validLine == null || validLine.length < 3 || validLine.length > 4) {
-            return false;
-        }
-        return true;
-    }
-
     private Integer isValidPlayer(String idString, HashSet<String> validId) {
         if (idString == null || idString.isEmpty()) {
             return null;
@@ -58,7 +50,7 @@ public class GameManager {
         }
     }
 
-    private String isValidColor(String color, HashSet<String> validColor) {
+    private String validateColor(String color, HashSet<String> validColor) {
         if (color == null) {
             return null;
         }
@@ -88,39 +80,35 @@ public class GameManager {
     }
 
     // Valida as informações de cada jogador e devolve uma lista de jogadores validos
-    private List<Player> infoValidPlayers(String[][] playerInfo) {
+    private List<Player> validateAndCreatePlayersByLine(String[][] playerInfo) {
         List<Player> validPlayers = new ArrayList<>();
-        HashSet<String> validId = new HashSet<>();
-        HashSet<String> validName = new HashSet<>();
-        HashSet<String> validColor = new HashSet<>();
+        HashSet<String> usedIds = new HashSet<>();
+        HashSet<String> usedNames = new HashSet<>();
+        HashSet<String> usedColors = new HashSet<>();
 
         for (int i = 0; i < playerInfo.length; i++) {
-            String[] validLine = playerInfo[i];
+            String[] playerLine = playerInfo[i];
 
-            if (!isValidLine(validLine)) {
-                System.out.println("funcao infoValidPlayers: isValidLine == null");
+            if (playerLine == null || playerLine.length < 2 || playerLine.length > 4) {
                 return null;
             }
 
-
-            String idStr = validLine[0].trim();
-            String nameStr = validLine[1].trim();
-            String langStr = validLine[2].trim();
-            String colorStr = "";
-            if (validLine.length == 4) {
-                colorStr = validLine[3].trim();
-            } else if (validLine.length == 3) {
-                colorStr = "RANDOM";
+            String idStr = playerLine[0].trim();
+            String nameStr = playerLine[1].trim();
+            String langStr = playerLine[2].trim();
+            String colorStr = "RANDOM";
+            if (playerLine.length == 4) {
+                colorStr = playerLine[3].trim();
             }
 
-            Integer id = isValidPlayer(idStr, validId);
-            if (id == null) {
+            Integer id = Player.isValidId(idStr);
+            if (id == null || usedIds.contains(idStr)) {
                 System.out.println("funcao infoValidPlayers: id == null");
                 return null;
             }
 
-            String name = Player.isValidName(nameStr, validName);
-            if (name == null) {
+            String name = Player.isValidName(nameStr);
+            if (name == null || usedNames.contains(nameStr)) {
                 System.out.println("funcao infoValidPlayers: name == null");
                 return null;
             }
@@ -131,14 +119,16 @@ public class GameManager {
                 return null;
             }
 
-            String color = isValidColor(colorStr, validColor);
+            String color = validateColor(colorStr, usedColors);
             if (color == null) {
                 System.out.println("funcao infoValidPlayers: color == null");
                 return null;
             }
 
             validPlayers.add(new Player(id, name, language, color));
-            validColor.add(color);
+            usedIds.add(idStr);
+            usedNames.add(name);
+            usedColors.add(color);
         }
 
         return validPlayers;
@@ -160,7 +150,7 @@ public class GameManager {
         }
 
         // valida os jogadores e cria a lista
-        List<Player> validPlayers = infoValidPlayers(playerInfo);
+        List<Player> validPlayers = validateAndCreatePlayersByLine(playerInfo);
         if (validPlayers == null) {
             System.out.println("playerInfo invalida");
             return false;
@@ -324,7 +314,7 @@ public class GameManager {
         Player player = slot.findPlayerByID(id);
 
         List<String> sortedLanguages = player.getSortedLanguages(player.getLanguage());
-        String languagesInfo = player.playerLanguageInfo(sortedLanguages);
+        String languagesInfo = String.join(";",sortedLanguages);
 
         List<Tool> playerTools = player.getTools();
         String toolsStr;
@@ -365,15 +355,11 @@ public class GameManager {
         List<Player> alivePlayers = new ArrayList<>();
 
         // Percorre os slots para manter a ordem do tabuleiro (Slot 1, Slot 2...)
-        for (Slot s : board.getSlots()) {
-            //List<Player> playersInSlot = new ArrayList<>();
-            // Recolhe jogadores vivos neste slot
-            for (Player player : s.getPlayers()) {
+            for (Player player : board.getPlayers()) {
                 if (player.getState() != PlayerState.DERROTADO) {
                     alivePlayers.add(player);
                 }
             }
-        }
         // Se não houver jogadores vivos, devolve string vazia
         if (alivePlayers.isEmpty()) {
             return "";
@@ -559,7 +545,7 @@ public class GameManager {
         gameState.append("Board Size: ").append(board.getNrTotalSlots()).append("\n");
 
         gameState.append("\n--- PLAYERS (Full List) ---\n");
-        List<Player> allPlayers = new ArrayList<>(board.getPlayers()); // Assuming board.getPlayers() returns ALL players, even defeated ones
+        List<Player> allPlayers = new ArrayList<>(board.getPlayers());
         allPlayers.sort(Comparator.comparingInt(Player::getId));
         for (Player p : allPlayers) {
             Slot playerSlot = board.getSlotOfPlayer(p.getId());
@@ -637,7 +623,7 @@ public class GameManager {
             // Se houver evento, interage e define a mensagem de retorno
             message = event.playerInteraction(currentPlayer, board);
             if (message == null) {
-                message = "O jogador encontrou: " + event.getName();
+                message = "jogador agarrou" + event.getName();
             }
         }
 
