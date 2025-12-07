@@ -33,9 +33,8 @@ public class GameManager {
     }
 
     private boolean isValidLine(String[] validLine) {
-
         // Cada linha contém a informação de um jogador
-        if (validLine == null || validLine.length < 4) {
+        if (validLine == null || validLine.length < 3 || validLine.length > 4) {
             return false;
         }
         return true;
@@ -61,7 +60,19 @@ public class GameManager {
     }
 
     private String isValidColor(String color, HashSet<String> validColor) {
-        if (color == null || color.isEmpty()) {
+        if (color == null) {
+            return null;
+        }
+
+        if (color.equals("RANDOM")) {
+            for (Color c : Color.values()) {
+                String corStr = c.toString().substring(0, 1).toUpperCase() + c.toString().substring(1).toLowerCase();
+
+                if (!validColor.contains(corStr)) {
+                    System.out.println("Atribui a cor: " + corStr);
+                    return corStr;
+                }
+            }
             return null;
         }
 
@@ -88,35 +99,47 @@ public class GameManager {
             String[] validLine = playerInfo[i];
 
             if (!isValidLine(validLine)) {
+                System.out.println("funcao infoValidPlayers: isValidLine == null");
                 return null;
             }
+
 
             String idStr = validLine[0].trim();
             String nameStr = validLine[1].trim();
             String langStr = validLine[2].trim();
-            String colorStr = validLine[3].trim();
+            String colorStr = "";
+            if (validLine.length == 4) {
+                colorStr = validLine[3].trim();
+            } else if (validLine.length == 3) {
+                colorStr = "RANDOM";
+            }
 
             Integer id = isValidPlayer(idStr, validId);
             if (id == null) {
+                System.out.println("funcao infoValidPlayers: id == null");
                 return null;
             }
 
             String name = Player.isValidName(nameStr, validName);
             if (name == null) {
+                System.out.println("funcao infoValidPlayers: name == null");
                 return null;
             }
 
             String language = Player.isValidLanguage(langStr);
             if (language == null) {
+                System.out.println("funcao infoValidPlayers: language == null");
                 return null;
             }
 
-            String color = isValidColor(colorStr, validColor); // Usa a versão corrigida abaixo
+            String color = isValidColor(colorStr, validColor);
             if (color == null) {
+                System.out.println("funcao infoValidPlayers: color == null");
                 return null;
             }
 
             validPlayers.add(new Player(id, name, language, color));
+            validColor.add(color);
         }
 
         return validPlayers;
@@ -127,17 +150,20 @@ public class GameManager {
     public boolean createInitialBoard(String[][] playerInfo, int worldSize) {
         // verifica número de jogadores
         if (!nrValidPlayers(playerInfo)) {
+            System.out.println("numero de player invalido");
             return false;
         }
 
         // tamanho do tabuleiro deve ser pelo menos o dobro do número de jogadores
         if (worldSize < playerInfo.length * 2) {
+            System.out.println("worldsize invalido");
             return false;
         }
 
         // valida os jogadores e cria a lista
         List<Player> validPlayers = infoValidPlayers(playerInfo);
         if (validPlayers == null) {
+            System.out.println("playerInfo invalida");
             return false;
         }
 
@@ -467,7 +493,7 @@ public class GameManager {
             return false; // jogador não encontrado
         }
 
-        if (!currentPlayer.getIsAlive()){
+        if (!currentPlayer.getIsAlive()) {
             return false;
         }
 
