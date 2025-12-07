@@ -12,6 +12,8 @@ public class ExceptionHandling extends Tool {
 
     @Override
     public void playerInteraction(Player player, Board board) {
-        player.getTools().add(this);
+        if (!player.hasTool(this)) {
+            player.getTools().add(this);
+        }
     }
 }

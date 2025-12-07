@@ -161,5 +161,13 @@ public class Player {
         return sb.toString();
     }
 
+    public boolean hasTool(Tool tool) {
+        for (Tool t : tools) {
+            if (t.getId() == tool.getId()) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }

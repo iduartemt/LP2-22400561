@@ -415,7 +415,6 @@ public class GameManager {
 
     // Devolve o ID do jogador atual
     public int getCurrentPlayerID() {
-        //
         return currentPlayerId;
     }
 
