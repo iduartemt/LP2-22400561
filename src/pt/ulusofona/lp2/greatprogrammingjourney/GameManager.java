@@ -557,6 +557,12 @@ public class GameManager {
     }
 
     public String reactToAbyssOrTool() {
+
+        // devolve null
+        // se jogador nao for encontrado
+        // se board é null
+        // se nao ha evento no slot onde o jogador chegou
+
         if (board == null || lastMovedPlayerId == -1) {
             return null;
         }
@@ -573,48 +579,21 @@ public class GameManager {
             }
         }
 
-        if (currentPlayer == null || currentSlot == null) {
+        if (currentPlayer == null) {
             return null;
         }
 
         Event event = currentSlot.getEvent();
 
-
         if (event != null) {
-            // 1. Guardar quantas ferramentas o jogador tem ANTES da interação
-            int toolsBefore = currentPlayer.getTools().size();
-
-            // 2. A interação acontece (ferramentas podem ser removidas aqui)
             event.playerInteraction(currentPlayer, board);
-
             passTurnToNextPlayer();
-
-            // Verificação especial para BSOD (Morte)
-            if (event.getName().equals("Blue Screen of Death") && !currentPlayer.getIsAlive()) {
-                return "O jogador caiu no " + event.getName() + " e perdeu o jogo :(";
-            }
-
-            // 3. Lógica para ABISMOS
-            if (event.getType() == EventType.ABYSS) {
-                // Se tem MENOS ferramentas agora do que antes, é porque usou uma para se salvar
-                if (currentPlayer.getTools().size() < toolsBefore) {
-                    return "O abismo " + event.getName() + " foi anulado por uma!";
-                } else {
-                    // Se o número é igual, sofreu a penalidade
-                    return "Caiu no abismo " + event.getName();
-                }
-            }
-
-            // Caso seja uma Ferramenta (que apenas se apanha)
-            return "Jogador agarrou " + event.getName();
+            return "mensagem";
         }
 
-        //devia estar no move ( so da pass caso haja react e se o evento nao for null)
         passTurnToNextPlayer();
-
         return null;
     }
-
     private int findAtualPlayerIndex(List<Player> allPlayers) {
         for (int i = 0; i < allPlayers.size(); i++) {
             if (allPlayers.get(i).getId() == currentPlayerId) {
