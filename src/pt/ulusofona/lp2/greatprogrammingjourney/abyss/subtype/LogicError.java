@@ -13,7 +13,7 @@ public class LogicError extends Abyss {
     }
 
     @Override
-    public void playerInteraction(Player player, Board board) {
+    public String playerInteraction(Player player, Board board) {
 
         Tool unitTests = null;
 
@@ -27,7 +27,7 @@ public class LogicError extends Abyss {
         if (unitTests != null) {
             player.getTools().remove(unitTests);
             System.out.println("Erro de lógica anulado por " + unitTests.getName());
-            return;
+            return null;
         }
 
         Slot currentSlot = null;
@@ -40,7 +40,7 @@ public class LogicError extends Abyss {
         }
 
         if (currentSlot == null) {
-            return;
+            return null;
         }
 
         //Dividir o valor do dado por 2
@@ -61,5 +61,6 @@ public class LogicError extends Abyss {
             destinationSlot.addPlayer(player);
 
         }
+        return null;
     }
 }

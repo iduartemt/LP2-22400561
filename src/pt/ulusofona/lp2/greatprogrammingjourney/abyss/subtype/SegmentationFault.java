@@ -15,7 +15,7 @@ public class SegmentationFault extends Abyss {
     }
 
     @Override
-    public void playerInteraction(Player player, Board board) {
+    public String playerInteraction(Player player, Board board) {
 
         for (Slot slot : board.getSlots()) {
             if (slot.getPlayers().contains(player)) {
@@ -38,5 +38,6 @@ public class SegmentationFault extends Abyss {
                 }
             }
         }
+        return null;
     }
 }

@@ -485,6 +485,7 @@ public class GameManager {
     public boolean moveCurrentPlayer(int nrSpaces) {
         // Validações básicas iniciais
         if (board == null || nrSpaces < 1 || nrSpaces > 6) {
+            System.out.println("board null");
             return false;
         }
         if (gameIsOver()) {
@@ -493,6 +494,7 @@ public class GameManager {
 
         Slot originSlot = board.getSlotOfPlayer(getCurrentPlayerID());
         if (originSlot == null) {
+            System.out.println("nao encontra jog");
             return false; // Jogador não encontrado
         }
 
@@ -508,6 +510,7 @@ public class GameManager {
         // Validação de Linguagens (Assembly/C)
         if (!currentPlayer.canMove(nrSpaces)) {
             currentPlayer.setLastMoveIsValid(false);
+            System.out.println("linguagem invalida");
             return false;
         }
 
@@ -533,6 +536,7 @@ public class GameManager {
         Slot destinationSlot = board.encontraSlot(destination);
 
         if (destinationSlot == null) {
+            System.out.println("destinationSlot null");
             return false;
         }
 
@@ -575,8 +579,10 @@ public class GameManager {
 
         if (event != null) {
             // Se houver evento, interage e define a mensagem de retorno
-            event.playerInteraction(currentPlayer, board);
-            message = "O jogador encontrou: " + event.getName();
+            message = event.playerInteraction(currentPlayer, board);
+            if (message == null) {
+                message = "O jogador encontrou: " + event.getName();
+            }
         }
 
         // 4. Passar o turno

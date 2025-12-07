@@ -11,8 +11,10 @@ public class Inheritance extends Tool {
     }
 
     @Override
-    public void playerInteraction(Player player, Board board) {
+    public String playerInteraction(Player player, Board board) {
         if (!player.hasTool(this)) {
             player.getTools().add(this);
-        }    }
+        }
+        return null;
+    }
 }

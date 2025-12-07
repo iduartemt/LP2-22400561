@@ -14,7 +14,7 @@ public class InfiniteLoop extends Abyss {
     }
 
     @Override
-    public void playerInteraction(Player player, Board board) {
+    public String playerInteraction(Player player, Board board) {
 
         // 1. TENTAR USAR A FERRAMENTA DE PROTEÇÃO (TeacherHelp - ID 5)
         Tool teacherHelp = null;
@@ -31,14 +31,14 @@ public class InfiniteLoop extends Abyss {
             System.out.println("Ciclo Infinito anulado por " + teacherHelp.getName());
             // REGRA: "não fica preso, mas também não liberta o que lá estava"
             // Por isso, fazemos return imediato.
-            return;
+            return "Ciclo Infinito anulado por " + teacherHelp.getName();
         }
 
         // 2. ENCONTRAR O SLOT ATUAL
         Slot currentSlot = board.getSlotOfPlayer(player.getId());
 
         if (currentSlot == null) {
-            return;
+            return null;
         }
 
         // 3. VERIFICAR SE JÁ EXISTE ALGUÉM PRESO E LIBERTAR
@@ -54,5 +54,6 @@ public class InfiniteLoop extends Abyss {
         // 4. PRENDER O JOGADOR ATUAL
         player.setState(PlayerState.PRESO);
         System.out.println(player.getName() + " entrou num Infinite Loop e ficou preso!");
+        return null;
     }
 }

@@ -14,7 +14,7 @@ public class CodeDuplication extends Abyss {
     }
 
     @Override
-    public void playerInteraction(Player player, Board board) {
+    public String playerInteraction(Player player, Board board) {
         Tool inheritance = null;
 
         for (Tool t : player.getTools()) {
@@ -27,7 +27,7 @@ public class CodeDuplication extends Abyss {
         if (inheritance != null) {
             player.getTools().remove(inheritance);
             System.out.println("Código duplicado anulado por " + inheritance.getName());
-            return;
+            return null;
         }
 
         Slot currentSlot = null;
@@ -40,13 +40,13 @@ public class CodeDuplication extends Abyss {
         }
 
         if (currentSlot == null) {
-            return;
+            return null;
         }
 
         Slot destinationSlot = board.encontraSlot(currentSlot.getNrSlot() - player.getLastDiceValue());
 
         currentSlot.removePlayer(player);
         destinationSlot.addPlayer(player);
-
+        return null;
     }
 }

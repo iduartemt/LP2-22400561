@@ -12,5 +12,5 @@ public abstract class Tool extends Event {
     }
 
     @Override
-    public abstract void playerInteraction(Player player, Board board);
+    public abstract String playerInteraction(Player player, Board board);
 }

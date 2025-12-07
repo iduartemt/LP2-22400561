@@ -35,6 +35,6 @@ public abstract class Event {
         return type;
     }
 
-    public abstract void playerInteraction(Player player, Board board);
+    public abstract String playerInteraction(Player player, Board board);
 
 }

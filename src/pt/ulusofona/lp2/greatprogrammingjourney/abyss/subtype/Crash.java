@@ -14,7 +14,7 @@ public class Crash extends Abyss {
     }
 
     @Override
-    public void playerInteraction(Player player, Board board) {
+    public String playerInteraction(Player player, Board board) {
 
         Tool ide = null;
 
@@ -28,7 +28,7 @@ public class Crash extends Abyss {
         if (ide != null) {
             player.getTools().remove(ide);
             System.out.println("Crash anulado por " + ide.getName());
-return;
+            return null;
         }
 
         Slot currentSlot = null;
@@ -41,13 +41,13 @@ return;
         }
 
         if (currentSlot == null) {
-            return;
+            return null;
         }
 
         Slot destinationSlot = board.encontraSlot(1);
 
         currentSlot.removePlayer(player);
         destinationSlot.addPlayer(player);
-
+        return null;
     }
 }

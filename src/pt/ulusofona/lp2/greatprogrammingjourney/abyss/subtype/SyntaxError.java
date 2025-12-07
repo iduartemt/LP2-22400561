@@ -15,7 +15,7 @@ public class SyntaxError extends Abyss {
     }
 
     @Override
-    public void playerInteraction(Player player, Board board) {
+    public String playerInteraction(Player player, Board board) {
 
         Tool ide = null;
 
@@ -31,7 +31,7 @@ public class SyntaxError extends Abyss {
         if (ide != null) {
             player.getTools().remove(ide);
             System.out.println("Erro de sintaxe anulado por " + ide.getName());
-            return;
+            return null;
         }
 
         //Descobre em qual slot esta o player
@@ -46,7 +46,7 @@ public class SyntaxError extends Abyss {
 
 
         if (currentSlot == null) {
-            return;
+            return null;
         }
 
 
@@ -57,6 +57,7 @@ public class SyntaxError extends Abyss {
 
         currentSlot.removePlayer(player);
         destinationSlot.addPlayer(player);
+        return null;
     }
 }
 

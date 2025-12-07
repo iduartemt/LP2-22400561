@@ -13,7 +13,8 @@ public class BlueScreenOfDeath extends Abyss {
     }
 
     @Override
-    public void playerInteraction(Player player, Board board) {
+    public String playerInteraction(Player player, Board board) {
         player.setState(PlayerState.DERROTADO);
+        return null;
     }
 }

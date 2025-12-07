@@ -13,7 +13,7 @@ public class Exception extends Abyss {
     }
 
     @Override
-    public void playerInteraction(Player player, Board board) {
+    public String playerInteraction(Player player, Board board) {
 
         Tool ExpectionHandling = null;
 
@@ -27,7 +27,7 @@ public class Exception extends Abyss {
         if (ExpectionHandling != null) {
             player.getTools().remove(ExpectionHandling);
             System.out.println("Exception anulado por " + ExpectionHandling.getName());
-            return;
+            return null;
         }
 
         Slot currentSlot = null;
@@ -40,7 +40,7 @@ public class Exception extends Abyss {
         }
 
         if (currentSlot == null) {
-            return;
+            return null;
         }
 
         int targetPos = currentSlot.getNrSlot() - 2;
@@ -50,6 +50,6 @@ public class Exception extends Abyss {
         currentSlot.removePlayer(player);
         //adicionar o player à nova slot
         destination.addPlayer(player);
-
+        return null;
     }
 }

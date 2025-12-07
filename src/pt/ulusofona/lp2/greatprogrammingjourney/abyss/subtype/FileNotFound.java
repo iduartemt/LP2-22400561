@@ -13,7 +13,7 @@ public class FileNotFound extends Abyss {
     }
 
     @Override
-    public void playerInteraction(Player player, Board board) {
+    public String playerInteraction(Player player, Board board) {
 
         Tool exceptionHandling = null;
 
@@ -26,7 +26,7 @@ public class FileNotFound extends Abyss {
 
         if (exceptionHandling != null) {
             player.getTools().remove(exceptionHandling);
-            return;
+            return null;
         }
 
         Slot currentSlot = null;
@@ -39,12 +39,13 @@ public class FileNotFound extends Abyss {
         }
 
         if (currentSlot == null) {
-            return;
+            return null;
         }
 
         int targetPos = currentSlot.getNrSlot() - 3;
         if (targetPos < 1) targetPos = 1;
         Slot destination = board.encontraSlot(targetPos);        currentSlot.removePlayer(player);
         destination.addPlayer(player);
+        return null;
     }
 }
