@@ -497,9 +497,28 @@ public class GameManager {
                     .append("Pos: ").append(slotInfo).append(" | ")
                     .append("Tools: ").append(toolsStr).append(" | ")
                     .append("Lang: ").append(p.getLanguage()).append(" | ")
-                    .append("State: ").append(p.getState())
+                    .append("State: ").append(p.getState()).append(" | ")
+                    .append("LastDice: ").append(p.getLastDiceValue()).append(" | ")
+                    .append("PrevPos: ").append(p.getPreviousPosition()).append(" | ")
+                    .append("PrevPos-2: ").append(p.getPositionTwoMovesAgo()).append(" | ")
+                    .append("LastMoveValid: ").append(p.isLastMoveIsValid())
                     .append("\n");
         }
+        gameState.append("\n--- get(s) FUNCTIONS ---\n");
+        for (Player p : board.getPlayers()) {
+            gameState.append("getProgrammerInfoAsStr(").append(p.getId()).append("): ");
+            gameState.append(getProgrammerInfoAsStr(p.getId())).append("\n");
+            gameState.append("\n");
+            gameState.append("getProgrammerInfo(").append(p.getId()).append("): ");
+            gameState.append(Arrays.toString(getProgrammerInfo(p.getId()))).append("\n");
+            gameState.append("\n");
+            gameState.append("getProgrammersInfo(): ").append(getProgrammersInfo()).append("\n");
+            gameState.append("\n");
+            gameState.append("getSlotInfo(").append(p.getId()).append("): ");
+            gameState.append(Arrays.toString(getSlotInfo(p.getId()))).append("\n");
+            gameState.append("\n");
+        }
+
 
         gameState.append("\n--- BOARD LAYOUT ---\n");
         for (Slot s : board.getSlots()) {
@@ -518,6 +537,19 @@ public class GameManager {
             }
             gameState.append("\n");
         }
+
+        gameState.append("\n--- GAME STATUS ---\n");
+        gameState.append("Game Over: ").append(gameIsOver()).append("\n");
+        if (gameIsOver()) {
+            gameState.append("Results: \n");
+            ArrayList<String> gameResults = getGameResults();
+            if (gameResults != null) {
+                for (String line : gameResults) {
+                    gameState.append(line).append("\n");
+                }
+            }
+        }
+
         gameState.append("--- END ").append(title).append(" ---\n");
         return gameState.toString();
     }
