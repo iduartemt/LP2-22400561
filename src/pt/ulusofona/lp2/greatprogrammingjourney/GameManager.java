@@ -493,9 +493,7 @@ public class GameManager {
             return false; // jogador não encontrado
         }
 
-        if (!currentPlayer.getIsAlive()) {
-            return false;
-        }
+        lastMovedPlayerId = currentPlayer.getId();
 
         if (currentPlayer.isTrapped()) {
             System.out.println(currentPlayer.getName() + " está preso e não se pode mover.");
@@ -515,9 +513,6 @@ public class GameManager {
         }
         currentPlayer.setLastMoveIsValid(true);
 
-        // passTurnToNextPlayer();
-
-        lastMovedPlayerId = currentPlayer.getId();
         currentPlayer.setLastDiceValue(nrSpaces);
 
         // Atualiza o histórico: O que era "anterior" passa a ser "há 2 jogadas"
