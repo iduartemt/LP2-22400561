@@ -11,8 +11,7 @@ public class Player {
     private final ArrayList<Tool> tools;
     private final String color;
     //Dados
-    private boolean isAlive = true;
-    private boolean isTrapped = false; // Novo atributo
+    private PlayerState state = PlayerState.EM_JOGO;
     private int lastDiceValue;
     private int previousPosition;
     private int positionTwoMovesAgo;
@@ -24,17 +23,19 @@ public class Player {
         this.language = language;
         this.color = color;
         this.tools = new ArrayList<>();
+        this.state = PlayerState.EM_JOGO;
     }
 
     public Player(int id, String name, String language, String color,
-                  boolean isAlive, int lastDiceValue,
-                  int previousPosition, int positionTwoMovesAgo) {
+                  PlayerState state, int lastDiceValue, int previousPosition,
+                  int positionTwoMovesAgo) {
+
         this.id = id;
         this.name = name;
         this.language = language;
         this.color = color;
         this.tools = new ArrayList<>();
-        this.isAlive = isAlive;
+        this.state = state;
         this.lastDiceValue = lastDiceValue;
         this.previousPosition = previousPosition;
         this.positionTwoMovesAgo = positionTwoMovesAgo;
@@ -73,8 +74,8 @@ public class Player {
         return color;
     }
 
-    public boolean getIsAlive() {
-        return isAlive;
+    public PlayerState getState() {
+        return state;
     }
 
     public int getPreviousPosition() {
@@ -95,11 +96,6 @@ public class Player {
     }
 
     //=====================================================SETTERS=====================================================
-
-    public void setIsAlive(boolean isAlive) {
-        this.isAlive = isAlive;
-    }
-
     public void setLastDiceValue(int value) {
         this.lastDiceValue = value;
     }
@@ -114,10 +110,9 @@ public class Player {
         this.positionTwoMovesAgo = positionTwoMovesAgo;
     }
 
-    public void setTrapped(boolean trapped) {
-        isTrapped = trapped;
-    }
-    //=====================================================METODOS======================================================
+    public void setState(PlayerState state) {
+        this.state = state;
+    }    //=====================================================METODOS======================================================
 
     public boolean addTool(Tool tool) {
         if (tool == null) {
@@ -152,10 +147,6 @@ public class Player {
         return language.trim();
     }
 
-    public boolean isTrapped() {
-        return isTrapped;
-    }
-
     public String playerLanguageInfo(List<String> sortLanguage) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < sortLanguage.size(); i++) {
@@ -175,6 +166,7 @@ public class Player {
         }
         return false;
     }
+
     public boolean canMove(int nrSpaces) {
         // Podes limpar a string da linguagem aqui ou no construtor
         String mainLang = this.language.split(";")[0].trim();

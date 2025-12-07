@@ -12,7 +12,6 @@ public class GameManager {
     private Board board;
     private int currentPlayerId; // guarda o ID do jogador atual
     private int turnCount = 1;   // conta o número de jogadas
-    private int lastMovedPlayerId = -1;
     //==================================================================================================================
 
     // Verifica se o número de jogadores está entre 2 e 4
@@ -299,9 +298,9 @@ public class GameManager {
             infoPlayer[5] = String.join(";", toolNames);
         }
 
-        if (!player.getIsAlive()) {
+        if (player.getState() == PlayerState.DERROTADO) {
             infoPlayer[6] = "Derrotado";
-        } else if (player.isTrapped()) {
+        } else if (player.getState() == PlayerState.PRESO) {
             infoPlayer[6] = "Preso";
         } else {
             infoPlayer[6] = "Em jogo";
@@ -341,17 +340,21 @@ public class GameManager {
             toolsStr = String.join(";", toolNames);
         }
 
-        String isAliveText;
-        if (!player.getIsAlive()) {
-            isAliveText = "Derrotado";
-        } else if (player.isTrapped()) {
-            isAliveText = "Preso";
-        } else {
-            isAliveText = "Em Jogo";
+        String playerState;
+        switch (player.getState()) {
+            case DERROTADO:
+                playerState = "Derrotado";
+                break;
+            case PRESO:
+                playerState = "Preso";
+                break;
+            default: // EM_JOGO
+                playerState = "Em Jogo";
+                break;
         }
 
         return id + " | " + player.getName() + " | " + slot.getNrSlot() + " | " + toolsStr + " | " +
-                languagesInfo + " | " + isAliveText;
+                languagesInfo + " | " + playerState;
     }
 
     public String getProgrammersInfo() {
@@ -365,9 +368,9 @@ public class GameManager {
         for (Slot s : board.getSlots()) {
             //List<Player> playersInSlot = new ArrayList<>();
             // Recolhe jogadores vivos neste slot
-            for (Player p : s.getPlayers()) {
-                if (p.getIsAlive()) {
-                    alivePlayers.add(p);
+            for (Player player : s.getPlayers()) {
+                if (player.getState() != PlayerState.DERROTADO) {
+                    alivePlayers.add(player);
                 }
             }
         }
@@ -453,7 +456,7 @@ public class GameManager {
                 int nextIndex = (currentIndex + 1) % board.getPlayers().size();
                 Player currentPlayer = board.getPlayers().get(nextIndex);
                 currentPlayerId = currentPlayer.getId();
-                if (currentPlayer.isLastMoveIsValid() && currentPlayer.getIsAlive()) {
+                if (currentPlayer.isLastMoveIsValid() && currentPlayer.getState() != PlayerState.DERROTADO) {
                     nextPlayerIsValid = true;
                 }
             }
@@ -480,9 +483,8 @@ public class GameManager {
         }
 
         Player currentPlayer = originSlot.findPlayerByID(getCurrentPlayerID());
-        lastMovedPlayerId = currentPlayer.getId();
 
-        if (currentPlayer.isTrapped()) {
+        if (currentPlayer.getState() == PlayerState.PRESO) {
             System.out.println(currentPlayer.getName() + " está preso e não se pode mover.");
 
             return false; // Retorna true porque a ação de "passar a vez preso" foi válida
@@ -534,34 +536,35 @@ public class GameManager {
     }
 
     public String reactToAbyssOrTool() {
-
-        // devolve null
-        // se jogador nao for encontrado
-        // se board é null
-        // se nao ha evento no slot onde o jogador chegou
-
-        if (board == null || lastMovedPlayerId == -1) {
+        // 1. Validações iniciais (Guard Clauses)
+        if (board == null || currentPlayerId == -1) {
             return null;
         }
 
-        Slot currentSlot = board.getSlotOfPlayer(lastMovedPlayerId);
-
+        // Alterado: usa currentPlayerId
+        Slot currentSlot = board.getSlotOfPlayer(currentPlayerId);
         if (currentSlot == null) {
             return null;
         }
 
-        Player currentPlayer = currentSlot.findPlayerByID(lastMovedPlayerId);
+        // Como já temos o slot, buscar o objeto Player é direto
+        Player currentPlayer = currentSlot.findPlayerByID(currentPlayerId);
 
+        // 3. Verificar se existe evento (Abismo ou Ferramenta)
         Event event = currentSlot.getEvent();
+        String message = null;
 
         if (event != null) {
+            // Se houver evento, interage e define a mensagem de retorno
             event.playerInteraction(currentPlayer, board);
-            passTurnToNextPlayer();
-            return "mensagem";
+            message = "O jogador encontrou: " + event.getName();
         }
 
+        // 4. Passar o turno
+        // Como isto acontece SEMPRE (tendo evento ou não), basta chamar uma vez no final
         passTurnToNextPlayer();
-        return null;
+
+        return message;
     }
 
     private int findAtualPlayerIndex(List<Player> allPlayers) {
@@ -689,12 +692,13 @@ public class GameManager {
                 String[] playerTools = playerInfo[3].split(";");
                 toolsOfPlayers.put(playerId, playerTools);
                 String playerColor = playerInfo[4];
-                boolean playerIsAlive = Boolean.parseBoolean(playerInfo[5]);
+                String stateStr = playerInfo[5]; // Lê a string "EM_JOGO", "PRESO", etc.
+                PlayerState state = PlayerState.valueOf(stateStr);
                 int playerLastDiceValue = Integer.parseInt(playerInfo[6]);
                 int playerPreviousPosition = Integer.parseInt(playerInfo[7]);
                 int positionTwoMovesAgo = Integer.parseInt(playerInfo[8]);
                 Player player = new Player(playerId, playerName, playerLanguage,
-                        playerColor, playerIsAlive, playerLastDiceValue,
+                        playerColor, state, playerLastDiceValue, // <--- Passas o Enum 'state' aqui
                         playerPreviousPosition, positionTwoMovesAgo
                 );
                 players.put(playerId, player);
@@ -719,11 +723,9 @@ public class GameManager {
             String[] currentGameInfo = scanner.nextLine().split(":");
             String currentPlayerId = currentGameInfo[0];
             String turnCount = currentGameInfo[1];
-            String lastMovedPlayerId = currentGameInfo[2];
 
             this.currentPlayerId = Integer.parseInt(currentPlayerId);
             this.turnCount = Integer.parseInt(turnCount);
-            this.lastMovedPlayerId = Integer.parseInt(lastMovedPlayerId);
 
             if (!scanner.hasNextLine()) {
                 throw new InvalidFileException();
@@ -784,7 +786,7 @@ public class GameManager {
                     }
                     writer.write(":");
                     writer.write(player.getColor() + ":");
-                    writer.write(player.getIsAlive() + ":");
+                    writer.write(player.getState().name() + ":");
                     writer.write(player.getLastDiceValue() + ":");
                     writer.write(player.getPreviousPosition() + ":");
                     writer.write(player.getPositionTwoMovesAgo() + ":");
@@ -794,7 +796,7 @@ public class GameManager {
             writer.write("\n");
 
             // escrever jogador atual e numero do turno (jogAtual:nrTurno)
-            writer.write(currentPlayerId + ":" + turnCount + ":" + lastMovedPlayerId);
+            writer.write(currentPlayerId + ":" + turnCount);
             writer.write("\n");
 
             for (Slot slot : board.getSlots()) {
