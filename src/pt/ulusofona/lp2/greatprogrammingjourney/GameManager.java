@@ -501,10 +501,10 @@ public class GameManager {
         Player currentPlayer = originSlot.findPlayerByID(getCurrentPlayerID());
 
         // Se o jogador estiver PRESO, não se pode mover.
-        // Retornamos 'true' para indicar que a "ação" foi processada (mesmo que nula).
         if (currentPlayer.getState() == PlayerState.PRESO) {
             System.out.println(currentPlayer.getName() + " está preso e não se pode mover.");
-            return false;
+            // Throw an exception with the game state to help debug the test failure.
+            throw new RuntimeException(getGameStateDump("Player is PRESO in moveCurrentPlayer"));
         }
 
         // Validação de Linguagens (Assembly/C)
@@ -608,8 +608,6 @@ public class GameManager {
         gameState.append("--- END ").append(title).append(" ---\n");
         return gameState.toString();
     }
-
-
     public String reactToAbyssOrTool() {
         // 1. Validações iniciais (Guard Clauses)
         if (board == null || currentPlayerId == -1) {
@@ -636,23 +634,11 @@ public class GameManager {
         String message = null;
 
         if (event != null) {
-            String beforeState = null;
-            String afterState = null;
-
-            //DEBUG BSOD
-            if (event.getName().equals("Blue Screen of Death")) {
-                beforeState = getGameStateDump("BSOD - BEFORE");
-            }
 
             // Se houver evento, interage e define a mensagem de retorno
             message = event.playerInteraction(currentPlayer, board);
             if (message == null) {
                 message = "O jogador encontrou: " + event.getName();
-            }
-
-            if (beforeState != null) {
-                afterState = getGameStateDump("BSOD - AFTER");
-                throw new RuntimeException(beforeState + afterState);
             }
         }
 

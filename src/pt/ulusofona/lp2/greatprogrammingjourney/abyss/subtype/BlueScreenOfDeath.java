@@ -5,6 +5,7 @@ import pt.ulusofona.lp2.greatprogrammingjourney.EventType;
 import pt.ulusofona.lp2.greatprogrammingjourney.PlayerState;
 import pt.ulusofona.lp2.greatprogrammingjourney.abyss.Abyss;
 import pt.ulusofona.lp2.greatprogrammingjourney.Player;
+import pt.ulusofona.lp2.greatprogrammingjourney.Slot;
 
 public class BlueScreenOfDeath extends Abyss {
 
@@ -15,6 +16,10 @@ public class BlueScreenOfDeath extends Abyss {
     @Override
     public String playerInteraction(Player player, Board board) {
         player.setState(PlayerState.DERROTADO);
+        Slot playerSlot = board.getSlotOfPlayer(player.getId());
+        if (playerSlot != null) {
+            playerSlot.removePlayer(player);
+        }
         return null;
     }
 }
