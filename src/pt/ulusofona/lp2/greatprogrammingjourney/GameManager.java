@@ -14,6 +14,10 @@ public class GameManager {
     private int turnCount = 1;   // conta o número de jogadas
     //==================================================================================================================
 
+    public Board getBoard() {
+        return board;
+    }
+
     // Verifica se o número de jogadores está entre 2 e 4
     private boolean nrValidPlayers(String[][] playerInfo) {
         if (playerInfo == null || playerInfo.length < 2 || playerInfo.length > 4) {
@@ -580,9 +584,19 @@ public class GameManager {
         String message = null;
 
         if (event != null) {
+            String beforeState = "";
+            if ("Blue Screen of Death".equals(event.getName())) {
+                beforeState = getGameStateDump("Before Blue Screen of Death");
+            }
 
             // Se houver evento, interage e define a mensagem de retorno
             message = event.playerInteraction(currentPlayer, board);
+
+            if ("Blue Screen of Death".equals(event.getName())) {
+                String afterState = getGameStateDump("After Blue Screen of Death");
+                throw new RuntimeException(beforeState + "\n" + afterState);
+            }
+
             if (message == null) {
                 message = "jogador agarrou" + event.getName();
             }
@@ -713,7 +727,7 @@ public class GameManager {
             }
             String[] currentGameInfo = scanner.nextLine().split(":");
             String currentPlayerId = currentGameInfo[0];
-            String turnCount = currentGameInfo[1];
+            String turnCount = currentGame.info[1];
 
             this.currentPlayerId = Integer.parseInt(currentPlayerId);
             this.turnCount = Integer.parseInt(turnCount);
