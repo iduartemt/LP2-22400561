@@ -123,4 +123,14 @@ public class Board {
             }
         }
     }
+
+    public Slot getSlotOfPlayer(int playerId) {
+        for (Slot slot : slots) {
+            if (slot.findPlayerByID(playerId) != null) {
+                return slot;
+            }
+        }
+        return null;
+    }
+
 }

@@ -175,5 +175,17 @@ public class Player {
         }
         return false;
     }
+    public boolean canMove(int nrSpaces) {
+        // Podes limpar a string da linguagem aqui ou no construtor
+        String mainLang = this.language.split(";")[0].trim();
+
+        if (mainLang.equalsIgnoreCase("Assembly") && nrSpaces > 2) {
+            return false;
+        }
+        if (mainLang.equalsIgnoreCase("C") && nrSpaces > 3) {
+            return false;
+        }
+        return true;
+    }
 
 }

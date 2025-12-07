@@ -15,7 +15,7 @@ public class InfiniteLoop extends Abyss {
     @Override
     public void playerInteraction(Player player, Board board) {
 
-        Tool unitTests = null;
+      /*  Tool unitTests = null;
         for (Tool t : player.getTools()) {
             if (t.getId() == 2) {
                 unitTests = t;
@@ -57,6 +57,6 @@ public class InfiniteLoop extends Abyss {
 
         // 4. PRENDER O JOGADOR ATUAL
         player.setTrapped(true);
-        System.out.println(player.getName() + " entrou num Infinite Loop e ficou preso!");
+        System.out.println(player.getName() + " entrou num Infinite Loop e ficou preso!");*/
     }
 }
