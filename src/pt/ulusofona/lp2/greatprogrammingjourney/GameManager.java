@@ -551,7 +551,6 @@ public class GameManager {
 
         // Depois da interação, passa o turno
         passTurnToNextPlayer();
-
         // Devolve a mensagem gerada pelo evento (se houver)
         return message;
     }

@@ -1,4 +1,4 @@
-package pt.ulusofona.lp2.greatprogrammingjourney.tests;
+package tests;
 
 import org.junit.Test;
 import pt.ulusofona.lp2.greatprogrammingjourney.GameManager;
