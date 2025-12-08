@@ -5,7 +5,7 @@ import pt.ulusofona.lp2.greatprogrammingjourney.GameManager;
 
 import static org.junit.Assert.*;
 
-public class GameManagerTest {
+public class TestGameManager {
 
     @Test
     public void testCreateInitialBoard_ValidData() {
