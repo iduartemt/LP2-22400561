@@ -479,7 +479,7 @@ public class GameManager {
       não pode estar preso,verifica se o jogador pode mover esse número de casas
      */
     public boolean moveCurrentPlayer(int nrSpaces) {
-       /* if (board == null || nrSpaces < 1 || nrSpaces > 6 || gameIsOver()) {
+        if (board == null || nrSpaces < 1 || nrSpaces > 6 || gameIsOver()) {
             return false;
         }
 
@@ -512,8 +512,7 @@ public class GameManager {
             currentPlayerId = currentPlayer.getId();
         }
 
-        return moved;*/
-        return false;
+        return moved;
     }
 
     /*
@@ -526,7 +525,7 @@ public class GameManager {
             return null;
         }
 
-        // Encontra o slot onde está o jogador atual
+       /* // Encontra o slot onde está o jogador atual
         Slot currentSlot = board.getSlotOfPlayer(currentPlayerId);
         if (currentSlot == null) {
             return null;
@@ -553,7 +552,8 @@ public class GameManager {
         // Depois da interação, passa o turno
         passTurnToNextPlayer();
         // Devolve a mensagem gerada pelo evento (se houver)
-        return message;
+        return message;*/
+        return null;
     }
 
     public boolean gameIsOver() {
