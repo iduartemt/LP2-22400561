@@ -16,7 +16,7 @@ public class InfiniteLoop extends Abyss {
     @Override
     public String playerInteraction(Player player, Board board) {
 
-        Tool functionalProgramming = null;
+       /* Tool functionalProgramming = null;
 
         for (Tool t : player.getTools()) {
             if (t.getId() == 1) {
@@ -50,7 +50,7 @@ public class InfiniteLoop extends Abyss {
         }
 
         // 4. PRENDER O JOGADOR ATUAL
-        player.setState(PlayerState.PRESO);
+        player.setState(PlayerState.PRESO);*/
         return "Ciclo Infinito";
     }
 }

@@ -15,7 +15,8 @@ public class CodeDuplication extends Abyss {
 
     @Override
     public String playerInteraction(Player player, Board board) {
-        /*Tool inheritance = null;
+        /*
+        Tool inheritance = null;
 
         for (Tool t : player.getTools()) {
             if (t.getId() == 0) {

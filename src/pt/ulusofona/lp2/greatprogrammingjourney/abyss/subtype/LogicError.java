@@ -15,7 +15,7 @@ public class LogicError extends Abyss {
     @Override
     public String playerInteraction(Player player, Board board) {
 
-        Tool unitTests = null;
+        /*Tool unitTests = null;
 
         for (Tool t : player.getTools()) {
             if (t.getId() == 2) {
@@ -59,7 +59,7 @@ public class LogicError extends Abyss {
             //colocar o jogador na sua nova posicao (recuo)
             destinationSlot.addPlayer(player);
 
-        }
+        }*/
         return "Erro de Lógica";
     }
 }

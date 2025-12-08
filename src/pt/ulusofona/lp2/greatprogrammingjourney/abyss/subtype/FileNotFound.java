@@ -15,7 +15,7 @@ public class FileNotFound extends Abyss {
     @Override
     public String playerInteraction(Player player, Board board) {
 
-        Tool exceptionHandling = null;
+        /*Tool exceptionHandling = null;
 
         for (Tool t : player.getTools()) {
             if (t.getId() == 3) {
@@ -48,7 +48,7 @@ public class FileNotFound extends Abyss {
         }
         Slot destination = board.encontraSlot(targetPos);
         currentSlot.removePlayer(player);
-        destination.addPlayer(player);
+        destination.addPlayer(player);*/
         return "Recua 3 casas";
     }
 }

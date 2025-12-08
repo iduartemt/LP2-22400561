@@ -15,7 +15,7 @@ public class BlueScreenOfDeath extends Abyss {
 
     @Override
     public String playerInteraction(Player player, Board board) {
-        player.setState(PlayerState.DERROTADO);
+      /*  player.setState(PlayerState.DERROTADO);*/
         return "Blue Screen of Death! O jogador morreu :(";
     }
 }
