@@ -521,7 +521,7 @@ public class GameManager {
      Regras especiais: se o jogador estiver preso, apenas passa o turno e devolve mensagem de ciclo infinito.
      */
     public String reactToAbyssOrTool() {
-        if (board == null || currentPlayerId == -1) {
+        if (board == null) {
             return null;
         }
 
