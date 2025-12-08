@@ -12,7 +12,7 @@ import java.util.List;
 
 public class Board {
     private final List<Slot> slots = new ArrayList<>();
-    private final HashMap<String, Tool> tools = new HashMap<>();
+    private final HashMap<Integer, Tool> tools = new HashMap<>();
     private final List<Player> players;
 
     public Board(List<Player> players, int worldSize) {
@@ -36,7 +36,7 @@ public class Board {
         return (List<Tool>) tools.values();
     }
 
-    public HashMap<String, Tool> getToolsHashMap() {
+    public HashMap<Integer, Tool> getToolsHashMap() {
         return tools;
     }
 
@@ -118,7 +118,7 @@ public class Board {
                     default -> throw new IllegalArgumentException("Tipo de ferramenta invalida");
                 }
                 slot.addEvent(tool);
-                this.tools.put(tool.getName(), tool);
+                this.tools.put(tool.getId(), tool);
             } else {
                 throw new IllegalArgumentException();
             }

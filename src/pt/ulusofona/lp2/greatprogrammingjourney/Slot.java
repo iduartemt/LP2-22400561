@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Slot {
-    private int nrSlot;
-    private List<Player> players = new ArrayList<>();
+    private final int nrSlot;
+    private final List<Player> players = new ArrayList<>();
     Event event;
 
     public Slot(int nrSlot) {
