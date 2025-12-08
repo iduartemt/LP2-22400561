@@ -525,7 +525,7 @@ public class GameManager {
             return null;
         }
 
-       /* // Encontra o slot onde está o jogador atual
+       // Encontra o slot onde está o jogador atual
         Slot currentSlot = board.getSlotOfPlayer(currentPlayerId);
         if (currentSlot == null) {
             return null;
@@ -550,10 +550,9 @@ public class GameManager {
         }
 
         // Depois da interação, passa o turno
-        passTurnToNextPlayer();
+        //passTurnToNextPlayer();
         // Devolve a mensagem gerada pelo evento (se houver)
-        return message;*/
-        return null;
+        return message;
     }
 
     public boolean gameIsOver() {
