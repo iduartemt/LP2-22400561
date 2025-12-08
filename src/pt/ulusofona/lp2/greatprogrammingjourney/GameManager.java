@@ -479,7 +479,7 @@ public class GameManager {
       não pode estar preso,verifica se o jogador pode mover esse número de casas
      */
     public boolean moveCurrentPlayer(int nrSpaces) {
-        if (board == null || nrSpaces < 1 || nrSpaces > 6 || gameIsOver()) {
+       /* if (board == null || nrSpaces < 1 || nrSpaces > 6 || gameIsOver()) {
             return false;
         }
 
@@ -512,7 +512,8 @@ public class GameManager {
             currentPlayerId = currentPlayer.getId();
         }
 
-        return moved;
+        return moved;*/
+        return false;
     }
 
     /*
@@ -521,7 +522,7 @@ public class GameManager {
      Regras especiais: se o jogador estiver preso, apenas passa o turno e devolve mensagem de ciclo infinito.
      */
     public String reactToAbyssOrTool() {
-        if (board == null) {
+        if (board == null || currentPlayerId == -1) {
             return null;
         }
 
