@@ -39,11 +39,14 @@ public class Exception extends Abyss {
         }
 
         if (currentSlot == null) {
-            return "Exception";
+            return null;
         }
 
         int targetPos = currentSlot.getNrSlot() - 2;
-        if (targetPos < 1) targetPos = 1;
+
+        if (targetPos < 1) {
+            targetPos = 1;
+        }
         Slot destination = board.encontraSlot(targetPos);
 
         currentSlot.removePlayer(player);

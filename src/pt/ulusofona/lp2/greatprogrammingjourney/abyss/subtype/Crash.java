@@ -26,7 +26,7 @@ public class Crash extends Abyss {
         }
 
         if (currentSlot == null) {
-            return "Crash";
+            return null;
         }
 
         Slot destinationSlot = board.encontraSlot(1);

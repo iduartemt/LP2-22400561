@@ -39,7 +39,7 @@ public class SecundaryEffects extends Abyss {
         }
 
         if (currentSlot == null) {
-            return "Efeitos secundários";
+            return null;
         }
 
         int posTwoMovesAgo = player.getPositionTwoMovesAgo();

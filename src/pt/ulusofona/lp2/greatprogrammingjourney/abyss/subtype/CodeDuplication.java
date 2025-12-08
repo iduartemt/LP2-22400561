@@ -39,7 +39,7 @@ public class CodeDuplication extends Abyss {
         }
 
         if (currentSlot == null) {
-            return "Código duplicado";
+            return null;
         }
 
         Slot destinationSlot = board.encontraSlot(currentSlot.getNrSlot() - player.getLastDiceValue());

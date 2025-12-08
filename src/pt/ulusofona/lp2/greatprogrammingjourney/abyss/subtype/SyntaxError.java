@@ -45,13 +45,15 @@ public class SyntaxError extends Abyss {
 
 
         if (currentSlot == null) {
-            return "Erro de sintaxe";
+            return null;
         }
 
 
         int targetPos = currentSlot.getNrSlot() - 1;
 
-        if (targetPos < 1) targetPos = 1;
+        if (targetPos < 1){
+            targetPos = 1;
+        }
         Slot destinationSlot = board.encontraSlot(targetPos);
 
         currentSlot.removePlayer(player);

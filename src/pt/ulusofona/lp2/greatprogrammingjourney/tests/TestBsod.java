@@ -1,7 +1,6 @@
 package pt.ulusofona.lp2.greatprogrammingjourney.tests;
 
 import org.junit.jupiter.api.Test;
-import pt.ulusofona.lp2.greatprogrammingjourney.GameManager;
 import pt.ulusofona.lp2.greatprogrammingjourney.Player;
 import pt.ulusofona.lp2.greatprogrammingjourney.Board;
 import pt.ulusofona.lp2.greatprogrammingjourney.abyss.subtype.BlueScreenOfDeath;

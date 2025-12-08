@@ -36,7 +36,7 @@ public class InfiniteLoop extends Abyss {
         Slot currentSlot = board.getSlotOfPlayer(player.getId());
 
         if (currentSlot == null) {
-            return "Ciclo Infinito";
+            return null;
         }
 
         // 3. VERIFICAR SE JÁ EXISTE ALGUÉM PRESO E LIBERTAR

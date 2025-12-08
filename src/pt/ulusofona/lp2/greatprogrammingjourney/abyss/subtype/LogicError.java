@@ -39,7 +39,7 @@ public class LogicError extends Abyss {
         }
 
         if (currentSlot == null) {
-            return "Erro de Lógica";
+            return null;
         }
 
         //Dividir o valor do dado por 2
