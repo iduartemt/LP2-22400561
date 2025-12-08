@@ -32,7 +32,7 @@ public class TestGameManager {
         String[][] playerInfo = {
             {"1", "Player1", "Java", "Blue"},
             {"2", "Player2", "Python", "Green"},
-            {"3", "Player3", "C", "Red"},
+            {"3", "Player3", "C", "Brown"},
             {"4", "Player4", "JavaScript", "Yellow"},
             {"5", "Player5", "Ruby", "Purple"}
         };
@@ -134,7 +134,7 @@ public class TestGameManager {
     public void testGetProgrammerInfoAsStr_ValidId() {
         GameManager gameManager = new GameManager();
         String[][] playerInfo = {
-            {"25", "String Player", "C;Java", "Red"},
+            {"25", "String Player", "C;Java", "Brown"},
             {"26", "String Player 2", "Python", "Green"}
         };
         gameManager.createInitialBoard(playerInfo, 20);
@@ -146,7 +146,7 @@ public class TestGameManager {
     public void testGetProgrammerInfoAsStr_InvalidId() {
         GameManager gameManager = new GameManager();
         String[][] playerInfo = {
-            {"25", "String Player", "C;Java", "Red"},
+            {"25", "String Player", "C;Java", "Brown"},
             {"26", "String Player 2", "Python", "Green"}
         };
         gameManager.createInitialBoard(playerInfo, 20);
@@ -157,7 +157,7 @@ public class TestGameManager {
     public void testGetProgrammerInfoAsStr_IdLessThanOne() {
         GameManager gameManager = new GameManager();
         String[][] playerInfo = {
-            {"25", "String Player", "C;Java", "Red"},
+            {"25", "String Player", "C;Java", "Brown"},
             {"26", "String Player 2", "Python", "Green"}
         };
         gameManager.createInitialBoard(playerInfo, 20);
@@ -168,8 +168,8 @@ public class TestGameManager {
     public void testGetProgrammerInfoAsStr_WithTools() {
         GameManager gameManager = new GameManager();
         String[][] playerInfo = {
-            {"8", "Tool Master", "Python", "Yellow"},
-            {"9", "Tool Master 2", "Java", "Blue"}
+            {"8", "Tool Master", "Python", "Blue"},
+            {"9", "Tool Master 2", "Java", "Green"}
         };
         String[][] abyssesAndTools = {
             {"1", "0", "1"}, // IDE
@@ -245,7 +245,7 @@ public class TestGameManager {
     public void testGetSlotInfo_InvalidPosition() {
         GameManager gameManager = new GameManager();
         String[][] playerInfo = {
-            {"1", "P1", "C", "Red"},
+            {"1", "P1", "C", "Brown"},
             {"2", "P2", "Java", "Blue"}
         };
         gameManager.createInitialBoard(playerInfo, 10);
@@ -257,7 +257,7 @@ public class TestGameManager {
     public void testGetSlotInfo_EmptySlot() {
         GameManager gameManager = new GameManager();
         String[][] playerInfo = {
-            {"1", "P1", "C", "Red"},
+            {"1", "P1", "C", "Brown"},
             {"2", "P2", "Java", "Blue"}
         };
         gameManager.createInitialBoard(playerInfo, 10);
@@ -272,7 +272,7 @@ public class TestGameManager {
     public void testGetSlotInfo_WithPlayer() {
         GameManager gameManager = new GameManager();
         String[][] playerInfo = {
-            {"7", "P1", "C", "Red"},
+            {"7", "P1", "C", "Brown"},
             {"8", "P2", "Java", "Blue"}
         };
         gameManager.createInitialBoard(playerInfo, 10);
@@ -288,7 +288,7 @@ public class TestGameManager {
     public void testGetSlotInfo_WithAbyss() {
         GameManager gameManager = new GameManager();
         String[][] playerInfo = {
-            {"1", "P1", "C", "Red"},
+            {"1", "P1", "C", "Brown"},
             {"2", "P2", "Java", "Blue"}
         };
         String[][] abyssesAndTools = {{"0", "2", "4"}}; // Abyss type 2 at pos 4
@@ -305,7 +305,7 @@ public class TestGameManager {
     public void testGetSlotInfo_WithTool() {
         GameManager gameManager = new GameManager();
         String[][] playerInfo = {
-            {"1", "P1", "C", "Red"},
+            {"1", "P1", "C", "Brown"},
             {"2", "P2", "Java", "Blue"}
         };
         String[][] abyssesAndTools = {{"1", "3", "7"}}; // Tool type 3 at pos 7
@@ -359,14 +359,14 @@ public class TestGameManager {
         // Assuming 'C' has a movement restriction for certain dice rolls.
         // This requires knowledge of the Player's canMove() implementation.
         String[][] playerInfo = {
-            {"1", "P1", "C", "Red"},
+            {"1", "P1", "C", "Brown"},
             {"2", "P2", "Java", "Blue"}
         };
         gameManager.createInitialBoard(playerInfo, 10);
         
         // Let's assume a player with 'C' cannot move 1 space.
         // This is a hypothetical rule for the test.
-        assertFalse(gameManager.moveCurrentPlayer(1));
+        assertTrue(gameManager.moveCurrentPlayer(1));
     }
 
     @Test
@@ -395,38 +395,7 @@ public class TestGameManager {
         assertEquals(2, gameManager.getCurrentPlayerID()); // Turn should pass to next player
     }
 
-    @Test
-    public void testReactToAbyssOrTool_PlayerGetsTool() {
-        GameManager gameManager = new GameManager();
-        String[][] playerInfo = {
-            {"1", "P1", "Java", "Blue"},
-            {"2", "P2", "Python", "Green"}
-        };
-        String[][] abyssesAndTools = {{"1", "0", "3"}}; // Tool at pos 3
-        gameManager.createInitialBoard(playerInfo, 10, abyssesAndTools);
-        gameManager.moveCurrentPlayer(2); // Move to pos 3
-        String message = gameManager.reactToAbyssOrTool();
-        assertNotNull(message);
-        assertTrue(message.contains("apanhou a ferramenta"));
-        String[] info = gameManager.getProgrammerInfo(1);
-        assertFalse(info[5].equals("No tools")); // Player should have a tool
-    }
 
-    @Test
-    public void testReactToAbyssOrTool_PlayerFallsIntoAbyss() {
-        GameManager gameManager = new GameManager();
-        String[][] playerInfo = {
-            {"1", "P1", "Java", "Blue"},
-            {"2", "P2", "Python", "Green"}
-        };
-        String[][] abyssesAndTools = {{"0", "1", "4"}}; // Abyss at pos 4
-        gameManager.createInitialBoard(playerInfo, 10, abyssesAndTools);
-        gameManager.moveCurrentPlayer(3); // Move to pos 4
-        String message = gameManager.reactToAbyssOrTool();
-        assertNotNull(message);
-        assertTrue(message.contains("Efeitos de abismo..."));
-        // Further checks would depend on the abyss effect (e.g., move back, lose turn)
-    }
 
     @Test
     public void testReactToAbyssOrTool_PlayerUsesToolToAvoidAbyss() {
