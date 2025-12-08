@@ -307,7 +307,7 @@ public class GameManager {
         } else if (player.getState() == PlayerState.PRESO) {
             infoPlayer[6] = "Preso";
         } else {
-            infoPlayer[6] = "Em jogo";
+            infoPlayer[6] = "Em Jogo";
         }
 
         return infoPlayer;
@@ -434,6 +434,7 @@ public class GameManager {
     private void passTurnToNextPlayer() {
         // Cria uma cópia da lista de jogadores
         List<Player> sortedPlayers = new ArrayList<>(board.getPlayers());
+
         // Ordena por ID
         sortedPlayers.sort(Comparator.comparingInt(Player::getId));
 
@@ -511,7 +512,6 @@ public class GameManager {
         if (moved && gameIsOver()) {
             currentPlayerId = currentPlayer.getId();
         }
-
         return moved;
     }
 
@@ -525,7 +525,7 @@ public class GameManager {
             return null;
         }
 
-       // Encontra o slot onde está o jogador atual
+        // Encontra o slot onde está o jogador atual
         Slot currentSlot = board.getSlotOfPlayer(currentPlayerId);
         if (currentSlot == null) {
             return null;
@@ -550,7 +550,7 @@ public class GameManager {
         }
 
         // Depois da interação, passa o turno
-        //passTurnToNextPlayer();
+        passTurnToNextPlayer();
         // Devolve a mensagem gerada pelo evento (se houver)
         return message;
     }

@@ -23,7 +23,7 @@ public class TestGetProgrammerInfo {
         assertEquals("Purple", info[3]);
         assertEquals("1", info[4]); // Initial position is 1
         assertEquals("No tools", info[5]);
-        assertEquals("Em jogo", info[6]);
+        assertEquals("Em Jogo", info[6]);
     }
 
     @Test
