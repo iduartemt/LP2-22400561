@@ -30,8 +30,7 @@ public class SyntaxError extends Abyss {
         //Se tiver o IDE remove e usa
         if (ide != null) {
             player.getTools().remove(ide);
-            System.out.println("Erro de sintaxe anulado por " + ide.getName());
-            return null;
+            return "Erro de sintaxe anulado por " + ide.getName();
         }
 
         //Descobre em qual slot esta o player
@@ -46,7 +45,7 @@ public class SyntaxError extends Abyss {
 
 
         if (currentSlot == null) {
-            return null;
+            return "Erro de sintaxe";
         }
 
 
@@ -57,7 +56,6 @@ public class SyntaxError extends Abyss {
 
         currentSlot.removePlayer(player);
         destinationSlot.addPlayer(player);
-        return null;
+        return "Recua 1 casa";
     }
 }
-

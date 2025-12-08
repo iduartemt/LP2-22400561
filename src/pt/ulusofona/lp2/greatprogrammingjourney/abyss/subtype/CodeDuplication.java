@@ -26,8 +26,7 @@ public class CodeDuplication extends Abyss {
 
         if (inheritance != null) {
             player.getTools().remove(inheritance);
-            System.out.println("Código duplicado anulado por " + inheritance.getName());
-            return null;
+            return "Código duplicado anulado por " + inheritance.getName();
         }
 
         Slot currentSlot = null;
@@ -40,13 +39,13 @@ public class CodeDuplication extends Abyss {
         }
 
         if (currentSlot == null) {
-            return null;
+            return "Código duplicado";
         }
 
         Slot destinationSlot = board.encontraSlot(currentSlot.getNrSlot() - player.getLastDiceValue());
 
         currentSlot.removePlayer(player);
         destinationSlot.addPlayer(player);
-        return null;
+        return "Recua para a casa anterior";
     }
 }

@@ -27,7 +27,6 @@ public class InfiniteLoop extends Abyss {
 
         if (functionalProgramming != null) {
             player.getTools().remove(functionalProgramming);
-            System.out.println("Ciclo Infinito anulado por " + functionalProgramming.getName());
             // REGRA: "não fica preso, mas também não liberta o que lá estava"
             // Por isso, fazemos return imediato.
             return "Ciclo Infinito anulado por " + functionalProgramming.getName();
@@ -37,7 +36,7 @@ public class InfiniteLoop extends Abyss {
         Slot currentSlot = board.getSlotOfPlayer(player.getId());
 
         if (currentSlot == null) {
-            return null;
+            return "Ciclo Infinito";
         }
 
         // 3. VERIFICAR SE JÁ EXISTE ALGUÉM PRESO E LIBERTAR
@@ -52,7 +51,6 @@ public class InfiniteLoop extends Abyss {
 
         // 4. PRENDER O JOGADOR ATUAL
         player.setState(PlayerState.PRESO);
-        System.out.println(player.getName() + " entrou num Infinite Loop e ficou preso!");
-        return null;
+        return "Ciclo Infinito";
     }
 }

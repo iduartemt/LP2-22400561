@@ -329,7 +329,7 @@ public class GameManager {
             case PRESO:
                 playerState = "Preso";
                 break;
-            default: // EM_JOGO
+            default:
                 playerState = "Em Jogo";
                 break;
         }
@@ -434,7 +434,7 @@ public class GameManager {
     }
 
     // Move o jogador atual pelo tabuleiro
-// Em GameManager.java
+    // Em GameManager.java
     public boolean moveCurrentPlayer(int nrSpaces) {
         if (board == null || nrSpaces < 1 || nrSpaces > 6 || gameIsOver()) {
             return false;
@@ -499,9 +499,7 @@ public class GameManager {
             // Se houver evento, interage e define a mensagem de retorno
             message = event.playerInteraction(currentPlayer, board);
 
-            if (message == null) {
-                message = "jogador agarrou" + event.getName();
-            }
+            System.out.println(message);
         }
 
         // 4. Passar o turno
@@ -722,10 +720,13 @@ public class GameManager {
     }
 
     public JPanel getAuthorsPanel() {
-        return null;
+        JPanel a = new JPanel();
+        return a;
     }
 
     public HashMap<String, String> customizeBoard() {
-        return new HashMap<>();
+        HashMap<String, String> a = new HashMap<String, String>();
+        a.put("a", "a");
+        return a;
     }
 }

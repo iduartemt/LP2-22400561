@@ -15,6 +15,6 @@ public class ExceptionHandling extends Tool {
         if (!player.hasTool(this)) {
             player.getTools().add(this);
         }
-        return null;
+        return "jogador agarrou " + getName();
     }
 }

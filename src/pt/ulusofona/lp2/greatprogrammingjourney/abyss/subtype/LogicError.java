@@ -26,8 +26,7 @@ public class LogicError extends Abyss {
 
         if (unitTests != null) {
             player.getTools().remove(unitTests);
-            System.out.println("Erro de lógica anulado por " + unitTests.getName());
-            return null;
+            return "Erro de Lógica anulado por " + unitTests.getName();
         }
 
         Slot currentSlot = null;
@@ -40,7 +39,7 @@ public class LogicError extends Abyss {
         }
 
         if (currentSlot == null) {
-            return null;
+            return "Erro de Lógica";
         }
 
         //Dividir o valor do dado por 2
@@ -61,6 +60,6 @@ public class LogicError extends Abyss {
             destinationSlot.addPlayer(player);
 
         }
-        return null;
+        return "Erro de Lógica";
     }
 }

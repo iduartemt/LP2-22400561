@@ -26,7 +26,7 @@ public class FileNotFound extends Abyss {
 
         if (exceptionHandling != null) {
             player.getTools().remove(exceptionHandling);
-            return null;
+            return "File not found exception anulado por " + exceptionHandling.getName();
         }
 
         Slot currentSlot = null;
@@ -39,13 +39,13 @@ public class FileNotFound extends Abyss {
         }
 
         if (currentSlot == null) {
-            return null;
+            return "File not found exception";
         }
 
         int targetPos = currentSlot.getNrSlot() - 3;
         if (targetPos < 1) targetPos = 1;
         Slot destination = board.encontraSlot(targetPos);        currentSlot.removePlayer(player);
         destination.addPlayer(player);
-        return null;
+        return "Recua 3 casas";
     }
 }

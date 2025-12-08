@@ -38,6 +38,6 @@ public class SegmentationFault extends Abyss {
                 }
             }
         }
-        return null;
+        return "Segmentation Fault";
     }
 }

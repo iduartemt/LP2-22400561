@@ -26,8 +26,7 @@ public class SecundaryEffects extends Abyss {
 
         if (FunctionalProgramming != null) {
             player.getTools().remove(FunctionalProgramming);
-            System.out.println("Efeitos secundários anulado por " + FunctionalProgramming.getName());
-            return null;
+            return "Efeitos secundários anulado por " + FunctionalProgramming.getName();
         }
 
         Slot currentSlot = null;
@@ -40,7 +39,7 @@ public class SecundaryEffects extends Abyss {
         }
 
         if (currentSlot == null) {
-            return null;
+            return "Efeitos secundários";
         }
 
         int posTwoMovesAgo = player.getPositionTwoMovesAgo();
@@ -52,11 +51,11 @@ public class SecundaryEffects extends Abyss {
         Slot destinationSlot = board.encontraSlot(posTwoMovesAgo);
 
         if (destinationSlot == null) {
-            return null;
+            return "Efeitos secundários";
         }
 
         currentSlot.removePlayer(player);
         destinationSlot.addPlayer(player);
-        return null;
+        return "Efeitos secundários";
     }
 }

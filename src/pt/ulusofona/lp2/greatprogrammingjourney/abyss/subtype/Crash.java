@@ -26,13 +26,13 @@ public class Crash extends Abyss {
         }
 
         if (currentSlot == null) {
-            return null;
+            return "Crash";
         }
 
         Slot destinationSlot = board.encontraSlot(1);
 
         currentSlot.removePlayer(player);
         destinationSlot.addPlayer(player);
-        return null;
+        return "Recua para a casa inicial";
     }
 }

@@ -26,8 +26,7 @@ public class Exception extends Abyss {
 
         if (ExpectionHandling != null) {
             player.getTools().remove(ExpectionHandling);
-            System.out.println("Exception anulado por " + ExpectionHandling.getName());
-            return null;
+            return "Exception anulado por " + ExpectionHandling.getName();
         }
 
         Slot currentSlot = null;
@@ -40,7 +39,7 @@ public class Exception extends Abyss {
         }
 
         if (currentSlot == null) {
-            return null;
+            return "Exception";
         }
 
         int targetPos = currentSlot.getNrSlot() - 2;
@@ -50,6 +49,6 @@ public class Exception extends Abyss {
         currentSlot.removePlayer(player);
         //adicionar o player à nova slot
         destination.addPlayer(player);
-        return null;
+        return "Recua 2 casas";
     }
 }
