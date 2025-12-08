@@ -10,7 +10,7 @@ import pt.ulusofona.lp2.greatprogrammingjourney.tool.Tool;
 public class CodeDuplication extends Abyss {
 
     public CodeDuplication(int position) {
-        super("Código duplicado", 5, position, null, "duplicated-code.png", EventType.ABYSS);
+        super("Código duplicado", 5, position, "duplicated-code.png", EventType.ABYSS);
     }
 
     @Override

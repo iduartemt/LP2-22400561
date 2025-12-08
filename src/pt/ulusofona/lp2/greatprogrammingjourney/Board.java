@@ -14,10 +14,6 @@ public class Board {
 
     // Lista com todas as casas do tabuleiro
     private final List<Slot> slots = new ArrayList<>();
-
-    // HashMap que guarda todas as ferramentas do jogo (id -> ferramenta)
-   // private final HashMap<Integer, Tool> tools = new HashMap<>();
-
     // Lista com todos os jogadores do jogo
     private final List<Player> players;
 

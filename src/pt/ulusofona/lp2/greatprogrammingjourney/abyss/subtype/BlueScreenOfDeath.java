@@ -10,7 +10,7 @@ import pt.ulusofona.lp2.greatprogrammingjourney.Slot;
 public class BlueScreenOfDeath extends Abyss {
 
     public BlueScreenOfDeath(int position) {
-        super("Blue Screen of Death", 7, position, null, "bsod.png", EventType.ABYSS);
+        super("Blue Screen of Death", 7, position, "bsod.png", EventType.ABYSS);
     }
 
     @Override

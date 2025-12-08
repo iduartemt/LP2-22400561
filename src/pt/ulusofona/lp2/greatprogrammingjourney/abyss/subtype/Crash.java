@@ -10,7 +10,7 @@ import pt.ulusofona.lp2.greatprogrammingjourney.tool.Tool;
 public class Crash extends Abyss {
 
     public Crash(int position) {
-        super("Crash", 4, position, null, "crash.png", EventType.ABYSS);
+        super("Crash", 4, position, "crash.png", EventType.ABYSS);
     }
 
     @Override

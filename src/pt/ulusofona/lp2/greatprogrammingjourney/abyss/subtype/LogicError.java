@@ -9,7 +9,7 @@ import pt.ulusofona.lp2.greatprogrammingjourney.tool.Tool;
 
 public class LogicError extends Abyss {
     public LogicError(int position) {
-        super("Erro de Lógica", 1, position, null, "logic.png", EventType.ABYSS);
+        super("Erro de Lógica", 1, position, "logic.png", EventType.ABYSS);
     }
 
     @Override

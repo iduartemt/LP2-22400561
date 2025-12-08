@@ -9,7 +9,7 @@ import pt.ulusofona.lp2.greatprogrammingjourney.tool.Tool;
 
 public class Exception extends Abyss {
     public Exception(int position) {
-        super("Exception", 2, position, null, "exception.png", EventType.ABYSS);
+        super("Exception", 2, position, "exception.png", EventType.ABYSS);
     }
 
     @Override

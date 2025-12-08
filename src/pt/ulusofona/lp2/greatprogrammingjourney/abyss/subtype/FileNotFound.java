@@ -9,7 +9,7 @@ import pt.ulusofona.lp2.greatprogrammingjourney.tool.Tool;
 
 public class FileNotFound extends Abyss {
     public FileNotFound(int position) {
-        super("File not found exception", 3, position, null, "file-not-found-exception.png", EventType.ABYSS);
+        super("File not found exception", 3, position, "file-not-found-exception.png", EventType.ABYSS);
     }
 
     @Override

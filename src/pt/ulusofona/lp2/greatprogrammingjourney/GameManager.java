@@ -15,8 +15,8 @@ public class GameManager {
     private int currentPlayerId;
     // Número total de turnos decorridos (começa em 1)
     private int turnCount = 1;
-
     //======================================================================================================================
+
     // Verifica se o número de jogadores é válido
     //Tem de haver pelo menos 2 e no máximo 4 jogadores
     private boolean nrValidPlayers(String[][] playerInfo) {

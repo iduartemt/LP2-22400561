@@ -11,7 +11,7 @@ import java.util.List;
 
 public class SegmentationFault extends Abyss {
     public SegmentationFault(int position) {
-        super("Segmentation Fault", 9, position, null, "core-dumped.png", EventType.ABYSS);
+        super("Segmentation Fault", 9, position, "core-dumped.png", EventType.ABYSS);
     }
 
     @Override

@@ -9,7 +9,7 @@ import pt.ulusofona.lp2.greatprogrammingjourney.tool.Tool;
 
 public class SecundaryEffects extends Abyss {
     public SecundaryEffects(int position) {
-        super("Efeitos secundários", 6, position, null, "secondary-effects.png", EventType.ABYSS);
+        super("Efeitos secundários", 6, position, "secondary-effects.png", EventType.ABYSS);
     }
 
     @Override

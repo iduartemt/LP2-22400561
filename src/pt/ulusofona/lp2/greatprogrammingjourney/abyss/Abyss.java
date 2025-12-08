@@ -7,11 +7,9 @@ import pt.ulusofona.lp2.greatprogrammingjourney.Player;
 import pt.ulusofona.lp2.greatprogrammingjourney.tool.Tool;
 
 public abstract class Abyss extends Event {
-    Tool counter;
 
-    public Abyss(String name, int id, int position, Tool counter, String image, EventType type) {
+    public Abyss(String name, int id, int position, String image, EventType type) {
         super(name, id, position,image, type);
-        this.counter = counter;
     }
 
     @Override
