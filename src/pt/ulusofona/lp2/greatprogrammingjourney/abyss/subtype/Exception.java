@@ -15,7 +15,7 @@ public class Exception extends Abyss {
     @Override
     public String playerInteraction(Player player, Board board) {
 
-       /* Tool ExpectionHandling = null;
+        Tool ExpectionHandling = null;
 
         for (Tool t : player.getTools()) {
             if (t.getId() == 3) {
@@ -51,7 +51,7 @@ public class Exception extends Abyss {
 
         currentSlot.removePlayer(player);
         //adicionar o player à nova slot
-        destination.addPlayer(player);*/
+        destination.addPlayer(player);
         return "Recua 2 casas";
     }
 }

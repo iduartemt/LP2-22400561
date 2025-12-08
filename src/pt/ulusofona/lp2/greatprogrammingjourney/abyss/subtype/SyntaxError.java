@@ -17,7 +17,7 @@ public class SyntaxError extends Abyss {
     @Override
     public String playerInteraction(Player player, Board board) {
 
-       /* Tool ide = null;
+        Tool ide = null;
 
         //Verifica se tem a tool IDE
         for (Tool t : player.getTools()) {
@@ -57,7 +57,7 @@ public class SyntaxError extends Abyss {
         Slot destinationSlot = board.encontraSlot(targetPos);
 
         currentSlot.removePlayer(player);
-        destinationSlot.addPlayer(player);*/
+        destinationSlot.addPlayer(player);
         return "Recua 1 casa";
     }
 }

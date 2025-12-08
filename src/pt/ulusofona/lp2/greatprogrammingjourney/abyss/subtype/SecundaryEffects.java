@@ -15,7 +15,7 @@ public class SecundaryEffects extends Abyss {
     @Override
     public String playerInteraction(Player player, Board board) {
 
-        /*Tool FunctionalProgramming = null;
+        Tool FunctionalProgramming = null;
 
         for (Tool t : player.getTools()) {
             if (t.getId() == 1) {
@@ -55,7 +55,7 @@ public class SecundaryEffects extends Abyss {
         }
 
         currentSlot.removePlayer(player);
-        destinationSlot.addPlayer(player);*/
+        destinationSlot.addPlayer(player);
         return "Efeitos secundários";
     }
 }

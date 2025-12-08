@@ -16,7 +16,7 @@ public class Crash extends Abyss {
     @Override
     public String playerInteraction(Player player, Board board) {
 
-       /* Slot currentSlot = null;
+        Slot currentSlot = null;
 
         for (Slot s : board.getSlots()) {
             if (s.getPlayers().contains(player)) {
@@ -32,7 +32,7 @@ public class Crash extends Abyss {
         Slot destinationSlot = board.encontraSlot(1);
 
         currentSlot.removePlayer(player);
-        destinationSlot.addPlayer(player);*/
+        destinationSlot.addPlayer(player);
         return "Recua para a casa inicial";
     }
 }
