@@ -7,7 +7,6 @@ import pt.ulusofona.lp2.greatprogrammingjourney.tool.subtypes.*;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 
 public class Board {

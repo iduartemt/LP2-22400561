@@ -616,11 +616,15 @@ public class GameManager {
 
         try (Scanner scanner = new Scanner(file)) { // Usar try-with-resources é mais seguro
             // 1. Ler Tamanho do Mundo
-            if (!scanner.hasNextLine()) throw new InvalidFileException();
+            if (!scanner.hasNextLine()){
+                throw new InvalidFileException();
+            }
             int worldSize = Integer.parseInt(scanner.nextLine());
 
             // 2. Ler Abismos e Ferramentas
-            if (!scanner.hasNextLine()) throw new InvalidFileException();
+            if (!scanner.hasNextLine()){
+                throw new InvalidFileException();
+            }
             List<String[]> abyssesAndTools = new ArrayList<>();
             String lineEvents = scanner.nextLine();
 
@@ -628,17 +632,19 @@ public class GameManager {
             if (!lineEvents.isEmpty()) {
                 String[] events = lineEvents.split(",");
                 for (String event : events) {
-                    if (event.trim().isEmpty()) continue;
+                    if (event.trim().isEmpty()){
+                        continue;
+                    }
                     String[] eventLines = event.split(":");
-                    // O Board espera: { Tipo(0/1), Subtipo(ID), Posição }
-                    // O ficheiro tem: Posição:Tipo:ID
                     String[] formatedEventLines = {eventLines[1], eventLines[2], eventLines[0]};
                     abyssesAndTools.add(formatedEventLines);
                 }
             }
 
             // 3. Ler Jogadores
-            if (!scanner.hasNextLine()) throw new InvalidFileException();
+            if (!scanner.hasNextLine()){
+                throw new InvalidFileException();
+            }
             String[] playersStr = scanner.nextLine().split(",");
 
             List<Player> playersList = new ArrayList<>();
@@ -646,7 +652,9 @@ public class GameManager {
             Map<Integer, String[]> toolsOfPlayers = new HashMap<>(); // Guardar nomes das tools temporariamente
 
             for (String playerStr : playersStr) {
-                if (playerStr.trim().isEmpty()) continue;
+                if (playerStr.trim().isEmpty()){
+                    continue;
+                }
 
                 String[] playerInfo = playerStr.split(":");
                 int playerId = Integer.parseInt(playerInfo[0]);
@@ -715,14 +723,18 @@ public class GameManager {
             }
 
             // 6. Ler Jogador Atual e Turno
-            if (!scanner.hasNextLine()) throw new InvalidFileException();
+            if (!scanner.hasNextLine()){
+                throw new InvalidFileException();
+            }
             String lineInfo = scanner.nextLine();
             String[] currentGameInfo = lineInfo.split(":");
             this.currentPlayerId = Integer.parseInt(currentGameInfo[0]);
             this.turnCount = Integer.parseInt(currentGameInfo[1]); // CORREÇÃO: era currentGame.info
 
             // 7. Colocar Jogadores nas Posições Certas
-            if (!scanner.hasNextLine()) throw new InvalidFileException();
+            if (!scanner.hasNextLine()){
+                throw new InvalidFileException();
+            }
             String playersPositionStr = scanner.nextLine();
 
             if (!playersPositionStr.isEmpty()) {
