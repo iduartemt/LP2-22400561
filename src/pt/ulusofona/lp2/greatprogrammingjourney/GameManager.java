@@ -395,7 +395,18 @@ public class GameManager {
         for (Player player : alivePlayers) {
             sb.append(player.getName()).append(" : ");
 
-            sb.append(player.getToolsAsString());
+            List<Tool> tools = player.getTools();
+            if (tools == null || tools.isEmpty()) {
+                sb.append("No tools");
+            } else {
+                List<String> toolNames = new ArrayList<>();
+                for (Tool t : tools) {
+                    toolNames.add(t.getName());
+                }
+                Collections.sort(toolNames);
+
+                sb.append(String.join(";", toolNames));
+            }
 
             playerNr++;
             if (playerNr != alivePlayers.size()) {
@@ -415,6 +426,7 @@ public class GameManager {
     public int getCurrentPlayerID() {
         return currentPlayerId;
     }
+
 
     // Passa o turno para o próximo jogador ainda em jogo (não derrotado).
     // Ordena os jogadores por ID e encontra o seguinte na lista circular.

@@ -41,8 +41,22 @@ public class Player {
         this.positionTwoMovesAgo = positionTwoMovesAgo;
     }
 
-    //=====================================================GETTERS======================================================
+    public static Integer isValidId(String idStr) {
+        if (idStr == null || idStr.isEmpty()) {
+            return null;
+        }
+        try {
+            int id = Integer.parseInt(idStr);
+            if (id < 0) {
+                return null;
+            }
+            return id;
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
 
+    //=====================================================GETTERS======================================================
     public int getId() {
         return id;
     }
@@ -64,9 +78,7 @@ public class Player {
     }
 
     public ArrayList<Tool> getTools() {
-        // retorna uma nova ArrayList com os mesmos elementos.
-        //quem receber esta lista pode adicionar/removera original nao sofre alteracoes
-        return new ArrayList<>(this.tools);
+        return tools;
     }
 
     public int getPositionTwoMovesAgo() {
@@ -99,7 +111,6 @@ public class Player {
     }
 
     //=====================================================SETTERS=====================================================
-
     public void setLastDiceValue(int value) {
         this.lastDiceValue = value;
     }
@@ -116,24 +127,7 @@ public class Player {
 
     public void setState(PlayerState state) {
         this.state = state;
-    }
-
-    public static Integer isValidId(String idStr) {
-        if (idStr == null || idStr.isEmpty()) {
-            return null;
-        }
-        try {
-            int id = Integer.parseInt(idStr);
-            if (id < 0) {
-                return null;
-            }
-            return id;
-        } catch (NumberFormatException e) {
-            return null;
-        }
-    }
-
-    //=====================================================METODOS======================================================
+    }    //=====================================================METODOS======================================================
 
     public static String isValidName(String name) {
         if (name == null || name.isEmpty()) {
@@ -169,35 +163,6 @@ public class Player {
             return false;
         }
         return true;
-    }
-
-    public String getToolsAsString() {
-        if (this.tools.isEmpty()) {
-            return "No tools";
-        }
-        List<String> toolNames = new ArrayList<>();
-        for (Tool t : this.tools) {
-            toolNames.add(t.getName());
-        }
-        Collections.sort(toolNames);
-        return String.join(";", toolNames);
-    }
-
-    // Formata o estado do jogador
-    public String getStateAsString() {
-        switch (this.state) {
-            case DERROTADO:
-                return "Derrotado";
-            case PRESO:
-                return "Preso";
-            default:
-                return "Em Jogo";
-        }
-    }
-
-    public String getLanguagesAsString() {
-        List<String> sortedLanguages = getSortedLanguages(this.language);
-        return String.join("; ", sortedLanguages);
     }
 
 }

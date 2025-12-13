@@ -12,21 +12,17 @@ public class Slot {
         this.nrSlot = nrSlot;
     }
 
-    //=====================================================GETTERS======================================================
-
     public int getNrSlot() {
         return nrSlot;
     }
 
     public List<Player> getPlayers() {
-        return new ArrayList<>(players);
+        return players;
     }
 
     public Event getEvent() {
         return event;
     }
-
-    //=====================================================METODOS======================================================
 
     public void addPlayer(Player player) {
         players.add(player);
