@@ -1,4 +1,4 @@
-package tests;
+package test;
 
 import org.junit.jupiter.api.Test;
 import pt.ulusofona.lp2.greatprogrammingjourney.GameManager;
