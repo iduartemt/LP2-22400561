@@ -5,6 +5,8 @@ import pt.ulusofona.lp2.greatprogrammingjourney.tool.Tool;
 import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 public class GameManager {
@@ -608,106 +610,147 @@ public class GameManager {
     }
 
     public void loadGame(File file) throws InvalidFileException, FileNotFoundException {
-      /*  if (file == null) {
+        if (file == null) {
             return;
         }
 
-        try {
-            Scanner scanner = new Scanner(file);
-            if (!scanner.hasNextLine()) {
-                throw new InvalidFileException();
-            }
+        try (Scanner scanner = new Scanner(file)) { // Usar try-with-resources é mais seguro
+            // 1. Ler Tamanho do Mundo
+            if (!scanner.hasNextLine()) throw new InvalidFileException();
             int worldSize = Integer.parseInt(scanner.nextLine());
-            if (!scanner.hasNextLine()) {
-                throw new InvalidFileException();
-            }
-            List<String[]> abyssesAndTools = new ArrayList<>();
-            String[] events = scanner.nextLine().split(",");
-            for (String event : events) {
 
-                String[] eventLines = event.split(":");
-                String[] formatedEventLines = {eventLines[1], eventLines[2], eventLines[0]};
-                abyssesAndTools.add(formatedEventLines);
+            // 2. Ler Abismos e Ferramentas
+            if (!scanner.hasNextLine()) throw new InvalidFileException();
+            List<String[]> abyssesAndTools = new ArrayList<>();
+            String lineEvents = scanner.nextLine();
+
+            // Proteção caso não haja eventos (linha vazia ou só vírgula)
+            if (!lineEvents.isEmpty()) {
+                String[] events = lineEvents.split(",");
+                for (String event : events) {
+                    if (event.trim().isEmpty()) continue;
+                    String[] eventLines = event.split(":");
+                    // O Board espera: { Tipo(0/1), Subtipo(ID), Posição }
+                    // O ficheiro tem: Posição:Tipo:ID
+                    String[] formatedEventLines = {eventLines[1], eventLines[2], eventLines[0]};
+                    abyssesAndTools.add(formatedEventLines);
+                }
             }
-            if (!scanner.hasNextLine()) {
-                throw new InvalidFileException();
-            }
+
+            // 3. Ler Jogadores
+            if (!scanner.hasNextLine()) throw new InvalidFileException();
             String[] playersStr = scanner.nextLine().split(",");
-            Map<Integer, Player> players = new HashMap<>();
+
             List<Player> playersList = new ArrayList<>();
-            HashMap<Integer, String[]> toolsOfPlayers = new HashMap<>();
+            Map<Integer, Player> playersMap = new HashMap<>(); // Para acesso rápido por ID
+            Map<Integer, String[]> toolsOfPlayers = new HashMap<>(); // Guardar nomes das tools temporariamente
+
             for (String playerStr : playersStr) {
-                System.out.println(playerStr);
+                if (playerStr.trim().isEmpty()) continue;
+
                 String[] playerInfo = playerStr.split(":");
                 int playerId = Integer.parseInt(playerInfo[0]);
                 String playerName = playerInfo[1];
                 String playerLanguage = playerInfo[2];
-                String[] playerTools = playerInfo[3].split(";");
-                toolsOfPlayers.put(playerId, playerTools);
+
+                // Guardar as ferramentas para processar depois de criar o Board
+                if (playerInfo[3].equals("No tools")) {
+                    toolsOfPlayers.put(playerId, new String[0]);
+                } else {
+                    toolsOfPlayers.put(playerId, playerInfo[3].split(";"));
+                }
+
                 String playerColor = playerInfo[4];
-                String stateStr = playerInfo[5]; // Lê a string "EM_JOGO", "PRESO", etc.
-                PlayerState state = PlayerState.valueOf(stateStr);
+                PlayerState state = PlayerState.valueOf(playerInfo[5]);
                 int playerLastDiceValue = Integer.parseInt(playerInfo[6]);
                 int playerPreviousPosition = Integer.parseInt(playerInfo[7]);
                 int positionTwoMovesAgo = Integer.parseInt(playerInfo[8]);
+
                 Player player = new Player(playerId, playerName, playerLanguage,
-                        playerColor, state, playerLastDiceValue, // <--- Passas o Enum 'state' aqui
+                        playerColor, state, playerLastDiceValue,
                         playerPreviousPosition, positionTwoMovesAgo
                 );
-                players.put(playerId, player);
+
+                playersMap.put(playerId, player);
                 playersList.add(player);
             }
 
-            // ler id current player e nrTurno
-            String[][] abyssesAndToolsFormated = new String[abyssesAndTools.size()][3];
-            for (int i = 0; i < abyssesAndTools.size(); i++) {
-                abyssesAndToolsFormated[i] = abyssesAndTools.get(i);
-            }
-            board = new Board(playersList, worldSize, abyssesAndToolsFormated);
-            for (Player player : board.getPlayers()) {
-                for (String toolStr : toolsOfPlayers.get(player.getId())) {
-                    Tool tool = board.getToolsHashMap().get(toolStr);
-                    player.addTool(tool);
+            // 4. Criar o Board
+            // Converter List para Array para o construtor
+            String[][] abyssesAndToolsFormated = null;
+            if (!abyssesAndTools.isEmpty()) {
+                abyssesAndToolsFormated = new String[abyssesAndTools.size()][3];
+                for (int i = 0; i < abyssesAndTools.size(); i++) {
+                    abyssesAndToolsFormated[i] = abyssesAndTools.get(i);
                 }
             }
-            if (!scanner.hasNext()) {
-                throw new InvalidFileException();
-            }
-            String[] currentGameInfo = scanner.nextLine().split(":");
-            String currentPlayerId = currentGameInfo[0];
-            String turnCount = currentGame.info[1];
 
-            this.currentPlayerId = Integer.parseInt(currentPlayerId);
-            this.turnCount = Integer.parseInt(turnCount);
+            this.board = new Board(playersList, worldSize, abyssesAndToolsFormated);
 
-            if (!scanner.hasNextLine()) {
-                throw new InvalidFileException();
+            // IMPORTANTE: O construtor do Board mete todos na casa 1.
+            // Temos de limpar a casa 1 antes de os meter nas posições reais.
+            if (!board.getSlots().isEmpty()) {
+                board.getSlots().get(0).getPlayers().clear();
             }
-            String playersPositionStr = scanner.nextLine();
-            for (String playersPosAndIdStr : playersPositionStr.split(",")) {
-                String[] playerPosAndId = playersPosAndIdStr.split(":");
-                int playerPos = Integer.parseInt(playerPosAndId[0]);
-                int playerId = Integer.parseInt(playerPosAndId[1]);
-                for (Slot slot : board.getSlots()) {
-                    if (slot.getNrSlot() == playerPos) {
-                        slot.addPlayer(players.get(playerId));
+
+            // 5. Restaurar Ferramentas dos Jogadores
+            // Como o Board não tem getToolsHashMap(), procuramos as ferramentas no tabuleiro
+            for (Player player : playersList) {
+                String[] toolNames = toolsOfPlayers.get(player.getId());
+                if (toolNames != null) {
+                    for (String toolName : toolNames) {
+                        // Procurar a ferramenta no tabuleiro pelo nome
+                        for (Slot slot : board.getSlots()) {
+                            Event event = slot.getEvent();
+                            // Verifica se é uma Tool e se tem o mesmo nome
+                            if (event != null && event instanceof Tool && event.getName().equals(toolName)) {
+                                // Adicionar à lista do jogador (Player não tem addTool, usa getTools().add)
+                                player.getTools().add((Tool) event);
+                                // Nota: Assumimos que a ferramenta é a mesma instância que está no tabuleiro
+                                break;
+                            }
+                        }
                     }
                 }
             }
 
-            scanner.close();
-        } catch (InvalidFileException | FileNotFoundException e) {
-            e.printStackTrace();
-            throw e;
-        } catch (IndexOutOfBoundsException e) {
-            e.printStackTrace();
+            // 6. Ler Jogador Atual e Turno
+            if (!scanner.hasNextLine()) throw new InvalidFileException();
+            String lineInfo = scanner.nextLine();
+            String[] currentGameInfo = lineInfo.split(":");
+            this.currentPlayerId = Integer.parseInt(currentGameInfo[0]);
+            this.turnCount = Integer.parseInt(currentGameInfo[1]); // CORREÇÃO: era currentGame.info
+
+            // 7. Colocar Jogadores nas Posições Certas
+            if (!scanner.hasNextLine()) throw new InvalidFileException();
+            String playersPositionStr = scanner.nextLine();
+
+            if (!playersPositionStr.isEmpty()) {
+                for (String playersPosAndIdStr : playersPositionStr.split(",")) {
+                    if (playersPosAndIdStr.trim().isEmpty()) continue;
+
+                    String[] playerPosAndId = playersPosAndIdStr.split(":");
+                    int playerPos = Integer.parseInt(playerPosAndId[0]);
+                    int playerId = Integer.parseInt(playerPosAndId[1]);
+
+                    // Encontrar o slot e adicionar o jogador
+                    Slot slot = board.encontraSlot(playerPos);
+                    if (slot != null) {
+                        Player p = playersMap.get(playerId);
+                        if (p != null) {
+                            slot.addPlayer(p);
+                        }
+                    }
+                }
+            }
+
+        } catch (NumberFormatException | IndexOutOfBoundsException e) {
+            e.printStackTrace(); // Ajuda a debuggar
             throw new InvalidFileException();
-        }*/
-
+        }
     }
-
     public boolean saveGame(File file) {
-       /* try {
+        try {
             FileWriter writer = new FileWriter(file);
 
             //primeira linha tamanho do board
@@ -763,7 +806,7 @@ public class GameManager {
             return false;
         }
         System.out.println("sucesso a salvar em " + file.getAbsolutePath());
-*/
+
         return true;
     }
 
