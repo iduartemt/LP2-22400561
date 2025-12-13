@@ -4,27 +4,23 @@ import pt.ulusofona.lp2.greatprogrammingjourney.abyss.subtype.*;
 import pt.ulusofona.lp2.greatprogrammingjourney.abyss.subtype.Exception;
 import pt.ulusofona.lp2.greatprogrammingjourney.tool.Tool;
 import pt.ulusofona.lp2.greatprogrammingjourney.tool.subtypes.*;
-
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 
 public class Board {
 
-    // Lista com todas as casas do tabuleiro
     private final List<Slot> slots = new ArrayList<>();
-    // Lista com todos os jogadores do jogo
     private final List<Player> players;
 
-    // Construtor: cria o tabuleiro apenas com jogadores
+    // cria o tabuleiro apenas com jogadores
     public Board(List<Player> players, int worldSize) {
         addSlotList(worldSize);            // Cria todas as casas do tabuleiro
         addPlayerSlotFirstSlot(players);   // Coloca os jogadores na primeira casa
         this.players = new ArrayList<>(players); // Guarda cópia dos jogadores
     }
 
-    // Construtor: cria o tabuleiro com jogadores + abismos + ferramentas
+    // cria o tabuleiro com jogadores + abismos + ferramentas
     public Board(List<Player> players, int worldSize, String[][] abyssesAndTools) {
         addSlotList(worldSize);               // Cria as casas
         addEventsToSlot(abyssesAndTools);     // Adiciona os eventos às casas
@@ -32,10 +28,22 @@ public class Board {
         this.players = new ArrayList<>(players);
     }
 
-    // Devolve a lista de jogadores
+    //=====================================================GETTERS======================================================
+
     public List<Player> getPlayers() {
-        return players;
+        return new ArrayList<>(players);
     }
+
+    public int getNrTotalSlots() {
+        return slots.size();
+    }
+
+    public List<Slot> getSlots() {
+        return new ArrayList<>(this.slots);
+    }
+
+    //=====================================================METODOS======================================================
+
     // Cria todas as casas do tabuleiro de 1 até worldSize
     private void addSlotList(int worldSize) {
         for (int i = 0; i < worldSize; i++) {
@@ -50,11 +58,6 @@ public class Board {
         }
     }
 
-    // Devolve o número total de casas do tabuleiro
-    public int getNrTotalSlots() {
-        return slots.size();
-    }
-
     // Devolve o slot com o número indicado
     public Slot encontraSlot(int nrSlot) {
         for (Slot slot : slots) {
@@ -63,11 +66,6 @@ public class Board {
             }
         }
         return null; // Se não encontrar nenhum
-    }
-
-    // Devolve a lista completa de slots
-    public List<Slot> getSlots() {
-        return slots;
     }
 
     // Verifica se existe pelo menos um jogador na última casa
