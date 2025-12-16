@@ -58,9 +58,4 @@ public class Slot {
     public void addEvent(Event event) {
         this.event = event;
     }
-
-    public void removeEvent() {
-        this.event = null;
-    }
-
 }

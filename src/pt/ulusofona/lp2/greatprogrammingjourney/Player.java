@@ -61,10 +61,6 @@ public class Player {
         return id;
     }
 
-    public boolean isLastMoveIsValid() {
-        return lastMoveIsValid;
-    }
-
     public void setLastMoveIsValid(boolean lastMoveIsValid) {
         this.lastMoveIsValid = lastMoveIsValid;
     }
@@ -101,16 +97,8 @@ public class Player {
         return lastDiceValue;
     }
 
-    public List<String> getSortedLanguages(String languageStr) {
-        List<String> languages = new ArrayList<>(List.of(languageStr.split(";")));
-        for (int i = 0; i < languages.size(); i++) {
-            languages.set(i, languages.get(i).trim());
-        }
-        Collections.sort(languages);
-        return languages;
-    }
-
     //=====================================================SETTERS=====================================================
+
     public void setLastDiceValue(int value) {
         this.lastDiceValue = value;
     }
@@ -128,6 +116,15 @@ public class Player {
     public void setState(PlayerState state) {
         this.state = state;
     }    //=====================================================METODOS======================================================
+
+    public List<String> getSortedLanguages(String languageStr) {
+        List<String> languages = new ArrayList<>(List.of(languageStr.split(";")));
+        for (int i = 0; i < languages.size(); i++) {
+            languages.set(i, languages.get(i).trim());
+        }
+        Collections.sort(languages);
+        return languages;
+    }
 
     public static String isValidName(String name) {
         if (name == null || name.isEmpty()) {

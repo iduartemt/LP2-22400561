@@ -47,7 +47,7 @@ public class GameManager {
             return null;
         }
 
-        // Caso especial: cor aleatória
+        // cor aleatória
         if (color.equals("RANDOM")) {
             for (Color c : Color.values()) {
                 String corStr = c.toString().substring(0, 1).toUpperCase() + c.toString().substring(1).toLowerCase();
@@ -615,27 +615,27 @@ public class GameManager {
         }
 
         try (Scanner scanner = new Scanner(file)) {
-            // 1. Ler Tamanho do Mundo
+            // Ler Tamanho do Mundo
             int worldSize = readWorldSize(scanner);
 
-            // 2. Ler Abismos e Ferramentas
+            // Ler Abismos e Ferramentas
             List<String[]> abyssesAndTools = readEvents(scanner);
 
-            // 3. Ler Jogadores
+            // Ler Jogadores
             Map<Integer, String[]> toolsOfPlayers = new HashMap<>();
             Map<Integer, Player> playersMap = new HashMap<>();
             List<Player> playersList = readPlayers(scanner, toolsOfPlayers, playersMap);
 
-            // 4. Criar Board e Limpar posição inicial
+            // Criar Board e Limpar posição inicial
             createAndCleanBoard(worldSize, abyssesAndTools, playersList);
 
-            // 5. Restaurar Ferramentas (Sem instanceof)
+            // Restaurar Ferramentas (Sem instanceof)
             restorePlayerTools(playersList, toolsOfPlayers);
 
-            // 6. Ler Estado do Jogo (Current Player e Turno)
+            // Ler Estado do Jogo (Current Player e Turno)
             readGameState(scanner);
 
-            // 7. Colocar Jogadores nas Posições
+            // Colocar Jogadores nas Posições
             placePlayersOnBoard(scanner, playersMap);
 
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
@@ -729,13 +729,14 @@ public class GameManager {
     private void restorePlayerTools(List<Player> playersList, Map<Integer, String[]> toolsOfPlayers) {
         for (Player player : playersList) {
             String[] toolNames = toolsOfPlayers.get(player.getId());
-            if (toolNames == null) continue;
+            if (toolNames == null){
+                continue;
+            }
 
             for (String toolName : toolNames) {
                 for (Slot slot : board.getSlots()) {
                     Event event = slot.getEvent();
 
-                    // CORREÇÃO: Usar EventType em vez de instanceof
                     if (event != null && event.getType() == EventType.TOOL && event.getName().equals(toolName)) {
                         player.getTools().add((Tool) event);
                         break;
@@ -764,7 +765,9 @@ public class GameManager {
 
         if (!playersPositionStr.isEmpty()) {
             for (String part : playersPositionStr.split(",")) {
-                if (part.trim().isEmpty()) continue;
+                if (part.trim().isEmpty()){
+                    continue;
+                }
 
                 String[] posId = part.split(":");
                 int pos = Integer.parseInt(posId[0]);
