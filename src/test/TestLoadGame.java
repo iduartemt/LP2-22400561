@@ -66,6 +66,9 @@ class TestLoadGame {
         }
 
         GameManager gameManager = new GameManager();
+        // O método loadGame apanha NumberFormatException e lança InvalidFileException.
+        // O e.printStackTrace() no código do GameManager irá imprimir a stack trace no console,
+        // mas o teste deve passar se a exceção correta for lançada.
         assertThrows(InvalidFileException.class, () -> {
             gameManager.loadGame(invalidFile);
         }, "Deveria ser lançada uma InvalidFileException para um ficheiro mal formatado.");
